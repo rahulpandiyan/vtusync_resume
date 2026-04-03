@@ -1,7 +1,7 @@
 'use client';
 
 import { Resume } from "@/lib/types";
-import { Document as PDFDocument, Page as PDFPage, Text, View, StyleSheet, Link, Image } from '@react-pdf/renderer';
+import { Document as PDFDocument, Page as PDFPage, Text, View, StyleSheet, Link } from '@react-pdf/renderer';
 import { memo, useMemo, useCallback } from 'react';
 import type { ReactNode } from 'react';
 
@@ -20,6 +20,7 @@ const baseStyles = {
     marginRight: 4,
   },
 } as const;
+const WATERMARK_TEXT = "Hire-Ready\u00A0Resume\u00A0-\u00A0ResuSync";
 
 // Create a cache outside of components to persist between renders
 const textProcessingCache = new Map<string, ReactNode[]>();
@@ -538,19 +539,19 @@ function createResumeStyles(settings: Resume['document_settings'] = {
       fontSize: document_font_size,
       color: '#111827',
     },
-    footer: {
+    watermarkBottom: {
       position: 'absolute',
-      bottom: 20,
+      bottom: 12,
       left: 0,
       right: 0,
-      height: 'auto',
-      display: 'flex',
-      alignItems: 'center',
       justifyContent: 'center',
+      alignItems: 'center',
     },
-    footerImage: {
-      width: `${footer_width}%`,
-      height: 'auto',
+    watermarkBottomText: {
+      fontSize: 9,
+      color: '#6b7280',
+      opacity: 0.7,
+      fontFamily: 'Helvetica-Bold',
     },
   });
 }
@@ -558,9 +559,10 @@ function createResumeStyles(settings: Resume['document_settings'] = {
 interface ResumePDFDocumentProps {
   resume: Resume;
   variant?: 'base' | 'tailored';
+  showWatermark?: boolean;
 }
 
-export const ResumePDFDocument = memo(function ResumePDFDocument({ resume }: ResumePDFDocumentProps) {
+export const ResumePDFDocument = memo(function ResumePDFDocument({ resume, showWatermark = false }: ResumePDFDocumentProps) {
   // Memoize styles based on document settings
   const styles = useMemo(() => createResumeStyles(resume.document_settings), [resume.document_settings]);
 
@@ -573,15 +575,12 @@ export const ResumePDFDocument = memo(function ResumePDFDocument({ resume }: Res
         <ProjectsSection projects={resume.projects} styles={styles} />
         <EducationSection education={resume.education} styles={styles} />
         
-        {resume.document_settings?.show_ubc_footer && (
-          <View style={styles.footer}>
-            {/* React PDF Image does not support alt text, so disable lint here */}
-            {/* eslint-disable-next-line jsx-a11y/alt-text */}
-            <Image 
-              src="/images/ubc-science-footer.png"
-              style={styles.footerImage}
-            />
-          </View>
+        {showWatermark && (
+          <>
+            <View style={styles.watermarkBottom} fixed>
+              <Text style={styles.watermarkBottomText} wrap={false}>{WATERMARK_TEXT}</Text>
+            </View>
+          </>
         )}
       </PDFPage>
     </PDFDocument>

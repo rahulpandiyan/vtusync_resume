@@ -95,6 +95,7 @@ export interface Resume {
   };
   has_cover_letter: boolean;
   cover_letter?: Record<string, unknown> | null;
+  watermark_removed?: boolean;
 }
 
 export interface ResumeSummary {
@@ -106,6 +107,7 @@ export interface ResumeSummary {
   is_base_resume: boolean;
   created_at: string;
   updated_at: string;
+  watermark_removed?: boolean;
 }
 
 export interface DocumentSettings {
@@ -171,10 +173,12 @@ export interface Subscription {
   user_id: string;
   stripe_customer_id: string | null;
   stripe_subscription_id: string | null;
+  razorpay_customer_id?: string | null;
   subscription_plan: 'free' | 'pro';
   subscription_status: 'active' | 'canceled';
   current_period_end: string | null;
   trial_end: string | null;
+  watermark_unlocked?: boolean;
   created_at: string;
   updated_at: string;
 }

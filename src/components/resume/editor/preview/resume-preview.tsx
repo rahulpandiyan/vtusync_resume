@@ -10,7 +10,7 @@
 
 import { Resume } from "@/lib/types";
 import { Document, Page, pdfjs } from 'react-pdf';
-import { useState, useEffect, memo, useMemo, useCallback } from 'react';
+import { useState, useEffect, memo, useMemo, useCallback, useRef } from 'react';
 import { pdf } from '@react-pdf/renderer';
 import { ResumePDFDocument } from './resume-pdf-document';
 import { useDebouncedValue } from '@/hooks/use-debounced-value';
@@ -100,6 +100,7 @@ interface ResumePreviewProps {
   resume: Resume;
   variant?: 'base' | 'tailored';
   containerWidth: number;  // This is now expected to be a percentage (0-100)
+  showWatermark?: boolean;
 }
 
 /**
@@ -108,10 +109,11 @@ interface ResumePreviewProps {
  * Displays a PDF preview of the resume using react-pdf.
  * Handles PDF generation and responsive display.
  */
-export const ResumePreview = memo(function ResumePreview({ resume, variant = 'base', containerWidth }: ResumePreviewProps) {
+export const ResumePreview = memo(function ResumePreview({ resume, variant = 'base', containerWidth, showWatermark = false }: ResumePreviewProps) {
   const [url, setUrl] = useState<string | null>(null);
   const [numPages, setNumPages] = useState<number>(0);
   const debouncedWidth = useDebouncedValue(containerWidth, 100);
+  const generationRef = useRef(0);
   
 
   // Convert percentage to pixels based on parent container
@@ -137,19 +139,22 @@ export const ResumePreview = memo(function ResumePreview({ resume, variant = 'ba
 
   // Generate or retrieve PDF from cache
   useEffect(() => {
+    const generationId = ++generationRef.current;
     let currentUrl: string | null = null;
 
     async function generatePDF() {
       // Check cache first
       const cached = pdfCache.get(resumeHash);
       if (cached) {
+        if (generationRef.current !== generationId) return;
         currentUrl = cached.url;
         setUrl(cached.url);
         return;
       }
 
       // Generate new PDF if not in cache
-      const blob = await pdf(<ResumePDFDocument resume={resume} variant={variant} />).toBlob();
+      const blob = await pdf(<ResumePDFDocument resume={resume} variant={variant} showWatermark={showWatermark} />).toBlob();
+      if (generationRef.current !== generationId) return;
       const newUrl = URL.createObjectURL(blob);
       currentUrl = newUrl;
       
@@ -158,15 +163,16 @@ export const ResumePreview = memo(function ResumePreview({ resume, variant = 'ba
       setUrl(newUrl);
     }
 
+    setNumPages(0);
     generatePDF();
 
     // Cleanup function
     return () => {
-      if (currentUrl && !pdfCache.has(resumeHash)) {
+      if (generationRef.current === generationId && currentUrl && !pdfCache.has(resumeHash)) {
         URL.revokeObjectURL(currentUrl);
       }
     };
-  }, [resumeHash, variant, resume]);
+  }, [resumeHash, variant, resume, showWatermark]);
 
   // Cleanup on component unmount
   useEffect(() => {
@@ -182,10 +188,15 @@ export const ResumePreview = memo(function ResumePreview({ resume, variant = 'ba
   const [shouldRenderTextLayer, setShouldRenderTextLayer] = useState(false);
 
   // Modify Page component to conditionally render text layer
-  function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
-    setNumPages(numPages);
+  function onDocumentLoadSuccess({ numPages: loadedPages }: { numPages: number }): void {
+    setNumPages(loadedPages);
     // Enable text layer after document is stable
     setTimeout(() => setShouldRenderTextLayer(true), 1000);
+  }
+
+  function onDocumentLoadError(): void {
+    setNumPages(0);
+    setShouldRenderTextLayer(false);
   }
 
   // Disable text layer during updates
@@ -258,8 +269,10 @@ export const ResumePreview = memo(function ResumePreview({ resume, variant = 'ba
   return (
     <div className=" h-full relative bg-black/15">
         <Document
+          key={url ?? 'resume-preview'}
           file={url}
           onLoadSuccess={onDocumentLoadSuccess}
+          onLoadError={onDocumentLoadError}
           className="relative h-full   "
           externalLinkTarget="_blank"
           loading={
@@ -338,6 +351,7 @@ export const ResumePreview = memo(function ResumePreview({ resume, variant = 'ba
   return (
     prevProps.resume === nextProps.resume &&
     prevProps.variant === nextProps.variant &&
-    prevProps.containerWidth === nextProps.containerWidth
+    prevProps.containerWidth === nextProps.containerWidth &&
+    prevProps.showWatermark === nextProps.showWatermark
   );
 }); 

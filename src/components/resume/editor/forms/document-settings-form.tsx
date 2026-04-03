@@ -1,17 +1,20 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { DocumentSettings } from "@/lib/types";
+import { DocumentSettings, Profile } from "@/lib/types";
 import { Button } from "@/components/ui/button";
-import { ChevronUp, ChevronDown } from "lucide-react"
-import { Switch } from "@/components/ui/switch";
+import { ChevronUp, ChevronDown, LayoutTemplate, Shield, LockOpen, Loader2 } from "lucide-react";
 import { SavedStylesDialog } from "./saved-styles-dialog";
-import { LayoutTemplate } from "lucide-react";
+import { useState } from "react";
+import { getSubscriptionAccessState } from "@/lib/subscription-access";
+import { createRazorpayOrder, verifyRazorpayPayment } from "@/utils/actions/payments/actions";
 
 interface DocumentSettingsFormProps {
-  // resume: Resume;
   documentSettings: DocumentSettings;
   onChange: (field: 'document_settings', value: DocumentSettings) => void;
+  profile: Profile;
+  showWatermark?: boolean;
+  resumeId: string;
 }
 
 interface NumberInputProps {
@@ -62,7 +65,50 @@ function NumberInput({ value, onChange, min, max, step }: NumberInputProps) {
   )
 }
 
-export function DocumentSettingsForm({ documentSettings, onChange }: DocumentSettingsFormProps) {
+export function DocumentSettingsForm({ documentSettings, onChange, profile, showWatermark = false, resumeId }: DocumentSettingsFormProps) {
+  const [isLoading, setIsLoading] = useState(false);
+  const subscriptionAccess = getSubscriptionAccessState(profile as any);
+  const { hasProAccess, hasWatermarkAccess } = subscriptionAccess;
+
+  const startPayment = async () => {
+    if (hasProAccess || hasWatermarkAccess) return;
+    setIsLoading(true);
+
+    try {
+      const loaded = await new Promise<boolean>((resolve) => {
+        if ((window as any).Razorpay) return resolve(true);
+        const script = document.createElement('script');
+        script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+        script.onload = () => resolve(true);
+        script.onerror = () => resolve(false);
+        document.body.appendChild(script);
+      });
+      if (!loaded) throw new Error('Failed to load Razorpay');
+
+      const order = await createRazorpayOrder('watermark', resumeId);
+      const RazorpayCtor = (window as any).Razorpay;
+      if (!RazorpayCtor) throw new Error('Razorpay unavailable');
+
+      const instance = new RazorpayCtor({
+        key: order.keyId,
+        amount: order.amount,
+        currency: order.currency,
+        order_id: order.orderId,
+        name: 'ResuSync',
+        description: 'Remove watermark (Rs 49)',
+        theme: { color: '#18181b' },
+        handler: async (response: any) => {
+          await verifyRazorpayPayment({ purpose: 'watermark', ...response, resumeId });
+          window.location.reload();
+        },
+      });
+      instance.open();
+    } catch (e) {
+      console.error('Payment error:', e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const defaultSettings = {
     // Global Settings
@@ -418,74 +464,43 @@ export function DocumentSettingsForm({ documentSettings, onChange }: DocumentSet
           </div>
         </CardHeader>
         <CardContent className="space-y-8">
-          <div className="space-y-6 ">
-            <div className="flex items-center justify-between">
-              <Label className="text-base font-semibold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">
-                Footer Options
-              </Label>
-              <div className="h-[1px] flex-1 mx-4 bg-gradient-to-r from-teal-200/20 via-cyan-200/20 to-transparent" />
-            </div>
-
-            <div className="space-y-2 bg-slate-50/50 rounded-lg  border border-slate-200/50">
-              <div className="flex items-center justify-between space-x-2">
-                <Label className="text-sm font-medium text-muted-foreground">
-                  Show UBC Science Co-op Footer
+          {showWatermark && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <Label className="text-base font-semibold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">
+                  Watermark
                 </Label>
-                <Switch
-                  checked={documentSettings?.show_ubc_footer ?? false}
-                  onCheckedChange={(checked) =>
-                    handleSettingsChange({
-                      ...documentSettings,
-                      show_ubc_footer: checked,
-                    })
-                  }
-                />
+                <div className="h-[1px] flex-1 mx-4 bg-gradient-to-r from-teal-200/20 via-cyan-200/20 to-transparent" />
               </div>
-              <p className="text-xs text-muted-foreground/60 mt-2">
-                By enabling this footer, I confirm that I am a UBC Faculty of Science Co-op student and acknowledge that I am responsible for ensuring appropriate use of UBC branding in my resume.
-              </p>
-              
-              {/* Footer Width Control - Only shown when footer is enabled */}
-              {documentSettings?.show_ubc_footer && (
-                <div className="space-y-2 mt-4 pt-4 border-t border-slate-200/50">
-                  <div className="flex items-center justify-between">
-                    <Label className="text-sm font-medium text-muted-foreground">Footer Width</Label>
-                    <div className="flex items-center">
-                      <NumberInput
-                        value={documentSettings?.footer_width ?? 95}
-                        min={50}
-                        max={100}
-                        step={1}
-                        onChange={(value) => 
-                          handleSettingsChange({
-                            ...documentSettings,
-                            footer_width: value
-                          })
-                        }
-                      />
-                      <span className="text-xs text-muted-foreground/60 ml-1">%</span>
-                    </div>
-                  </div>
-                  <Slider
-                    value={[documentSettings?.footer_width ?? 95]}
-                    min={50}
-                    max={100}
-                    step={1}
-                    onValueChange={([value]) => 
-                      handleSettingsChange({
-                        ...documentSettings,
-                        footer_width: value
-                      })
-                    }
-                  />
-                  <div className="flex justify-between mt-1">
-                    <span className="text-[10px] text-muted-foreground/40">Narrow</span>
-                    <span className="text-[10px] text-muted-foreground/40">Full Width</span>
-                  </div>
+
+              <div className="space-y-4 bg-slate-50/50 rounded-lg border border-slate-200/50 p-4">
+                <div className="space-y-2">
+                  <p className="text-sm font-bold text-slate-700 dark:text-slate-300">
+                    Default watermark: <span className="font-mono text-slate-400">Hire-Ready Resume - ResuSync</span>
+                  </p>
+                  <p className="text-xs text-muted-foreground/70 leading-relaxed">
+                    Free plan exports include this watermark. Remove it with a one-time Rs 49 payment, or upgrade to Pro (Rs 199) to remove it automatically.
+                  </p>
                 </div>
-              )}
+                
+                <Button
+                  type="button"
+                  onClick={startPayment}
+                  disabled={isLoading}
+                  className="w-full h-9 text-xs font-bold bg-white hover:bg-slate-50 text-slate-900 border border-slate-200 shadow-sm"
+                >
+                  {isLoading ? (
+                    <Loader2 className="h-3 w-3 animate-spin" />
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <LockOpen className="h-3 w-3" />
+                      <span>Pay Rs 49 to Remove</span>
+                    </div>
+                  )}
+                </Button>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Global Document Settings */}
           <div className="space-y-6">

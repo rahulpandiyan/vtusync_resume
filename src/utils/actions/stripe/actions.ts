@@ -257,7 +257,8 @@ export async function getSubscriptionStatus() {
       current_period_end,
       trial_end,
       stripe_customer_id,
-      stripe_subscription_id
+      stripe_subscription_id,
+      watermark_unlocked
     `)
     .eq('user_id', user.id)
     .single();
@@ -272,7 +273,8 @@ export async function getSubscriptionStatus() {
         current_period_end: null,
         trial_end: null,
         stripe_customer_id: null,
-        stripe_subscription_id: null
+        stripe_subscription_id: null,
+        watermark_unlocked: false
       };
     }
     throw new Error('Failed to fetch subscription status');

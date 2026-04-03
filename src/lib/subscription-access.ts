@@ -4,6 +4,7 @@ export interface SubscriptionSnapshot {
   current_period_end?: string | null;
   trial_end?: string | null;
   stripe_subscription_id?: string | null;
+  watermark_unlocked?: boolean | null;
 }
 
 export interface SubscriptionAccessState {
@@ -19,6 +20,7 @@ export interface SubscriptionAccessState {
   currentPeriodEndLabel: string | null;
   trialEndLabel: string | null;
   effectivePlan: "pro" | "free" | "";
+  hasWatermarkAccess: boolean;
 }
 
 function parseDate(value?: string | null): Date | null {
@@ -89,5 +91,6 @@ export function getSubscriptionAccessState(
     currentPeriodEndLabel: formatDate(currentPeriodEnd),
     trialEndLabel: formatDate(trialEnd),
     effectivePlan,
+    hasWatermarkAccess: hasProAccess || Boolean(subscription?.watermark_unlocked),
   };
 }

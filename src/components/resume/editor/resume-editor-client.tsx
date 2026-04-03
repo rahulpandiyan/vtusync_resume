@@ -16,12 +16,14 @@ interface ResumeEditorClientProps {
   initialResume: Resume;
   profile: Profile;
   initialJob?: Job | null;
+  showWatermark?: boolean;
 }
 
 export function ResumeEditorClient({
   initialResume,
   profile,
   initialJob,
+  showWatermark = false,
 }: ResumeEditorClientProps) {
   const router = useRouter();
   const [state, dispatch] = useReducer(resumeReducer, {
@@ -134,6 +136,7 @@ export function ResumeEditorClient({
       job={job}
       isLoadingJob={isLoadingJob}
       onResumeChange={updateField}
+      showWatermark={showWatermark}
     />
   );
 
@@ -143,6 +146,7 @@ export function ResumeEditorClient({
       resume={debouncedResume}
       onResumeChange={updateField}
       width={width}
+      showWatermark={showWatermark}
     />
   );
 

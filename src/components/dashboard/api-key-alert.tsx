@@ -70,17 +70,12 @@ export function ApiKeyAlert({ variant = 'upgrade' }: { variant?: ApiKeyAlertVari
                 {variant === 'trial' ? (
                   <Button
                     onClick={() => {
-                      const priceId = process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID
-                      if (priceId) {
-                        router.push(`/subscription/checkout?price_id=${priceId}&trial=true`)
-                        return
-                      }
-                      router.push('/start-trial')
+                      router.push('/subscription')
                     }}
                     className="bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200"
                   >
                     <Clock className="h-4 w-4" />
-                    Start trial
+                    View pricing
                   </Button>
                 ) : (
                   <ProUpgradeButton />

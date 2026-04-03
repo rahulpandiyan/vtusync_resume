@@ -2,7 +2,7 @@ import dynamic from 'next/dynamic';
 import React from 'react';
 import type { ComponentType } from 'react';
 import { LoadingFallback } from './shared/LoadingFallback';
-import type { WorkExperience, Education, Skill, Project, DocumentSettings } from '@/lib/types';
+import type { WorkExperience, Education, Skill, Project, DocumentSettings, Profile } from '@/lib/types';
 
 interface WorkExperienceFormProps {
   experiences: WorkExperience[];
@@ -69,7 +69,10 @@ export const DocumentSettingsForm = dynamic(
     default: mod.DocumentSettingsForm 
   })) as Promise<ComponentType<{ 
     documentSettings: DocumentSettings; 
-    onChange: (field: 'document_settings', value: DocumentSettings) => void 
+    onChange: (field: 'document_settings', value: DocumentSettings) => void;
+    profile: Profile;
+    showWatermark?: boolean;
+    resumeId: string;
   }>>,
   {
     loading: () => <LoadingFallback lines={1} />,

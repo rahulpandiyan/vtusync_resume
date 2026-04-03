@@ -11,13 +11,15 @@ interface PreviewPanelProps {
   resume: Resume;
   onResumeChange: (field: keyof Resume, value: Resume[keyof Resume]) => void;
   width: number;
+  showWatermark?: boolean;
   // percentWidth: number;
 }
 
 export function PreviewPanel({
   resume,
   // onResumeChange,
-  width
+  width,
+  showWatermark = false,
 }: PreviewPanelProps) {
   return (
     <ScrollArea className={cn(
@@ -27,8 +29,8 @@ export function PreviewPanel({
         : "bg-pink-50/60 shadow-sm shadow-pink-200/20"
     )}>
       <div className="">
-      <ResumeContextMenu resume={resume}>
-          <ResumePreview resume={resume} containerWidth={width} />
+      <ResumeContextMenu resume={resume} showWatermark={showWatermark}>
+          <ResumePreview resume={resume} containerWidth={width} showWatermark={showWatermark} />
         </ResumeContextMenu>
       </div>
 

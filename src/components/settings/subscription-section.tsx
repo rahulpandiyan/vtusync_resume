@@ -1,13 +1,12 @@
 'use client'
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Sparkles, Star, Clock, Zap, ArrowRight, Crown, Shield, Check, Users, TrendingUp } from "lucide-react"
 import { cn } from '@/lib/utils';
-import { createPortalSession } from '@/app/(dashboard)/subscription/stripe-session';
 import { getSubscriptionAccessState, type SubscriptionSnapshot } from '@/lib/subscription-access';
+import { createRazorpayOrder, verifyRazorpayPayment } from '@/utils/actions/payments/actions';
 
 interface SubscriptionSectionProps {
   initialProfile: SubscriptionSnapshot | null;
@@ -15,7 +14,6 @@ interface SubscriptionSectionProps {
 
 export function SubscriptionSection({ initialProfile }: SubscriptionSectionProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
 
   const subscriptionAccessState = getSubscriptionAccessState(initialProfile);
   const {
@@ -30,23 +28,40 @@ export function SubscriptionSection({ initialProfile }: SubscriptionSectionProps
   } = subscriptionAccessState;
 
   const handleSubscriptionAction = async () => {
-    if (!hasProAccess) {
-      const priceId = process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID;
-      if (priceId) {
-        router.push(`/subscription/checkout?price_id=${priceId}`);
-      }
-      return;
-    }
-
     try {
       setIsLoading(true);
-      const result = await createPortalSession();
-      if (result?.url) {
-        window.location.href = result.url;
-      }
-    } catch (error) {
-      // Handle error silently
-      void error
+      const scriptOk = await new Promise<boolean>((resolve) => {
+        const hasRazorpay = Boolean((window as Window & { Razorpay?: unknown }).Razorpay);
+        if (hasRazorpay) {
+          resolve(true);
+          return;
+        }
+        const script = document.createElement('script');
+        script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+        script.onload = () => resolve(true);
+        script.onerror = () => resolve(false);
+        document.body.appendChild(script);
+      });
+      if (!scriptOk || hasProAccess) return;
+
+      const order = await createRazorpayOrder('pro');
+      const RazorpayCtor = (window as Window & { Razorpay?: new (options: Record<string, unknown>) => { open: () => void } }).Razorpay;
+      if (!RazorpayCtor) return;
+      const instance = new RazorpayCtor({
+        key: order.keyId,
+        order_id: order.orderId,
+        amount: order.amount,
+        currency: order.currency,
+        name: 'ResuSync',
+        description: 'ResuSync Pro (Rs 199)',
+        handler: async (response: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) => {
+          await verifyRazorpayPayment({ purpose: 'pro', ...response });
+          window.location.reload();
+        },
+      });
+      instance.open();
+    } catch {
+      // silent
     } finally {
       setIsLoading(false);
     }
@@ -61,8 +76,8 @@ export function SubscriptionSection({ initialProfile }: SubscriptionSectionProps
         {isCanceling ? (
           <>
             <div className="flex items-center justify-center mb-2">
-              <Clock className="h-6 w-6 text-amber-500 mr-2" />
-              <Badge variant="outline" className="text-amber-700 border-amber-300 bg-amber-50">
+              <Clock className="h-5 w-5 text-zinc-500 mr-2" />
+              <Badge variant="outline" className="text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 font-bold">
                 {daysRemaining} days remaining
               </Badge>
             </div>
@@ -78,8 +93,8 @@ export function SubscriptionSection({ initialProfile }: SubscriptionSectionProps
         ) : isExpiredProAccess ? (
           <>
             <div className="flex items-center justify-center mb-2">
-              <Clock className="h-6 w-6 text-rose-500 mr-2" />
-              <Badge variant="outline" className="text-rose-700 border-rose-300 bg-rose-50">
+              <Shield className="h-5 w-5 text-rose-500 mr-2" />
+              <Badge variant="outline" className="text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-900 bg-rose-50 dark:bg-rose-950/30 font-bold">
                 Access expired
               </Badge>
             </div>
@@ -95,7 +110,7 @@ export function SubscriptionSection({ initialProfile }: SubscriptionSectionProps
         ) : isTrialing ? (
           <>
             <div className="flex items-center justify-center mb-2">
-              <Badge variant="outline" className="text-blue-700 border-blue-300 bg-blue-50">
+              <Badge variant="outline" className="text-zinc-900 dark:text-zinc-50 border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 font-bold">
                 {trialDaysRemaining > 0 ? `${trialDaysRemaining} days left in trial` : 'Trial ends today'}
               </Badge>
             </div>
@@ -103,14 +118,14 @@ export function SubscriptionSection({ initialProfile }: SubscriptionSectionProps
               Free trial active — Pro unlocked
             </h2>
             <p className="text-zinc-500 dark:text-zinc-400 max-w-lg mx-auto">
-              Enjoy full Pro access during your trial. After {trialEndLabel || 'the trial'}, you&apos;ll continue on the Pro plan at $20/month unless you cancel in the billing portal.
+              Enjoy full Pro access during your trial. After {trialEndLabel || 'the trial'}, upgrade once with Razorpay to continue on Pro.
             </p>
           </>
         ) : hasProAccess ? (
           <>
             <div className="flex items-center justify-center mb-2">
-              <Crown className="h-6 w-6 text-purple-500 mr-2" />
-              <Badge className="bg-purple-100 text-purple-700 border-purple-300">
+              <Crown className="h-5 w-5 text-zinc-900 dark:text-zinc-50 mr-2" />
+              <Badge className="bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 font-bold">
                 Pro Member
               </Badge>
             </div>
@@ -124,8 +139,8 @@ export function SubscriptionSection({ initialProfile }: SubscriptionSectionProps
         ) : (
           <>
             <div className="flex items-center justify-center mb-2">
-              <TrendingUp className="h-6 w-6 text-blue-500 mr-2" />
-              <Badge variant="outline" className="text-blue-700 border-blue-300 bg-blue-50">
+              <TrendingUp className="h-5 w-5 text-zinc-900 dark:text-zinc-50 mr-2" />
+              <Badge variant="outline" className="text-zinc-900 dark:text-zinc-50 border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 font-bold">
                 3x Higher Interview Rate
               </Badge>
             </div>
@@ -145,7 +160,7 @@ export function SubscriptionSection({ initialProfile }: SubscriptionSectionProps
         <span>Trusted by 12,000+ professionals</span>
         <div className="flex ml-3">
           {[...Array(5)].map((_, i) => (
-            <Star key={i} className="h-3 w-3 text-yellow-400 fill-current" />
+            <Star key={i} className="h-3 w-3 text-zinc-300 fill-zinc-300 dark:text-zinc-700 dark:fill-zinc-700" />
           ))}
         </div>
         <span className="ml-1">4.9/5</span>
@@ -188,7 +203,7 @@ export function SubscriptionSection({ initialProfile }: SubscriptionSectionProps
                 key={index}
                 className={cn(
                   "flex items-start space-x-3 p-3 rounded-xl transition-colors",
-                  benefit.highlight ? "bg-blue-50 border border-blue-200" : "hover:bg-zinc-50 dark:bg-zinc-900"
+                  benefit.highlight ? "bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700" : "hover:bg-zinc-50 dark:hover:bg-zinc-900 border border-transparent"
                 )}
               >
                 <div className={cn(
@@ -225,8 +240,7 @@ export function SubscriptionSection({ initialProfile }: SubscriptionSectionProps
               </div>
               
               <div className="mb-3">
-                <span className="text-3xl font-bold text-zinc-900 dark:text-zinc-50">$20</span>
-                <span className="text-zinc-500 dark:text-zinc-400">/month</span>
+                <span className="text-3xl font-bold text-zinc-900 dark:text-zinc-50">Rs 199</span>
               </div>
               
               {!hasProAccess && (
@@ -280,10 +294,10 @@ export function SubscriptionSection({ initialProfile }: SubscriptionSectionProps
                   <span>Loading...</span>
                 </div>
               ) : hasProAccess ? (
-                isTrialing ? "Manage trial / billing" : "Manage Subscription"
+                "Pro Activated"
               ) : (
                 <div className="flex items-center justify-center space-x-2">
-                  <span>Upgrade to Pro</span>
+                  <span>Upgrade to Pro (Rs 199)</span>
                   <ArrowRight className="h-4 w-4" />
                 </div>
               )}

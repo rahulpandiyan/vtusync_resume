@@ -15,12 +15,13 @@ import { ResumePDFDocument } from "../preview/resume-pdf-document";
 interface ResumeContextMenuProps {
   children: React.ReactNode;
   resume: Resume;
+  showWatermark?: boolean;
 }
 
-export function ResumeContextMenu({ children, resume }: ResumeContextMenuProps) {
+export function ResumeContextMenu({ children, resume, showWatermark = false }: ResumeContextMenuProps) {
   const handleDownloadPDF = async () => {
     try {
-      const blob = await pdf(<ResumePDFDocument resume={resume} />).toBlob();
+      const blob = await pdf(<ResumePDFDocument resume={resume} showWatermark={showWatermark} />).toBlob();
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;

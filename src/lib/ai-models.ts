@@ -82,7 +82,7 @@ export const PROVIDERS: Partial<Record<ServiceName, AIProvider>> = {
   openrouter: {
     id: 'openrouter',
     name: 'OpenRouter',
-    apiLink: 'https://openrouter.ai/account/api-keys',
+    apiLink: 'https://openrouter.ai/workspaces/default/keys',
     logo: '/logos/gemini-logo.webp',
     envKey: 'OPENROUTER_API_KEY',
     sdkInitializer: 'openrouter',

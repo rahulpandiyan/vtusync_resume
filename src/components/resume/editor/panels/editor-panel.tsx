@@ -29,6 +29,7 @@ interface EditorPanelProps {
   job: Job | null;
   isLoadingJob: boolean;
   onResumeChange: (field: keyof Resume, value: Resume[keyof Resume]) => void;
+  showWatermark?: boolean;
 }
 
 export function EditorPanel({
@@ -37,6 +38,7 @@ export function EditorPanel({
   job,
   isLoadingJob,
   onResumeChange,
+  showWatermark = false,
 }: EditorPanelProps) {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
@@ -54,6 +56,7 @@ export function EditorPanel({
               <div className="flex flex-col gap-4">
                 <ResumeEditorActions
                   onResumeChange={onResumeChange}
+                  showWatermark={showWatermark}
                 />
               </div>
             </div>
@@ -155,6 +158,9 @@ export function EditorPanel({
                 }>
                   <DocumentSettingsForm
                     documentSettings={resume.document_settings!}
+                    profile={profile}
+                    showWatermark={showWatermark}
+                    resumeId={resume.id}
                     onChange={(_field: 'document_settings', value: DocumentSettings) => {
                       onResumeChange('document_settings', value);
                     }}

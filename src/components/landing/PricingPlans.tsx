@@ -3,8 +3,7 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useMemo, useRef } from "react";
-import { Check, Sparkles } from "lucide-react";
-import { useInView } from "framer-motion";
+import { Check } from "lucide-react";
 import { AuthDialog } from "@/components/auth/auth-dialog";
 
 interface PlanFeature {
@@ -29,12 +28,13 @@ export function PricingPlans() {
   const plans = useMemo<PricingPlan[]>(() => [
     {
       name: "FREE",
-      price: "$0",
+      price: "Free",
       description: "Ideal for trying out the platform",
       features: [
         { text: "Use your own API keys" },
         { text: "2 base resumes" },
         { text: "5 tailored resumes" },
+        { text: "Watermarked PDF exports" },
         { text: "Smart formatting" },
       ],
       ctaText: "Get Started",
@@ -43,8 +43,7 @@ export function PricingPlans() {
     },
     {
       name: "PRO",
-      price: "$20",
-      period: "/month",
+      price: "Rs 199",
       description: "Everything you need to get hired",
       badge: "MOST POPULAR",
       popular: true,
@@ -52,6 +51,7 @@ export function PricingPlans() {
         { text: "Access to all premium AI models", highlight: true },
         { text: "Unlimited base resumes", highlight: true },
         { text: "Unlimited tailored resumes", highlight: true },
+        { text: "No resume watermark", highlight: true },
         { text: "Support student developers ❤️", highlight: true },
       ],
       ctaText: "Upgrade Now",

@@ -218,7 +218,10 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
 
   const approveSuggestion = (projectIndex: number, suggestion: AISuggestion) => {
     const updated = [...projects];
-    updated[projectIndex].description = [...updated[projectIndex].description, suggestion.point];
+    updated[projectIndex] = {
+      ...updated[projectIndex],
+      description: [...updated[projectIndex].description, suggestion.point]
+    };
     onChange(updated);
     
     // Remove the suggestion after approval
@@ -276,7 +279,12 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
       }));
 
       const updated = [...projects];
-      updated[projectIndex].description[pointIndex] = improvedPoint;
+      const currentDescription = [...updated[projectIndex].description];
+      currentDescription[pointIndex] = improvedPoint;
+      updated[projectIndex] = {
+        ...updated[projectIndex],
+        description: currentDescription
+      };
       onChange(updated);
     } catch (error: unknown) {
       if (error instanceof Error && (
@@ -308,7 +316,12 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
     const improvedPoint = improvedPoints[projectIndex]?.[pointIndex];
     if (improvedPoint) {
       const updated = [...projects];
-      updated[projectIndex].description[pointIndex] = improvedPoint.original;
+      const currentDescription = [...updated[projectIndex].description];
+      currentDescription[pointIndex] = improvedPoint.original;
+      updated[projectIndex] = {
+        ...updated[projectIndex],
+        description: currentDescription
+      };
       onChange(updated);
       
       // Remove the improvement from state
@@ -513,7 +526,12 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
                             content={desc} 
                             onChange={(newContent) => {
                               const updated = [...projects];
-                              updated[index].description[descIndex] = newContent;
+                              const currentDescription = [...updated[index].description];
+                              currentDescription[descIndex] = newContent;
+                              updated[index] = {
+                                ...updated[index],
+                                description: currentDescription
+                              };
                               onChange(updated);
 
                               if (improvedPoints[index]?.[descIndex]) {
@@ -606,7 +624,10 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
                                 size="icon"
                                 onClick={() => {
                                   const updated = [...projects];
-                                  updated[index].description = updated[index].description.filter((_, i) => i !== descIndex);
+                                  updated[index] = {
+                                    ...updated[index],
+                                    description: updated[index].description.filter((_, i) => i !== descIndex)
+                                  };
                                   onChange(updated);
                                 }}
                                 className="p-0 group-hover/item:opacity-100 text-zinc-400 hover:text-red-500 transition-all duration-200"
@@ -692,7 +713,10 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
                       size="sm"
                       onClick={() => {
                         const updated = [...projects];
-                        updated[index].description = [...updated[index].description, ""];
+                        updated[index] = {
+                          ...updated[index],
+                          description: [...updated[index].description, ""]
+                        };
                         onChange(updated);
                       }}
                       className={cn(

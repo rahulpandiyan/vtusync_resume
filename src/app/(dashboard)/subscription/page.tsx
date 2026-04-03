@@ -12,6 +12,7 @@ interface Profile {
   trial_end: string | null;
   stripe_customer_id: string | null;
   stripe_subscription_id: string | null;
+  watermark_unlocked?: boolean | null;
 }
 
 export default async function PlansPage() {

@@ -4,6 +4,7 @@ import { getResumeById } from "@/utils/actions/resumes/actions";
 import { ResumeEditorClient } from "@/components/resume/editor/resume-editor-client";
 import { Metadata } from "next";
 import { Resume } from "@/lib/types";
+import { getBillingStatus } from "@/utils/actions/payments/actions";
 
 const getResumePageData = cache(async (resumeId: string) => {
   return getResumeById(resumeId);
@@ -86,7 +87,10 @@ export default async function Page({
   
   try {
     const { id } = await params;
-    const { resume: rawResume, profile, job } = await getResumePageData(id);
+    const [{ resume: rawResume, profile, job }, billing] = await Promise.all([
+      getResumePageData(id),
+      getBillingStatus(),
+    ]);
     const normalizedResume = normalizeResumeData(rawResume);
     const component = (
       <div 
@@ -94,7 +98,12 @@ export default async function Page({
         data-page-title={normalizedResume.name}
         data-resume-type={normalizedResume.is_base_resume ? "Base Resume" : "Tailored Resume"}
       >
-        <ResumeEditorClient initialResume={normalizedResume} profile={profile} initialJob={job} />
+        <ResumeEditorClient
+          initialResume={normalizedResume}
+          profile={profile}
+          initialJob={job}
+          showWatermark={!billing.hasWatermarkAccess && !normalizedResume.watermark_removed}
+        />
       </div>
     );
   

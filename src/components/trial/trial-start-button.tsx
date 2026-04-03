@@ -10,8 +10,7 @@ interface TrialStartButtonProps {
 }
 
 export function TrialStartButton({ className }: TrialStartButtonProps) {
-  const priceId = process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID;
-  const href = priceId ? `/subscription/checkout?price_id=${priceId}&trial=true` : '/start-trial';
+  const href = '/subscription';
 
   return (
     <motion.div
@@ -38,7 +37,7 @@ export function TrialStartButton({ className }: TrialStartButtonProps) {
       >
         <Clock className="h-4 w-4 transition-transform duration-300 ease-in-out group-hover:scale-110" />
         <span className="transition-all duration-300 ease-in-out group-hover:translate-x-0.5">
-          Start free trial
+          View pricing
         </span>
       </Link>
     </motion.div>

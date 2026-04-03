@@ -17,10 +17,12 @@ import { useState } from "react";
 
 interface ResumeEditorActionsProps {
   onResumeChange: (field: keyof Resume, value: Resume[keyof Resume]) => void;
+  showWatermark?: boolean;
 }
 
 export function ResumeEditorActions({
-  onResumeChange
+  onResumeChange,
+  showWatermark = false,
 }: ResumeEditorActionsProps) {
   const { state, dispatch } = useResumeContext();
   const { resume, isSaving } = state;
@@ -115,7 +117,7 @@ export function ResumeEditorActions({
                   try {
                     // Download Resume if selected
                     if (downloadOptions.resume) {
-                      const blob = await pdf(<ResumePDFDocument resume={resume} />).toBlob();
+                      const blob = await pdf(<ResumePDFDocument resume={resume} showWatermark={showWatermark} />).toBlob();
                       const url = URL.createObjectURL(blob);
                       const link = document.createElement('a');
                       link.href = url;

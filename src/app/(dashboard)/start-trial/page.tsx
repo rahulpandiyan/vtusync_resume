@@ -36,10 +36,7 @@ export default function StartTrialPage() {
 
   const handleStartTrial = () => {
     setIsLoading(true);
-    const priceId = process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID;
-    if (priceId) {
-      router.push(`/subscription/checkout?price_id=${priceId}&trial=true`);
-    }
+    router.push('/subscription');
   };
 
   return (
@@ -78,7 +75,7 @@ export default function StartTrialPage() {
           </h1>
           
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Try ResuSync Pro free for 7 days. Cancel anytime before your trial ends and you won&apos;t be charged.
+            Pay once with Razorpay: Rs 199 for Pro or Rs 49 to remove watermark only.
           </p>
         </motion.div>
 
@@ -149,7 +146,7 @@ export default function StartTrialPage() {
               <div className="text-center mb-6">
                 <div className="inline-flex items-center gap-2 bg-purple-50 rounded-full px-4 py-2 mb-4">
                   <Clock className="h-4 w-4 text-purple-600" />
-                  <span className="text-sm font-medium text-purple-700">7-day free trial</span>
+                  <span className="text-sm font-medium text-purple-700">New pricing available</span>
                 </div>
                 
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">ResuSync Pro</h3>
@@ -160,7 +157,7 @@ export default function StartTrialPage() {
                 </div>
                 
                 <p className="text-sm text-gray-500">
-                  Then $20/month • Cancel anytime
+                  Rs 199 one-time Pro unlock
                 </p>
               </div>
 
@@ -208,7 +205,7 @@ export default function StartTrialPage() {
                   </div>
                 ) : (
                   <div className="flex items-center justify-center gap-2">
-                    <span>Start Free Trial</span>
+                    <span>Continue to pricing</span>
                     <ArrowRight className="h-5 w-5" />
                   </div>
                 )}

@@ -34,8 +34,8 @@ const tiers: PricingTier[] = [
   },
   {
     name: "Pro",
-    price: "$20",
-    description: "Enhanced features for serious job seekers",
+    price: "Rs 199",
+    description: "One-time Pro unlock for serious job seekers",
     gradient: "bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 border-zinc-900 dark:border-zinc-50",
     popular: true,
     features: [
@@ -84,7 +84,7 @@ export function PricingSection() {
             >
               {tier.popular && (
                 <div className="absolute -top-6 left-0 right-0 mx-auto w-36 rounded-full bg-zinc-900 dark:bg-zinc-50 px-4 py-1.5 text-sm text-zinc-50 dark:text-zinc-900 text-center font-medium shadow-sm">
-                  Coming Soon
+                  Popular
                 </div>
               )}
 
@@ -97,9 +97,6 @@ export function PricingSection() {
                     <span className="text-6xl font-bold text-zinc-900 dark:text-zinc-50">
                       {tier.price}
                     </span>
-                    {tier.price !== "$0" && (
-                      <span className="ml-2 text-muted-foreground">/month</span>
-                    )}
                   </div>
                   <p className="mt-3 text-muted-foreground">{tier.description}</p>
                 </div>

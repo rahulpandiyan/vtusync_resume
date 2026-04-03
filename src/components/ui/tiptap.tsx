@@ -46,28 +46,30 @@ const Tiptap = memo(
       []
     );
 
-    const editorProps = useMemo(
-      () => ({
+    const editorProps = useMemo(() => {
+      const customAttributes = customEditorProps?.attributes ?? {};
+      const customClass = customAttributes.class ?? '';
+
+      return {
         attributes: {
+          ...customAttributes,
           class: cn(
             "prose w-full rounded-lg border border-input bg-white/50 text-xs md:text-sm ring-offset-background",
             "placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2",
             "focus-visible:ring-ring focus-visible:ring-offset-2",
             "disabled:cursor-not-allowed disabled:opacity-50",
-            // Apply different styles based on variant
             variant === 'default' && "min-h-[80px] px-3 py-2",
             variant === 'skill' && "px-3",
-            className
+            className,
+            customClass
           ),
-          ...customEditorProps?.attributes
         },
-      }),
-      [className, customEditorProps?.attributes, variant]
-    );
+      };
+    }, [className, customEditorProps?.attributes, variant]);
 
     const editor = useEditor({
       extensions,
-      content: transformContent(content),
+      content: content?.trim() ? transformContent(content) : '<p></p>',
       editorProps,
       editable: !readOnly,
       onUpdate: ({ editor }) => {
@@ -85,8 +87,19 @@ const Tiptap = memo(
 
     // Sync editor content when content prop changes
     useEffect(() => {
-      if (editor && content !== editor.getHTML().replace(/<p>/g, '').replace(/<\/p>/g, '').trim()) {
-        editor.commands.setContent(transformContent(content));
+      if (!editor) return;
+
+      // Get current editor content in the same format as the content prop
+      const html = editor.getHTML();
+      const currentFormattedContent = html
+        .replace(/<strong>(.*?)<\/strong>/g, '**$1**')
+        .replace(/<p>/g, '')
+        .replace(/<\/p>/g, '')
+        .trim();
+
+      if (content !== currentFormattedContent) {
+        const transformed = content?.trim() ? transformContent(content) : '<p></p>';
+        editor.commands.setContent(transformed);
       }
     }, [content, editor, transformContent]);
 

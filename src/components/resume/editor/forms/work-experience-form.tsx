@@ -74,6 +74,8 @@ export const WorkExperienceForm = memo(function WorkExperienceFormComponent({
   const [improvementConfig, setImprovementConfig] = useState<ImprovementConfig>({});
   const [showErrorDialog, setShowErrorDialog] = useState(false);
   const [errorMessage, setErrorMessage] = useState({ title: '', description: '' });
+  const getDescription = (exp: WorkExperience): string[] =>
+    Array.isArray(exp.description) ? exp.description : [];
 
   const reorderIndexMap = <T,>(map: Record<number, T>, from: number, to: number): Record<number, T> => {
     const updated: Record<number, T> = {};
@@ -222,7 +224,10 @@ export const WorkExperienceForm = memo(function WorkExperienceFormComponent({
 
   const approveSuggestion = (expIndex: number, suggestion: AISuggestion) => {
     const updated = [...experiences];
-    updated[expIndex].description = [...updated[expIndex].description, suggestion.point];
+    updated[expIndex] = {
+      ...updated[expIndex],
+      description: [...getDescription(updated[expIndex]), suggestion.point]
+    };
     onChange(updated);
     
     // Remove the suggestion after approval
@@ -241,7 +246,8 @@ export const WorkExperienceForm = memo(function WorkExperienceFormComponent({
 
   const rewritePoint = async (expIndex: number, pointIndex: number) => {
     const exp = experiences[expIndex];
-    const point = exp.description[pointIndex];
+    const point = getDescription(exp)[pointIndex];
+    if (!point) return;
     const customPrompt = improvementConfig[expIndex]?.[pointIndex];
     
     setLoadingPointAI(prev => ({
@@ -283,7 +289,12 @@ export const WorkExperienceForm = memo(function WorkExperienceFormComponent({
 
       // Update the experience with the improved version
       const updated = [...experiences];
-      updated[expIndex].description[pointIndex] = improvedPoint;
+      const currentDescription = [...getDescription(updated[expIndex])];
+      currentDescription[pointIndex] = improvedPoint;
+      updated[expIndex] = {
+        ...updated[expIndex],
+        description: currentDescription
+      };
       onChange(updated);
     } catch (error: Error | unknown) {
       if (error instanceof Error && (
@@ -315,7 +326,12 @@ export const WorkExperienceForm = memo(function WorkExperienceFormComponent({
     const improvedPoint = improvedPoints[expIndex]?.[pointIndex];
     if (improvedPoint) {
       const updated = [...experiences];
-      updated[expIndex].description[pointIndex] = improvedPoint.original;
+      const currentDescription = [...getDescription(updated[expIndex])];
+      currentDescription[pointIndex] = improvedPoint.original;
+      updated[expIndex] = {
+        ...updated[expIndex],
+        description: currentDescription
+      };
       onChange(updated);
       
       // Remove the improvement from state
@@ -478,14 +494,19 @@ export const WorkExperienceForm = memo(function WorkExperienceFormComponent({
                     Key Responsibilities & Achievements
                   </Label>
                   <div className="space-y-2 pl-0">
-                    {exp.description.map((desc, descIndex) => (
+                    {getDescription(exp).map((desc, descIndex) => (
                       <div key={descIndex} className="flex gap-1 items-start group/item">
                         <div className="flex-1">
                           <Tiptap
                             content={desc} 
                             onChange={(newContent) => {
                               const updated = [...experiences];
-                              updated[index].description[descIndex] = newContent;
+                              const currentDescription = [...getDescription(updated[index])];
+                              currentDescription[descIndex] = newContent;
+                              updated[index] = {
+                                ...updated[index],
+                                description: currentDescription
+                              };
                               onChange(updated);
 
                               if (improvedPoints[index]?.[descIndex]) {
@@ -578,7 +599,10 @@ export const WorkExperienceForm = memo(function WorkExperienceFormComponent({
                                 size="icon"
                                 onClick={() => {
                                   const updated = [...experiences];
-                                  updated[index].description = updated[index].description.filter((_, i) => i !== descIndex);
+                                  updated[index] = {
+                                    ...updated[index],
+                                    description: getDescription(updated[index]).filter((_, i) => i !== descIndex)
+                                  };
                                   onChange(updated);
                                 }}
                                 className="p-0 group-hover/item:opacity-100 text-zinc-400 hover:text-red-500 transition-all duration-200"
@@ -653,7 +677,7 @@ export const WorkExperienceForm = memo(function WorkExperienceFormComponent({
                       onDelete={(suggestionId) => deleteSuggestion(index, suggestionId)}
                     />
 
-                    {exp.description.length === 0 && !aiSuggestions[index]?.length && (
+                    {getDescription(exp).length === 0 && !aiSuggestions[index]?.length && (
                       <div className="text-[11px] md:text-xs text-zinc-500 italic px-4 py-3 bg-zinc-50 dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800">
                         Add points to describe your responsibilities and achievements
                       </div>
@@ -665,7 +689,10 @@ export const WorkExperienceForm = memo(function WorkExperienceFormComponent({
                       size="sm"
                       onClick={() => {
                         const updated = [...experiences];
-                        updated[index].description = [...updated[index].description, ""];
+                        updated[index] = {
+                          ...updated[index],
+                          description: [...getDescription(updated[index]), ""]
+                        };
                         onChange(updated);
                       }}
                       className={cn(
