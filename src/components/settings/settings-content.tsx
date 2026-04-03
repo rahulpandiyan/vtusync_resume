@@ -9,8 +9,9 @@ import { User } from "@supabase/supabase-js"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { useEffect, useState } from "react"
-import { Shield, CreditCard, Key, Bot, AlertTriangle } from "lucide-react"
+import { Shield, CreditCard, Key, Bot, AlertTriangle, Book } from "lucide-react"
 import type { SubscriptionSnapshot } from "@/lib/subscription-access"
+import Link from "next/link"
 
 const sections = [
   { id: "security", title: "Security", description: "Manage your email and password settings", icon: Shield },
@@ -18,6 +19,7 @@ const sections = [
   { id: "api-keys", title: "API Keys", description: "Manage your API keys for different AI providers", icon: Key },
   { id: "ai-prompts", title: "AI Prompts", description: "Customize AI system prompts for different actions", icon: Bot },
   { id: "danger-zone", title: "Danger Zone", description: "Irreversible and destructive actions", icon: AlertTriangle },
+  { id: "legal", title: "Legal", description: "Privacy Policy and Terms of Service", icon: Book },
 ]
 
 interface SettingsContentProps {
@@ -149,6 +151,26 @@ export function SettingsContent({ user, isProPlan, subscriptionStatus, subscript
           </CardHeader>
           <CardContent>
             <DangerZone subscriptionStatus={subscriptionStatus} />
+          </CardContent>
+        </Card>
+
+        {/* Legal */}
+        <Card id="legal" className="rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-sm">
+          <CardHeader>
+            <CardTitle className="text-xl font-bold tracking-tight">Legal</CardTitle>
+            <CardDescription className="font-medium text-zinc-500">Important legal documents and policies</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex flex-col gap-3">
+              <Link href="/privacy" className="inline-flex items-center text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 transition-colors bg-zinc-50 dark:bg-zinc-900/50 p-4 rounded-lg border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700">
+                <Book className="w-4 h-4 mr-3 text-zinc-400" />
+                Privacy Policy
+              </Link>
+              <Link href="/terms" className="inline-flex items-center text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 transition-colors bg-zinc-50 dark:bg-zinc-900/50 p-4 rounded-lg border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700">
+                <Book className="w-4 h-4 mr-3 text-zinc-400" />
+                Terms of Service
+              </Link>
+            </div>
           </CardContent>
         </Card>
       </div>

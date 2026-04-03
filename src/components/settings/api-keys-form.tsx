@@ -191,12 +191,12 @@ export function ApiKeysForm({ isProPlan }: { isProPlan: boolean }) {
               <div 
                 key={provider.id}
                 className={cn(
-                  "p-4 rounded-lg bg-white/30 border transition-all hover:bg-white/40"
+                  "p-4 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-all"
                 )}
               >
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <Label className="text-sm font-medium text-gray-800">{provider.name}</Label>
+                    <Label className="text-sm font-medium text-zinc-900 dark:text-zinc-50">{provider.name}</Label>
                   </div>
                   {existingKey && (
                     <div className="flex items-center gap-1">
@@ -207,7 +207,7 @@ export function ApiKeysForm({ isProPlan }: { isProPlan: boolean }) {
                           ...prev,
                           [provider.id]: !prev[provider.id]
                         }))}
-                        className="h-7 px-2 text-muted-foreground hover:text-gray-900 transition-colors"
+                        className="h-7 px-2 text-muted-foreground hover:text-zinc-900 dark:hover:text-zinc-50 transition-colors"
                       >
                         {isVisible ? (
                           <EyeOff className="h-3.5 w-3.5" />
@@ -223,7 +223,7 @@ export function ApiKeysForm({ isProPlan }: { isProPlan: boolean }) {
                           "h-7 px-2 transition-colors",
                           copiedKey === provider.id 
                             ? "text-emerald-500 hover:text-emerald-600" 
-                            : "text-muted-foreground hover:text-gray-900"
+                            : "text-muted-foreground hover:text-zinc-900 dark:hover:text-zinc-50"
                         )}
                       >
                         {copiedKey === provider.id ? (
@@ -250,7 +250,7 @@ export function ApiKeysForm({ isProPlan }: { isProPlan: boolean }) {
                       Added {new Date(existingKey.addedAt).toLocaleDateString()}
                     </div>
                     {isVisible && (
-                      <div className="font-mono bg-white/50 px-3 py-1.5 rounded-md text-sm border border-white/40">
+                      <div className="font-mono bg-zinc-100 dark:bg-zinc-800 px-3 py-1.5 rounded-md text-sm border border-zinc-200 dark:border-zinc-700">
                         {existingKey.key}
                       </div>
                     )}
@@ -266,7 +266,7 @@ export function ApiKeysForm({ isProPlan }: { isProPlan: boolean }) {
                           ...prev,
                           [provider.id]: e.target.value
                         }))}
-                        className="bg-white/50 flex-1 h-9 text-sm border-black/20 focus:border-black/30 hover:border-black/25 transition-colors"
+                        className="flex-1 h-9 text-sm"
                       />
                       <Button
                         variant="ghost"
@@ -275,7 +275,7 @@ export function ApiKeysForm({ isProPlan }: { isProPlan: boolean }) {
                           ...prev,
                           [provider.id]: !prev[provider.id]
                         }))}
-                        className="bg-white/50 h-9 w-9 hover:bg-white/60 transition-colors"
+                        className="h-9 w-9"
                       >
                         {isVisible ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
                       </Button>
@@ -322,7 +322,7 @@ export function ApiKeysForm({ isProPlan }: { isProPlan: boolean }) {
                 <div 
                   key={provider.id}
                   className={cn(
-                    "p-4 rounded-lg bg-white/30 border transition-all hover:bg-white/40",
+                    "p-4 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-all",
                     "relative border-amber-200/50"
                   )}
                 >
@@ -332,7 +332,7 @@ export function ApiKeysForm({ isProPlan }: { isProPlan: boolean }) {
                   
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <Label className="text-sm font-medium text-gray-800">{provider.name}</Label>
+                      <Label className="text-sm font-medium text-zinc-900 dark:text-zinc-50">{provider.name}</Label>
                     </div>
                     {existingKey && (
                       <div className="flex items-center gap-1">
@@ -343,7 +343,7 @@ export function ApiKeysForm({ isProPlan }: { isProPlan: boolean }) {
                             ...prev,
                             [provider.id]: !prev[provider.id]
                           }))}
-                          className="h-7 px-2 text-muted-foreground hover:text-gray-900 transition-colors"
+                          className="h-7 px-2 text-muted-foreground hover:text-zinc-900 dark:hover:text-zinc-50 transition-colors"
                         >
                           {isVisible ? (
                             <EyeOff className="h-3.5 w-3.5" />
@@ -359,7 +359,7 @@ export function ApiKeysForm({ isProPlan }: { isProPlan: boolean }) {
                             "h-7 px-2 transition-colors",
                             copiedKey === provider.id 
                               ? "text-emerald-500 hover:text-emerald-600" 
-                              : "text-muted-foreground hover:text-gray-900"
+                              : "text-muted-foreground hover:text-zinc-900 dark:hover:text-zinc-50"
                           )}
                         >
                           {copiedKey === provider.id ? (
@@ -386,7 +386,7 @@ export function ApiKeysForm({ isProPlan }: { isProPlan: boolean }) {
                         Added {new Date(existingKey.addedAt).toLocaleDateString()}
                       </div>
                       {isVisible && (
-                        <div className="font-mono bg-white/50 px-3 py-1.5 rounded-md text-sm border border-white/40">
+                        <div className="font-mono bg-zinc-100 dark:bg-zinc-800 px-3 py-1.5 rounded-md text-sm border border-zinc-200 dark:border-zinc-700">
                           {existingKey.key}
                         </div>
                       )}
@@ -402,7 +402,7 @@ export function ApiKeysForm({ isProPlan }: { isProPlan: boolean }) {
                             ...prev,
                             [provider.id]: e.target.value
                           }))}
-                          className="bg-white/50 flex-1 h-9 text-sm border-black/20 focus:border-black/30 hover:border-black/25 transition-colors"
+                          className="flex-1 h-9 text-sm"
                         />
                         <Button
                           variant="ghost"
@@ -411,7 +411,7 @@ export function ApiKeysForm({ isProPlan }: { isProPlan: boolean }) {
                             ...prev,
                             [provider.id]: !prev[provider.id]
                           }))}
-                          className="bg-white/50 h-9 w-9 hover:bg-white/60 transition-colors"
+                          className="h-9 w-9"
                         >
                           {isVisible ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
                         </Button>

@@ -87,18 +87,18 @@ export function SecurityForm({ user }: SecurityFormProps) {
                 placeholder="Enter new email address"
                 value={newEmail}
                 onChange={(e) => setNewEmail(e.target.value)}
-                className="bg-white/50 flex-1"
+                className="flex-1"
               />
               <Input
                 type="password"
                 placeholder="Current password"
                 value={emailCurrentPassword}
                 onChange={(e) => setEmailCurrentPassword(e.target.value)}
-                className="bg-white/50 flex-1"
+                className="flex-1"
               />
               <Button 
-                variant="outline"
-                className="bg-white/50 border-teal-200 text-teal-700 hover:bg-teal-50 hover:text-teal-800"
+                variant="default"
+                className="bg-zinc-900 text-zinc-50 hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
                 onClick={handleEmailUpdate}
                 disabled={isUpdatingEmail || !newEmail || !emailCurrentPassword}
               >
@@ -120,18 +120,18 @@ export function SecurityForm({ user }: SecurityFormProps) {
               placeholder="Enter current password"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              className="bg-white/50"
+              
             />
             <Input
               type="password"
               placeholder="Enter new password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="bg-white/50"
+              
             />
             <Button 
-              variant="outline"
-              className="bg-white/50 border-teal-200 text-teal-700 hover:bg-teal-50 hover:text-teal-800 whitespace-nowrap"
+              variant="default"
+              className="bg-zinc-900 text-zinc-50 hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200 whitespace-nowrap"
               onClick={handlePasswordUpdate}
               disabled={isUpdatingPassword || !currentPassword || !newPassword}
             >

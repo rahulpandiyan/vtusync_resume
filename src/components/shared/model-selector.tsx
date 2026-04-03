@@ -63,19 +63,19 @@ function UnavailableModelPopover({ children, model }: { children: React.ReactNod
           
           <div className="space-y-2">
             {/* Pro Option */}
-            <div className="p-3 rounded-lg border border-purple-200/50 bg-gradient-to-br from-purple-50/50 to-purple-100/30">
+            <div className="p-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900">
               <div className="flex items-center gap-2 mb-2">
-                <Crown className="w-4 h-4 text-purple-600" />
-                <span className="text-sm font-medium text-purple-800">Recommended</span>
-                <span className="px-2 py-0.5 text-xs font-medium bg-purple-100 text-purple-700 rounded-full">
+                <Crown className="w-4 h-4 text-zinc-600 dark:text-zinc-400" />
+                <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">Recommended</span>
+                <span className="px-2 py-0.5 text-xs font-medium bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100 rounded-full">
                   Instant Access
                 </span>
               </div>
-              <p className="text-xs text-purple-700 mb-2">
+              <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-2">
                 Get unlimited access to all AI models without managing API keys
               </p>
               <Link href="/subscription">
-                <Button size="sm" className="w-full bg-purple-600 hover:bg-purple-700 h-7 text-xs">
+                <Button size="sm" className="w-full bg-zinc-900 text-zinc-50 hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200 h-7 text-xs">
                   Upgrade to Pro
                 </Button>
               </Link>
@@ -150,16 +150,16 @@ export function ModelSelector({
   return (
     <Select value={value} onValueChange={handleModelChange}>
       <SelectTrigger className={cn(
-        "bg-white border-2 border-b-4 border-muted hover:bg-gray-50 active:border-b-0 active:translate-y-[4px] transition-all",
+        "bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-all",
         className
       )}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
-      <SelectContent className="min-w-[320px] max-w-[400px] border-2 border-muted rounded-2xl shadow-[0_8px_16px_rgba(0,0,0,0.1)] p-2">
+      <SelectContent className="min-w-[320px] max-w-[400px] border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-md p-1">
         {getModelsByProvider().map((group, groupIndex) => (
           <div key={group.provider}>
             <SelectGroup>
-              <SelectLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 px-4 py-3">
+              <SelectLabel className="text-xs font-semibold text-zinc-500 dark:text-zinc-400 px-3 py-2">
                 <div className="flex items-center gap-2">
                   {getProviderById(group.provider)?.logo && (
                     <Image
@@ -183,8 +183,8 @@ export function ModelSelector({
                     value={model.id}
                     disabled={!isSelectable}
                     className={cn(
-                      "rounded-xl transition-all mb-1 px-4 py-3",
-                      !isSelectable ? 'opacity-40' : 'hover:bg-primary/5 cursor-pointer'
+                      "rounded-lg transition-all mb-1 px-3 py-2",
+                      !isSelectable ? 'opacity-40' : 'cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-800'
                     )}
                   >
                     <div className="flex items-center gap-3 w-full">
@@ -198,20 +198,20 @@ export function ModelSelector({
                         />
                       )}
                       <div className="flex items-center gap-2 min-w-0 flex-1">
-                        <span className="truncate font-black uppercase tracking-tight text-sm">{model.name}</span>
+                        <span className="truncate font-medium text-sm">{model.name}</span>
                         {model.features.isRecommended && (
-                          <span className="text-secondary bg-secondary/10 px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-widest flex-shrink-0 border border-secondary/20">
+                          <span className="text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-md text-[10px] font-medium flex-shrink-0 border border-zinc-200 dark:border-zinc-700">
                             Top
                           </span>
                         )}
                         {model.features.isFree && (
-                          <span className="text-primary bg-primary/10 px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-widest flex-shrink-0 border border-primary/20">
+                          <span className="text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-md text-[10px] font-medium flex-shrink-0 border border-zinc-200 dark:border-zinc-700">
                             Free
                           </span>
                         )}
                       </div>
                       {!isSelectable && (
-                        <Crown className="ml-1.5 h-3.5 w-3.5 text-accent-gold flex-shrink-0" />
+                        <Crown className="ml-1.5 h-3.5 w-3.5 text-amber-500 flex-shrink-0" />
                       )}
                     </div>
                   </SelectItem>

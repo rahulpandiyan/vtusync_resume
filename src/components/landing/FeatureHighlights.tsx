@@ -1,23 +1,9 @@
-"use client"
-import React from 'react';
-import Image from "next/image";
-import { motion } from "framer-motion";
 import { CheckCircle2 } from "lucide-react";
 import Link from "next/link";
-import { SplitContent } from '../ui/split-content';
 import { AuthDialog } from "@/components/auth/auth-dialog";
 import { Button } from "@/components/ui/button";
 
 const FeatureHighlights = () => {
-  // Trusted by logos
-  const companies = [
-    { name: "Google", logo: "/logos/google.png" },
-    { name: "Microsoft", logo: "/logos/microsoft.webp" },
-    { name: "Amazon", logo: "/logos/amazon.png" },
-    { name: "Meta", logo: "/logos/meta.png" },
-    { name: "Netflix", logo: "/logos/netflix.png" },
-  ];
-
   // Statistics
   const stats = [
     { value: "500+", label: "Resumes Generated" },
@@ -63,48 +49,42 @@ const FeatureHighlights = () => {
         </div>
       </div>
       
-      {/* Features Section */}
-      <div className="flex flex-col space-y-8" id="features">
-        <SplitContent
-          imageSrc="/SS Chat.png"
-          heading="AI Resume Assistant"
-          description="Get real-time feedback and suggestions from our advanced AI assistant. Optimize your resume content with industry-specific insights."
-          badgeText="Intelligent Analysis"
-          bulletPoints={[
-            "Context-aware bullet points",
-            "Keyword density optimization",
-            "Action verb suggestions"
-          ]}
-        />
+      {/* Features Section - Simplified and Text-Focused */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-16" id="features">
+        <div className="p-8 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/30 dark:bg-zinc-900/30 space-y-4">
+          <span className="px-3 py-1 rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-[10px] font-bold uppercase tracking-widest text-zinc-500">
+            Intelligent Analysis
+          </span>
+          <h3 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">AI Resume Assistant</h3>
+          <p className="text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed">
+            Get real-time feedback and suggestions from our advanced AI assistant. Optimize your resume content with industry-specific insights.
+          </p>
+          <ul className="space-y-3 pt-2">
+            {["Context-aware bullet points", "Keyword density optimization", "Action verb suggestions"].map((point, idx) => (
+              <li key={idx} className="flex items-center gap-3">
+                <CheckCircle2 className="w-5 h-5 text-zinc-900 dark:text-zinc-100 flex-shrink-0" />
+                <span className="text-sm font-medium text-zinc-600 dark:text-zinc-400">{point}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
 
-        <SplitContent
-          imageSrc="/Dashboard Image.png"
-          heading="Unified Dashboard"
-          description="Manage all your resumes in one place. Create base profiles and generate tailored versions for specific job descriptions in seconds."
-          badgeText="Efficient Management"
-          imageOverflowRight={true}
-          bulletPoints={[
-            "Tailored version control",
-            "Instant PDF generation",
-            "Job application tracking"
-          ]}
-        />
-      </div>
-      
-      {/* Social proof */}
-      <div className="mt-32 border-t border-zinc-100 dark:border-zinc-900 pt-24 text-center">
-        <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-12">Trusted by professionals from</h3>
-        <div className="flex flex-wrap justify-center items-center gap-12 md:gap-20 max-w-4xl mx-auto opacity-40 grayscale contrast-125 dark:invert">
-          {companies.map((company, index) => (
-            <div key={index} className="w-24 h-8 relative">
-              <Image 
-                src={company.logo} 
-                alt={company.name} 
-                fill
-                className="object-contain" 
-              />
-            </div>
-          ))}
+        <div className="p-8 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/30 dark:bg-zinc-900/30 space-y-4">
+          <span className="px-3 py-1 rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-[10px] font-bold uppercase tracking-widest text-zinc-500">
+            Efficient Management
+          </span>
+          <h3 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">Unified Dashboard</h3>
+          <p className="text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed">
+            Manage all your resumes in one place. Create base profiles and generate tailored versions for specific job descriptions in seconds.
+          </p>
+          <ul className="space-y-3 pt-2">
+            {["Tailored version control", "Instant PDF generation", "Job application tracking"].map((point, idx) => (
+              <li key={idx} className="flex items-center gap-3">
+                <CheckCircle2 className="w-5 h-5 text-zinc-900 dark:text-zinc-100 flex-shrink-0" />
+                <span className="text-sm font-medium text-zinc-600 dark:text-zinc-400">{point}</span>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
       

@@ -56,13 +56,7 @@ export function SubscriptionSection({ initialProfile }: SubscriptionSectionProps
 
   return (
     <div className="space-y-8">
-      {/* Background decoration */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10">
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-zinc-100/50 dark:bg-zinc-800/20 rounded-full blur-3xl" />
-        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-zinc-100/50 dark:bg-zinc-800/20 rounded-full blur-3xl" />
-      </div>
-
-      {/* Header Section - State Aware */}
+            {/* Header Section - State Aware */}
       <div className="text-center space-y-4">
         {isCanceling ? (
           <>
@@ -72,10 +66,10 @@ export function SubscriptionSection({ initialProfile }: SubscriptionSectionProps
                 {daysRemaining} days remaining
               </Badge>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900">
+            <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
               Pro access ending soon
             </h2>
-            <p className="text-gray-600 max-w-lg mx-auto">
+            <p className="text-zinc-500 dark:text-zinc-400 max-w-lg mx-auto">
               {endDate
                 ? `Your Pro access ends on ${endDate}. Reactivate to keep your premium features.`
                 : "Your Pro access is ending soon. Reactivate to keep your premium features."}
@@ -89,10 +83,10 @@ export function SubscriptionSection({ initialProfile }: SubscriptionSectionProps
                 Access expired
               </Badge>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900">
+            <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
               Your Pro access has expired
             </h2>
-            <p className="text-gray-600 max-w-lg mx-auto">
+            <p className="text-zinc-500 dark:text-zinc-400 max-w-lg mx-auto">
               {endDate
                 ? `Your previous Pro access ended on ${endDate}. Upgrade to regain premium features.`
                 : "Your previous Pro access has ended. Upgrade to regain premium features."}
@@ -105,10 +99,10 @@ export function SubscriptionSection({ initialProfile }: SubscriptionSectionProps
                 {trialDaysRemaining > 0 ? `${trialDaysRemaining} days left in trial` : 'Trial ends today'}
               </Badge>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900">
+            <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
               Free trial active — Pro unlocked
             </h2>
-            <p className="text-gray-600 max-w-lg mx-auto">
+            <p className="text-zinc-500 dark:text-zinc-400 max-w-lg mx-auto">
               Enjoy full Pro access during your trial. After {trialEndLabel || 'the trial'}, you&apos;ll continue on the Pro plan at $20/month unless you cancel in the billing portal.
             </p>
           </>
@@ -120,10 +114,10 @@ export function SubscriptionSection({ initialProfile }: SubscriptionSectionProps
                 Pro Member
               </Badge>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900">
+            <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
               You&apos;re on the Pro plan
             </h2>
-            <p className="text-gray-600 max-w-lg mx-auto">
+            <p className="text-zinc-500 dark:text-zinc-400 max-w-lg mx-auto">
               Enjoying unlimited access to all premium features and priority support.
             </p>
           </>
@@ -135,10 +129,10 @@ export function SubscriptionSection({ initialProfile }: SubscriptionSectionProps
                 3x Higher Interview Rate
               </Badge>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900">
+            <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
               Upgrade to ResuSync Pro
             </h2>
-            <p className="text-gray-600 max-w-lg mx-auto">
+            <p className="text-zinc-500 dark:text-zinc-400 max-w-lg mx-auto">
               Join thousands of professionals landing more interviews with premium AI assistance.
             </p>
           </>
@@ -146,7 +140,7 @@ export function SubscriptionSection({ initialProfile }: SubscriptionSectionProps
       </div>
 
       {/* Social Proof */}
-      <div className="flex items-center justify-center text-sm text-gray-600">
+      <div className="flex items-center justify-center text-sm text-zinc-500 dark:text-zinc-400">
         <Users className="h-4 w-4 mr-2" />
         <span>Trusted by 12,000+ professionals</span>
         <div className="flex ml-3">
@@ -161,7 +155,7 @@ export function SubscriptionSection({ initialProfile }: SubscriptionSectionProps
       <div className="grid lg:grid-cols-2 gap-8">
         {/* Left Column - Benefits */}
         <div className="space-y-6">
-          <h3 className="text-lg font-semibold text-gray-900">
+          <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
             {hasProAccess ? "Your Pro Benefits" : "What you get with Pro"}
           </h3>
           
@@ -193,22 +187,22 @@ export function SubscriptionSection({ initialProfile }: SubscriptionSectionProps
               <div 
                 key={index}
                 className={cn(
-                  "flex items-start space-x-3 p-3 rounded-lg transition-colors",
-                  benefit.highlight ? "bg-blue-50 border border-blue-200" : "hover:bg-gray-50"
+                  "flex items-start space-x-3 p-3 rounded-xl transition-colors",
+                  benefit.highlight ? "bg-blue-50 border border-blue-200" : "hover:bg-zinc-50 dark:bg-zinc-900"
                 )}
               >
                 <div className={cn(
                   "p-2 rounded-lg flex-shrink-0",
-                  benefit.highlight ? "bg-blue-100" : "bg-gray-100"
+                  benefit.highlight ? "bg-zinc-200 dark:bg-zinc-800" : "bg-zinc-100 dark:bg-zinc-800/50"
                 )}>
                   <benefit.icon className={cn(
                     "h-4 w-4",
-                    benefit.highlight ? "text-blue-600" : "text-gray-600"
+                    benefit.highlight ? "text-zinc-900 dark:text-zinc-100" : "text-zinc-500 dark:text-zinc-400"
                   )} />
                 </div>
                 <div>
-                  <h4 className="font-medium text-gray-900 text-sm">{benefit.title}</h4>
-                  <p className="text-xs text-gray-600">{benefit.description}</p>
+                  <h4 className="font-medium text-zinc-900 dark:text-zinc-50 text-sm">{benefit.title}</h4>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400">{benefit.description}</p>
                 </div>
               </div>
             ))}
@@ -217,26 +211,26 @@ export function SubscriptionSection({ initialProfile }: SubscriptionSectionProps
 
         {/* Right Column - Pricing */}
       <div className="space-y-6">
-          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm relative overflow-hidden">
+          <div className="bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6 shadow-sm relative overflow-hidden">
             {!hasProAccess && (
               <div className="absolute top-0 left-0 right-0 h-1 bg-zinc-900 dark:bg-zinc-100" />
             )}
             
             <div className="text-center mb-6">
               <div className="flex items-center justify-center mb-2">
-                <h4 className="text-xl font-bold text-gray-900">ResuSync Pro</h4>
+                <h4 className="text-xl font-bold text-zinc-900 dark:text-zinc-50">ResuSync Pro</h4>
                 {!hasProAccess && (
-                  <Badge className="ml-2 bg-blue-100 text-blue-700 text-xs">Most Popular</Badge>
+                  <Badge variant="secondary" className="ml-2 bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-xs border border-zinc-200 dark:border-zinc-800 shadow-none">Most Popular</Badge>
                 )}
               </div>
               
               <div className="mb-3">
-                <span className="text-3xl font-bold text-gray-900">$20</span>
-                <span className="text-gray-600">/month</span>
+                <span className="text-3xl font-bold text-zinc-900 dark:text-zinc-50">$20</span>
+                <span className="text-zinc-500 dark:text-zinc-400">/month</span>
               </div>
               
               {!hasProAccess && (
-                <div className="space-y-1 text-xs text-gray-600">
+                <div className="space-y-1 text-xs text-zinc-500 dark:text-zinc-400">
                   <p>💰 Pays for itself with one interview</p>
                   <p>💼 Compare: Resume writers charge $260+</p>
                 </div>
@@ -253,17 +247,17 @@ export function SubscriptionSection({ initialProfile }: SubscriptionSectionProps
                 "Priority support"
               ].map((feature, index) => (
                 <div key={index} className="flex items-center space-x-2">
-                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                  <span className="text-sm text-gray-700">{feature}</span>
+                  <Check className="h-4 w-4 text-zinc-900 dark:text-zinc-100 flex-shrink-0" />
+                  <span className="text-sm text-zinc-700 dark:text-zinc-300">{feature}</span>
                 </div>
               ))}
             </div>
 
             {/* Risk Reduction */}
             {!hasProAccess && (
-              <div className="flex items-center justify-center space-x-2 mb-4 p-2 bg-green-50 rounded-lg border border-green-200">
-                <Shield className="h-4 w-4 text-green-600" />
-                <span className="text-xs text-green-700 font-medium">
+              <div className="flex items-center justify-center space-x-2 mb-4 p-2 bg-zinc-50 dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800">
+                <Shield className="h-4 w-4 text-zinc-500 dark:text-zinc-400" />
+                <span className="text-xs text-zinc-600 dark:text-zinc-400 font-medium">
                   30-day money-back guarantee
                 </span>
               </div>
@@ -276,8 +270,8 @@ export function SubscriptionSection({ initialProfile }: SubscriptionSectionProps
               className={cn(
                 "w-full py-3 font-semibold rounded-lg transition-all duration-300",
                 hasProAccess
-                  ? "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  : "bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 shadow-lg hover:shadow-xl"
+                  ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:bg-zinc-700"
+                  : "bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 shadow-sm"
               )}
             >
               {isLoading ? (
@@ -296,7 +290,7 @@ export function SubscriptionSection({ initialProfile }: SubscriptionSectionProps
             </Button>
 
             {!hasProAccess && (
-              <p className="text-center text-xs text-gray-500 mt-3">
+              <p className="text-center text-xs text-zinc-500 dark:text-zinc-400 mt-3">
                 Cancel anytime • No hidden fees
               </p>
             )}

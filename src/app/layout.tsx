@@ -1,4 +1,5 @@
 import { Nunito } from "next/font/google";
+import { DisableRightClick } from "@/components/layout/disable-right-click";
 
 import "./globals.css";
 import { Toaster } from "sonner";
@@ -126,6 +127,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={nunito.className}>
+        <DisableRightClick />
         <PostHogProvider>
           {isImpersonating && user && (
             <div className="bg-amber-500 text-white text-center text-sm py-2">

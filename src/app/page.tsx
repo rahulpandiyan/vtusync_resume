@@ -2,7 +2,6 @@ import { Background } from "@/components/landing/Background";
 import FeatureHighlights from "@/components/landing/FeatureHighlights";
 import { Hero } from "@/components/landing/Hero";
 import { PricingPlans } from "@/components/landing/PricingPlans";
-import { VideoShowcase } from "@/components/landing/VideoShowcase";
 import { CreatorStory } from "@/components/landing/creator-story";
 import { FAQ } from "@/components/landing/FAQ";
 import { Footer } from "@/components/layout/footer";
@@ -91,10 +90,7 @@ export default async function Page() {
             <Hero />
           </div>
 
-          {/* Video Showcase Section */}
-          <section id="product-demo">
-            <VideoShowcase />
-          </section>
+
 
           {/* Feature Highlights Section */}
           <section id="features" aria-labelledby="features-heading">
@@ -113,9 +109,9 @@ export default async function Page() {
 
           {/* FAQ Section */}
           <FAQ />
-
-          <Footer variant="static" />
         </main>
+        
+        <Footer variant="static" />
       </AuthDialogProvider>
     </>
   );
