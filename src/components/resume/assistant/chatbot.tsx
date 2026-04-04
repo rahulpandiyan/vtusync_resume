@@ -257,7 +257,7 @@ export default function ChatBot({ resume, onResumeChange, job }: ChatBotProps) {
 
   return (
     <Card className={cn(
-      "flex flex-col w-full l mx-auto",
+      "flex flex-col w-full mx-auto lg:max-w-full",
       "bg-gradient-to-br from-purple-400/20 via-purple-400/50 to-indigo-400/50",
       "border-2 border-purple-200/60",
       "shadow-lg shadow-purple-500/5",
@@ -274,20 +274,19 @@ export default function ChatBot({ resume, onResumeChange, job }: ChatBotProps) {
         collapsible
         value={accordionValue}
         onValueChange={setAccordionValue}
-        className="relative z-10 "
+        className="relative z-10"
       >
-        <AccordionItem value="chat" className="border-none py-0 my-0">
+        <AccordionItem value="chat" className="border-none py-0 my-0 flex flex-col-reverse">
 
           {/* Accordion Trigger */}
           <div className="relative">
             <AccordionTrigger className={cn(
-              "px-2 py-2",
+              "px-2 sm:px-3 py-1.5 sm:py-2",
               "hover:no-underline",
               "group",
               "transition-all duration-300",
-              "data-[state=open]:border-b border-purple-200/60",
-              "data-[state=closed]:opacity-80 data-[state=closed]:hover:opacity-100",
-              "data-[state=closed]:py-1"
+              "data-[state=open]:border-t border-purple-200/60 data-[state=closed]:border-t-0",
+              "data-[state=closed]:opacity-80 data-[state=closed]:hover:opacity-100"
             )}>
               <div className={cn(
                 "flex items-center w-full",
@@ -297,16 +296,15 @@ export default function ChatBot({ resume, onResumeChange, job }: ChatBotProps) {
               )}>
                 <div className="flex items-center gap-1.5">
                   <div className={cn(
-                    "p-1 rounded-lg",
+                    "p-0.5 sm:p-1 rounded-lg",
                     "bg-purple-100/80 text-purple-600",
                     "group-hover:bg-purple-200/80",
                     "transition-colors duration-300",
-                    "group-data-[state=closed]:bg-white/60",
-                    "group-data-[state=closed]:p-0.5"
+                    "group-data-[state=closed]:bg-white/60"
                   )}>
                     <Bot className="h-3 w-3" />
                   </div>
-                  <Logo className="text-xs" asLink={false} />
+                  <Logo className="text-[10px] sm:text-xs" asLink={false} />
                 </div>
               </div>
             </AccordionTrigger>
@@ -315,17 +313,15 @@ export default function ChatBot({ resume, onResumeChange, job }: ChatBotProps) {
               <AlertDialogTrigger asChild>
                 <Button
                   className={cn(
-                    "absolute right-8 top-1/2 -translate-y-1/2",
-                    "px-3 py-1 rounded-lg",
+                    "absolute right-12 sm:right-8 top-1/2 -translate-y-1/2",
+                    "px-2 py-1 rounded-lg",
                     "bg-purple-100/40 text-purple-500/80 border border-purple-500",
                     "hover:bg-purple-200/60 hover:text-purple-600",
                     "transition-all duration-300",
                     "focus:outline-none focus:ring-2 focus:ring-purple-400/40",
                     "disabled:opacity-50",
-                    "flex items-center gap-2",
+                    "flex items-center gap-1",
                     (accordionValue !== "chat" || isAlertOpen) && "hidden",
-                    
-                
                   )}
                   disabled={messages.length === 0}
                   aria-label="Clear chat history"
@@ -333,7 +329,6 @@ export default function ChatBot({ resume, onResumeChange, job }: ChatBotProps) {
                   size="sm"
                 >
                   <RefreshCw className="h-3 w-3" />
-                  <span className="text-xs font-medium">Clear Chat History</span>
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent className={cn(
@@ -372,7 +367,7 @@ export default function ChatBot({ resume, onResumeChange, job }: ChatBotProps) {
 
           {/* Accordion Content */}
           <AccordionContent className="space-y-4">
-            <StickToBottom className="h-[60vh] px-4 relative custom-scrollbar" resize="smooth" initial="smooth">
+            <StickToBottom className="h-[40vh] sm:h-[50vh] lg:max-h-[400px] px-4 relative custom-scrollbar" resize="smooth" initial="smooth">
               <StickToBottom.Content className="flex flex-col custom-scrollbar">
                 {messages.length === 0 ? (
                   <QuickSuggestions onSuggestionClick={handleSubmit} />

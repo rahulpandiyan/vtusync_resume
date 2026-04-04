@@ -94,7 +94,7 @@ export default async function Page({
     const normalizedResume = normalizeResumeData(rawResume);
     const component = (
       <div 
-        className="h-full flex flex-col "
+        className="h-full flex flex-col min-w-0 -mx-2 sm:-mx-4 lg:mx-0"
         data-page-title={normalizedResume.name}
         data-resume-type={normalizedResume.is_base_resume ? "Base Resume" : "Tailored Resume"}
       >
@@ -109,11 +109,21 @@ export default async function Page({
   
     
     return component;
-  } catch (error) {
-    console.error('❌ [Error]:', error);
-    if (error instanceof Error && error.message === 'User not authenticated') {
+  } catch (error: any) {
+    console.error('❌ [Resume Page Error]:', error);
+    
+    // Check for specific error messages we've defined in our actions
+    const errorMessage = error?.message || 'unknown error';
+    if (errorMessage.includes('Resume not found') || errorMessage.includes('Profile not found')) {
+      console.log('🔍 [Resume Page]: Resource not found, redirecting to home.');
+      redirect("/home");
+    }
+
+    if (errorMessage === 'User not authenticated') {
       redirect("/");
     }
-    redirect("/");
+    
+    // Default fallback redirect
+    redirect("/home");
   }
 } 

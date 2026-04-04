@@ -23,7 +23,7 @@ export function Hero() {
         </div>
 
         {/* Impactful Heading */}
-        <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black tracking-[-0.04em] leading-[0.9] text-zinc-900 dark:text-zinc-50 animate-in fade-in slide-in-from-bottom-4 duration-1200 delay-100">
+        <h1 className="text-5xl sm:text-5xl md:text-7xl lg:text-8xl font-black tracking-[-0.04em] leading-[0.9] text-zinc-900 dark:text-zinc-50 animate-in fade-in slide-in-from-bottom-4 duration-1200 delay-100">
           Build your future<br />with AI
         </h1>
 

@@ -77,7 +77,7 @@ export function ProfileSkillsForm({ skills, onChange }: ProfileSkillsFormProps) 
               <div className="px-4 pb-4 pt-2 space-y-4">
                 {/* Category and Delete Button Row */}
                 <div className="flex items-center justify-between gap-3">
-                  <div className="relative group flex-1">
+                  <div className="relative group flex-1 min-w-0">
                     <Input
                       value={skill.category}
                       onChange={(e) => updateSkill(index, 'category', e.target.value)}

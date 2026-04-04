@@ -419,7 +419,7 @@ export const WorkExperienceForm = memo(function WorkExperienceFormComponent({
                       )}
                       placeholder="Position Title"
                     />
-                    <div className="absolute -top-2 left-2 px-1 bg-white dark:bg-zinc-950 text-[7px] sm:text-[9px] font-medium text-zinc-500 uppercase">
+                    <div className="absolute -top-2 left-2 px-1 bg-white dark:bg-zinc-950 text-[9px] sm:text-[10px] font-medium text-zinc-500 uppercase">
                       POSITION
                     </div>
                   </div>
@@ -447,7 +447,7 @@ export const WorkExperienceForm = memo(function WorkExperienceFormComponent({
                       )}
                       placeholder="Company Name"
                     />
-                    <div className="absolute -top-2 left-2 px-1 bg-white dark:bg-zinc-950 text-[7px] sm:text-[9px] font-medium text-zinc-500 uppercase">
+                    <div className="absolute -top-2 left-2 px-1 bg-white dark:bg-zinc-950 text-[9px] sm:text-[10px] font-medium text-zinc-500 uppercase">
                       COMPANY
                     </div>
                   </div>
@@ -463,7 +463,7 @@ export const WorkExperienceForm = memo(function WorkExperienceFormComponent({
                       )}
                       placeholder="Location"
                     />
-                    <div className="absolute -top-2 left-2 px-1 bg-white dark:bg-zinc-950 text-[7px] sm:text-[9px] font-medium text-zinc-500 uppercase">
+                    <div className="absolute -top-2 left-2 px-1 bg-white dark:bg-zinc-950 text-[9px] sm:text-[10px] font-medium text-zinc-500 uppercase">
                       LOCATION
                     </div>
                   </div>
@@ -482,15 +482,15 @@ export const WorkExperienceForm = memo(function WorkExperienceFormComponent({
                     )}
                     placeholder="e.g., &apos;Jan 2023 - Present&apos; or &apos;2020 - 2022&apos;"
                   />
-                  <div className="absolute -top-2 left-2 px-1 bg-white dark:bg-zinc-950 text-[7px] sm:text-[9px] font-medium text-zinc-500 uppercase">
+                  <div className="absolute -top-2 left-2 px-1 bg-white dark:bg-zinc-950 text-[9px] sm:text-[10px] font-medium text-zinc-500 uppercase">
                     DATE
                   </div>
-                  <span className="ml-2 text-[8px] sm:text-[10px] text-gray-500">Use &apos;Present&apos; in the date field for current positions</span>
+                  <span className="ml-2 text-[10px] sm:text-xs text-gray-500">Use &apos;Present&apos; in the date field for current positions</span>
                 </div>
 
                 {/* Description Section */}
                 <div className="space-y-3">
-                  <Label className="text-[11px] md:text-xs font-medium text-zinc-900 dark:text-zinc-100">
+                  <Label className="text-xs font-medium text-zinc-900 dark:text-zinc-100">
                     Key Responsibilities & Achievements
                   </Label>
                   <div className="space-y-2 pl-0">
@@ -678,7 +678,7 @@ export const WorkExperienceForm = memo(function WorkExperienceFormComponent({
                     />
 
                     {getDescription(exp).length === 0 && !aiSuggestions[index]?.length && (
-                      <div className="text-[11px] md:text-xs text-zinc-500 italic px-4 py-3 bg-zinc-50 dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800">
+                      <div className="text-xs text-zinc-500 italic px-4 py-3 bg-zinc-50 dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800">
                         Add points to describe your responsibilities and achievements
                       </div>
                     )}
@@ -696,7 +696,7 @@ export const WorkExperienceForm = memo(function WorkExperienceFormComponent({
                         onChange(updated);
                       }}
                       className={cn(
-                        "flex-1 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors text-[10px] sm:text-xs",
+                        "flex-1 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors text-xs",
                         "border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900"
                       )}
                     >

@@ -82,7 +82,7 @@ export function ProfileProjectsForm({ projects, onChange }: ProfileProjectsFormP
               <div className="px-4 pb-4 pt-2 space-y-4">
                 {/* Project Name and Delete Button Row */}
                 <div className="flex items-center justify-between gap-3">
-                  <div className="relative group flex-1">
+                  <div className="relative group flex-1 min-w-0">
                     <Input
                       value={project.name}
                       onChange={(e) => updateProject(index, 'name', e.target.value)}
@@ -107,7 +107,7 @@ export function ProfileProjectsForm({ projects, onChange }: ProfileProjectsFormP
 
                 {/* URLs Row */}
                 <div className="flex flex-col md:flex-row md:items-start gap-3 text-gray-600">
-                  <div className="relative group flex-1">
+                  <div className="relative group flex-1 min-w-0">
                     <Input
                       type="url"
                       value={project.url || ''}
@@ -121,7 +121,7 @@ export function ProfileProjectsForm({ projects, onChange }: ProfileProjectsFormP
                       Live URL
                     </div>
                   </div>
-                  <div className="relative group flex-1">
+                  <div className="relative group flex-1 min-w-0">
                     <Input
                       type="url"
                       value={project.github_url || ''}
@@ -218,7 +218,7 @@ export function ProfileProjectsForm({ projects, onChange }: ProfileProjectsFormP
                   <div className="space-y-2">
                     {project.description.map((desc, descIndex) => (
                       <div key={descIndex} className="flex gap-2 items-start">
-                        <div className="flex-1">
+                        <div className="flex-1 min-w-0">
                           <Input
                             value={desc}
                             onChange={(e) => {

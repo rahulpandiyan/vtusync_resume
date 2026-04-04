@@ -98,24 +98,24 @@ export const BasicInfoForm = memo(function BasicInfoFormComponent({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <Card className="relative bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 shadow-sm rounded-xl">
         <CardContent className="p-3 sm:p-4">
           {profile && (
-            <div className="mb-3 sm:mb-4">
+            <div className="w-full mb-3 sm:mb-4">
               <Button
                 onClick={handleFillFromProfile}
-                className="w-full bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 text-sm hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-all duration-200 font-medium"
+                className="w-full bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 text-xs sm:text-sm hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-all duration-200 font-medium h-10"
               >
-                <UserCircle2 className="mr-2 h-3.5 w-3.5" />
-                Fill from Profile
+                <UserCircle2 className="mr-1.5 sm:mr-2 h-4 w-4" />
+                <span>Fill from Profile</span>
               </Button>
             </div>
           )}
 
-          <div className="space-y-2 sm:space-y-3">
+          <div className="space-y-3 sm:space-y-4">
             {/* Name Row */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 pt-2">
               <BasicInfoField
                 field="first_name"
                 value={resume.first_name}

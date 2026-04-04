@@ -70,7 +70,7 @@ export default async function Page() {
       />
 
       <AuthDialogProvider>
-        <main aria-label="ResuSync landing page" className=" ">
+        <main aria-label="ResuSync landing page" className="overflow-x-hidden w-full relative">
           {/* Simplified Navigation */}
           <nav aria-label="Main navigation" className="border-b border-zinc-100 dark:border-zinc-900 fixed top-0 w-full bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md z-[1000] transition-all duration-300">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

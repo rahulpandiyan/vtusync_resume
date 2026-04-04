@@ -34,11 +34,15 @@ export async function getBillingStatus() {
 
   if (!user) throw new Error("User not authenticated");
 
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("subscriptions")
     .select("subscription_plan, subscription_status, watermark_unlocked")
     .eq("user_id", user.id)
     .maybeSingle();
+
+  if (error) {
+    console.error("❌ [getBillingStatus Error]:", error);
+  }
 
   const hasProAccess = data?.subscription_plan === "pro" && data?.subscription_status === "active";
   const hasWatermarkAccess = hasProAccess || Boolean(data?.watermark_unlocked);
@@ -116,7 +120,10 @@ export async function verifyRazorpayPayment(payload: {
       .eq("id", payload.resumeId)
       .eq("user_id", user.id);
       
-    if (error) throw error;
+    if (error) {
+      console.error("❌ [verifyRazorpayPayment Error]:", error);
+      throw new Error(`Failed to update resume: ${error.message}`);
+    }
   } else {
     // Global subscription update (Pro or legacy watermark)
     const updateData = {
@@ -132,7 +139,10 @@ export async function verifyRazorpayPayment(payload: {
       onConflict: "user_id",
     });
 
-    if (error) throw error;
+    if (error) {
+      console.error("❌ [verifyRazorpayPayment Error]:", error);
+      throw new Error(`Failed to update subscription: ${error.message}`);
+    }
   }
 
   revalidatePath("/subscription");

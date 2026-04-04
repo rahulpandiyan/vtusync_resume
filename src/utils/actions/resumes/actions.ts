@@ -110,7 +110,9 @@ export async function getResumeById(resumeId: string): Promise<{ resume: Resume;
       job
     };
   } catch (error) {
-    throw error;
+    console.error('❌ [getResumeById Error]:', error);
+    if (error instanceof Error) throw error;
+    throw new Error('An unexpected error occurred while fetching your resume.');
   }
 }
 
@@ -187,7 +189,9 @@ export async function deleteResume(resumeId: string): Promise<void> {
     revalidatePath('/jobs', 'layout');
 
   } catch (error) {
-    throw error instanceof Error ? error : new Error('Failed to delete resume');
+    console.error('❌ [deleteResume Error]:', error);
+    if (error instanceof Error) throw error;
+    throw new Error('Failed to delete resume. Please try again.');
   }
 }
 
@@ -369,7 +373,10 @@ export async function createTailoredResume(
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {
+    console.error('❌ [createTailoredResume Error]:', error);
+    throw new Error(`Failed to create tailored resume: ${error.message}`);
+  }
   return data;
 }
 

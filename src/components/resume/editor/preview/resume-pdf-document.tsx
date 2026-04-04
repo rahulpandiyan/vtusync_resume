@@ -1,7 +1,7 @@
 'use client';
 
 import { Resume } from "@/lib/types";
-import { Document as PDFDocument, Page as PDFPage, Text, View, StyleSheet, Link } from '@react-pdf/renderer';
+import { Document as PDFDocument, Page as PDFPage, Text, View, StyleSheet, Link, Image } from '@react-pdf/renderer';
 import { memo, useMemo, useCallback } from 'react';
 import type { ReactNode } from 'react';
 
@@ -20,7 +20,7 @@ const baseStyles = {
     marginRight: 4,
   },
 } as const;
-const WATERMARK_TEXT = "Hire-Ready\u00A0Resume\u00A0-\u00A0ResuSync";
+const WATERMARK_IMAGE = "/images/watermark.png";
 
 // Create a cache outside of components to persist between renders
 const textProcessingCache = new Map<string, ReactNode[]>();
@@ -552,6 +552,22 @@ function createResumeStyles(settings: Resume['document_settings'] = {
       opacity: 0.7,
       fontFamily: 'Helvetica-Bold',
     },
+    watermarkOverlay: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: -1,
+      pointerEvents: 'none',
+      opacity: 0.08, // Light enough not to obscure text but visible
+    },
+    watermarkImage: {
+      width: '50%', // Scale relative to the page
+      opacity: 0.08, // Opacity is handled by the container (watermarkOverlay)
+    }
   });
 }
 
@@ -567,7 +583,15 @@ export const ResumePDFDocument = memo(function ResumePDFDocument({ resume, showW
 
   return (
     <PDFDocument>
-      <PDFPage size="LETTER" style={styles.page}>
+      <PDFPage size="A4" style={styles.page}>
+        {showWatermark && (
+          <View style={styles.watermarkOverlay} fixed>
+            <Image 
+              src={WATERMARK_IMAGE} 
+              style={styles.watermarkImage}
+            />
+          </View>
+        )}
         <HeaderSection resume={resume} styles={styles} />
         <SkillsSection skills={resume.skills} styles={styles} />
         <ExperienceSection experiences={resume.work_experience} styles={styles} />
@@ -575,11 +599,9 @@ export const ResumePDFDocument = memo(function ResumePDFDocument({ resume, showW
         <EducationSection education={resume.education} styles={styles} />
         
         {showWatermark && (
-          <>
-            <View style={styles.watermarkBottom} fixed>
-              <Text style={styles.watermarkBottomText} wrap={false}>{WATERMARK_TEXT}</Text>
-            </View>
-          </>
+          <View style={styles.watermarkBottom} fixed>
+            <Text style={styles.watermarkBottomText} wrap={false}>Hire-Ready Resume - ResuSync</Text>
+          </View>
         )}
       </PDFPage>
     </PDFDocument>

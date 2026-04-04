@@ -3,7 +3,6 @@ import { User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProfileRow } from "@/components/dashboard/profile-row";
 import { WelcomeDialog } from "@/components/dashboard/welcome-dialog";
-import { getGreeting } from "@/lib/utils";
 import { ApiKeyAlert } from "@/components/dashboard/api-key-alert";
 import { type SortOption, type SortDirection } from "@/components/resume/management/resume-sort-controls";
 import type { ResumeSummary } from "@/lib/types";
@@ -11,6 +10,7 @@ import { ResumesSection } from "@/components/dashboard/resumes-section";
 import { getDashboardData } from "@/utils/actions";
 import { checkSubscriptionPlan } from "@/utils/actions/stripe/actions";
 import { FREE_PLAN_RESUME_LIMITS } from "@/lib/resume-limits";
+import { HomeHeader } from "@/components/dashboard/home-header";
 
 export default async function Home({
   searchParams,
@@ -99,32 +99,27 @@ export default async function Home({
     <main className="min-h-screen relative pb-24 sm:pb-12 bg-white dark:bg-zinc-950">
       <WelcomeDialog isOpen={!!isNewSignup} />
       
-      <div className="relative z-10 w-full max-w-4xl mx-auto pt-4 sm:pt-8 px-4 sm:px-6">
-        <div className="space-y-4 sm:space-y-8">
+      <div className="relative z-10 w-full max-w-4xl mx-auto pt-2 sm:pt-4 px-3 sm:px-4">
+        <div className="space-y-4 sm:space-y-6">
+          {/* Greeting with Model Selector - At Top */}
+          <HomeHeader firstName={profile.first_name || 'there'} isProPlan={isProPlan} />
+
+          {/* API Key Alert */}
+          {!isProPlan && (
+            <div className="w-full">
+              <ApiKeyAlert variant="upgrade" />
+            </div>
+          )}
+
           {/* Profile Overview */}
-          <section className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-4 sm:p-8">
+          <section className="rounded-lg sm:rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-3 sm:p-4">
             <ProfileRow profile={profile} />
           </section>
           
           <div className="space-y-4 sm:space-y-6">
-            {/* API Key Alert */}
-            {!isProPlan && <ApiKeyAlert variant="upgrade" />}
-            
-            {/* Greeting */}
-            <div className="flex items-center justify-between px-1 pt-2">
-              <div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-50 tracking-tight">
-                  {getGreeting()}, {profile.first_name}
-                </h1>
-                <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-1 font-medium">
-                  ResuSync Dashboard
-                </p>
-              </div>
-            </div>
-
             {/* Resume Sections */}
-            <div className="space-y-4 sm:space-y-8 pt-2">
-              <section className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-4 sm:p-8">
+            <div className="space-y-4 sm:space-y-6 pt-2">
+              <section className="rounded-lg sm:rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-3 sm:p-4">
                 <ResumesSection
                   type="base"
                   resumes={baseResumes}
@@ -137,7 +132,7 @@ export default async function Home({
                 />
               </section>
 
-              <section className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-4 sm:p-8">
+              <section className="rounded-lg sm:rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-3 sm:p-4">
                 <ResumesSection
                   type="tailored"
                   resumes={tailoredResumes}

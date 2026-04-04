@@ -1,7 +1,7 @@
 'use client';
 
 import { Resume } from "@/lib/types";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { ResumePreview } from "../preview/resume-preview";
 import CoverLetter from "@/components/cover-letter/cover-letter";
@@ -12,42 +12,36 @@ interface PreviewPanelProps {
   onResumeChange: (field: keyof Resume, value: Resume[keyof Resume]) => void;
   width: number;
   showWatermark?: boolean;
-  // percentWidth: number;
 }
 
 export function PreviewPanel({
   resume,
-  // onResumeChange,
   width,
   showWatermark = false,
 }: PreviewPanelProps) {
+  const scrollbarWidth = 12;
+  const paddingHorizontal = 16;
+  const availableWidth = Math.max(width - scrollbarWidth - paddingHorizontal, 280);
+
   return (
-    <ScrollArea className={cn(
-      "z-50 h-full",
+    <div className={cn(
+      "h-full w-full",
       resume.is_base_resume
         ? "bg-purple-50/30"
         : "bg-pink-50/60 shadow-sm shadow-pink-200/20"
     )}>
-      <div className="">
-      <ResumeContextMenu resume={resume} showWatermark={showWatermark}>
-          <ResumePreview resume={resume} containerWidth={width} showWatermark={showWatermark} />
-        </ResumeContextMenu>
-      </div>
+      <ScrollArea className="z-50 h-full w-full">
+        <div className="min-h-full w-full flex flex-col items-center justify-start p-2 sm:p-4">
+          <ResumeContextMenu resume={resume} showWatermark={showWatermark}>
+            <ResumePreview resume={resume} containerWidth={availableWidth} showWatermark={showWatermark} />
+          </ResumeContextMenu>
+        </div>
 
-      <CoverLetter 
-        // resumeId={resume.id} 
-        // hasCoverLetter={resume.has_cover_letter}
-        // coverLetterData={resume.cover_letter}
-        containerWidth={width}
-        // onCoverLetterChange={(data: Record<string, unknown>) => {
-        //   if ('has_cover_letter' in data) {
-        //     onResumeChange('has_cover_letter', data.has_cover_letter as boolean);
-        //   }
-        //   if ('cover_letter' in data) {    
-        //     onResumeChange('cover_letter', data.cover_letter as Record<string, unknown>);
-        //   }
-        // }}
-      />
-    </ScrollArea>
+        <CoverLetter 
+          containerWidth={availableWidth}
+        />
+        <ScrollBar orientation="vertical" className="w-3" />
+      </ScrollArea>
+    </div>
   );
 } 

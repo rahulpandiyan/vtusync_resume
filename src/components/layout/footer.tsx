@@ -8,7 +8,7 @@ interface FooterProps {
 export function Footer({ variant = 'fixed' }: FooterProps) {
   if (variant === 'fixed') {
     return (
-      <footer className="h-14 w-full border-t border-zinc-100 dark:border-zinc-900 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md z-50 fixed bottom-0 left-0 right-0">
+      <footer className="h-14 w-full border-t border-zinc-100 dark:border-zinc-900 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md z-50 fixed bottom-0 left-0 right-0 safe-bottom">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex h-full items-center justify-between gap-4">
           <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
             © 2025 ResuSync · Powered by VTUSync

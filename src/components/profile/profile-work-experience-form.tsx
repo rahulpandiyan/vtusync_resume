@@ -82,7 +82,7 @@ export function ProfileWorkExperienceForm({ experiences, onChange }: ProfileWork
               <div className="px-4 pb-4 pt-2 space-y-4">
                 {/* Position and Delete Button Row */}
                 <div className="flex items-center justify-between gap-3">
-                  <div className="relative group flex-1">
+                  <div className="relative group flex-1 min-w-0">
                     <Input
                       value={exp.position}
                       onChange={(e) => updateExperience(index, 'position', e.target.value)}
@@ -136,7 +136,7 @@ export function ProfileWorkExperienceForm({ experiences, onChange }: ProfileWork
                       Date
                     </div>
                   </div>
-                  <div className="relative group flex-1">
+                  <div className="relative group flex-1 min-w-0">
                     <Input
                       value={exp.location}
                       onChange={(e) => updateExperience(index, 'location', e.target.value)}
@@ -216,7 +216,7 @@ export function ProfileWorkExperienceForm({ experiences, onChange }: ProfileWork
                   <div className="space-y-2">
                     {exp.description.map((desc, descIndex) => (
                       <div key={descIndex} className="flex gap-2 items-start">
-                        <div className="flex-1">
+                        <div className="flex-1 min-w-0">
                           <Input
                             value={desc}
                             onChange={(e) => {

@@ -90,7 +90,7 @@ const FeatureHighlights = () => {
       
       {/* CTA section */}
       <div className="mt-32 text-center pb-20">
-        <div className="max-w-4xl mx-auto p-12 md:p-24 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 relative overflow-hidden group">
+        <div className="max-w-4xl mx-auto p-6 sm:p-12 md:p-24 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 relative overflow-hidden group">
           <div className="absolute inset-0 bg-gradient-to-br from-zinc-100 to-transparent dark:from-zinc-800/10 opacity-50" />
           
           <div className="relative z-10 space-y-8">

@@ -50,7 +50,7 @@ export default async function ResumesPage({
   );
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white pb-16 lg:pb-0">
       <div className="container max-w-7xl mx-auto p-6 space-y-10">
         {/* Header with controls */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 md:gap-6 border-b border-zinc-100 dark:border-zinc-800 pb-6 md:pb-8">

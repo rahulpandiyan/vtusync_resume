@@ -5,7 +5,7 @@ import "./globals.css";
 import { Toaster } from "sonner";
 
 import { createClient } from "@/utils/supabase/server";
-import { Metadata } from "next";
+import { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/react";
 import Link from "next/link";
 import { cookies } from "next/headers";
@@ -43,7 +43,6 @@ export const metadata: Metadata = {
     shortcut: "/favicon-16x16.png",
     apple: "/apple-touch-icon.png",
   },
-
   openGraph: {
     type: "website",
     siteName: "ResuSync",
@@ -76,9 +75,16 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  // verification: {
-  //   google: "google-site-verification-code", // Replace with actual verification code
-  // },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#09090b" },
+  ],
 };
 
 export default async function RootLayout({

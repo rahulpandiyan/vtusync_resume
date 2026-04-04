@@ -292,38 +292,34 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
   };
 
   return (
-    <div className="relative mx-auto">
-      
-
+    <div className="w-full max-w-4xl mx-auto">
       {/* Action Bar */}
-      <div className="z-50 mt-4 mb-6">
-        <div className="max-w-[2000px] mx-auto">
-          <div className="mx-4 sm:mx-6">
-            <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 sm:p-4 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
-              <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-zinc-900 dark:bg-zinc-50" />
-                <span className="text-sm font-semibold tracking-wide text-zinc-500">Profile Editor</span>
+      <div className="sticky top-0 z-[40] mb-6 pt-2">
+        <div className="bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md border border-zinc-200 dark:border-zinc-800 rounded-xl p-2 sm:p-3 flex items-center justify-between gap-4 shadow-sm">
+              <div className="flex items-center gap-2 min-w-0 shrink">
+                <div className="w-2.5 h-2.5 shrink-0 rounded-full bg-zinc-900 dark:bg-zinc-50" />
+                <span className="text-xs sm:text-sm font-semibold tracking-wide text-zinc-500 truncate">Profile Editor</span>
               </div>
               
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
                 {/* Reset Profile Button */}
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button
                       size="sm"
                       variant="outline"
-                      className="w-full sm:w-auto font-semibold text-red-500 border-red-200 hover:bg-red-50 dark:border-red-900/50 dark:hover:bg-red-900/20"
+                      className="shrink-0 font-semibold text-xs text-red-500 border-red-200 hover:bg-red-50 dark:border-red-900/50 dark:hover:bg-red-900/20 px-2 sm:px-3"
                       disabled={isResetting}
                     >
                       {isResetting ? (
                         <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Resetting...
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <span className="hidden sm:inline ml-2">Resetting...</span>
                         </>
                       ) : (
                         <>
-                          <Trash2 className="mr-2 h-4 w-4" />
-                          Reset
+                          <Trash2 className="h-4 w-4" />
+                          <span className="hidden sm:inline ml-2">Reset</span>
                         </>
                       )}
                     </Button>
@@ -353,31 +349,29 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
                   onClick={handleSubmit} 
                   disabled={isSubmitting}
                   size="sm"
-                  className="w-full sm:w-auto font-semibold bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200"
+                  className="font-semibold text-xs bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 px-3 sm:px-4"
                 >
                   {isSubmitting ? (
                     <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Saving...
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span className="hidden sm:inline ml-2">Saving...</span>
                     </>
                   ) : (
                     <>
-                      <Save className="mr-2 h-4 w-4" />
-                      Save Changes
+                      <Save className="h-4 w-4" />
+                      <span className="hidden sm:inline ml-2">Save Changes</span>
+                      <span className="sm:hidden ml-2">Save</span>
                     </>
                   )}
                 </Button>
               </div>
             </div>
-          </div>
-        </div>
       </div>
-
       {/* Main content container with consistent styling */}
-      <div className="relative px-4 sm:px-8 lg:px-10 pb-4 sm:pb-10">
+      <div className="relative pb-4 sm:pb-10">
         {/* Import Actions Row */}
         <div className="relative mb-6">
-          <div className="bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800 p-4 sm:p-8 shadow-sm">
+          <div className="bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800 p-3.5 sm:p-8 shadow-sm">
             <div className="flex flex-col gap-4">
               
               {/* Import Options Text */}
@@ -389,19 +383,19 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
               </div>
 
 
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                 <Button
                   variant="outline"
                   onClick={handleLinkedInImport}
-                  className="group relative bg-[#0077b5]/5 hover:bg-[#0077b5]/10 border-[#0077b5]/20 hover:border-[#0077b5]/30 text-[#0077b5] transition-all duration-300 h-auto py-3"
+                  className="group relative bg-[#0077b5]/5 hover:bg-[#0077b5]/10 border-[#0077b5]/20 hover:border-[#0077b5]/30 text-[#0077b5] transition-all duration-300 h-auto py-1.5 sm:py-3 px-1 sm:px-4"
                 >
-                  <div className="relative flex flex-col items-center gap-1.5 w-full">
-                    <div className="flex items-center justify-center w-9 h-9 rounded-full bg-[#0077b5]/10">
-                      <Linkedin className="h-5 w-5" />
+                  <div className="relative flex flex-col items-center gap-0.5 sm:gap-1.5 w-full">
+                    <div className="flex items-center justify-center w-6 h-6 sm:w-9 sm:h-9 rounded-full bg-[#0077b5]/10">
+                      <Linkedin className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
                     </div>
                     <div className="text-center">
-                      <div className="font-semibold text-xs leading-tight">LinkedIn</div>
-                      <div className="text-[10px] text-[#0077b5]/70 leading-tight hidden sm:block">Sync profile</div>
+                      <div className="font-bold text-[9px] sm:text-xs leading-tight">LinkedIn</div>
+                      <div className="text-[9px] sm:text-[10px] text-[#0077b5]/70 leading-tight hidden sm:block">Sync profile</div>
                     </div>
                   </div>
                 </Button>
@@ -411,15 +405,15 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
                   <DialogTrigger asChild>
                     <Button
                       variant="outline"
-                      className="group relative border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-900 h-auto py-3 w-full"
+                      className="group relative border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-900 h-auto py-1.5 sm:py-3 px-1 sm:px-4 w-full"
                     >
-                      <div className="relative flex flex-col items-center gap-1.5 w-full">
-                        <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-zinc-100 dark:bg-zinc-800">
-                          <Upload className="h-5 w-5" />
+                      <div className="relative flex flex-col items-center gap-0.5 sm:gap-1.5 w-full">
+                        <div className="flex items-center justify-center w-6 h-6 sm:w-9 sm:h-9 rounded-xl bg-zinc-100 dark:bg-zinc-800">
+                          <Upload className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
                         </div>
                         <div className="text-center">
-                          <div className="font-semibold text-xs leading-tight">Resume</div>
-                          <div className="text-[10px] text-zinc-500 leading-tight hidden sm:block">Upload PDF</div>
+                          <div className="font-bold text-[9px] sm:text-xs leading-tight">Resume</div>
+                          <div className="text-[9px] sm:text-[10px] text-zinc-500 leading-tight hidden sm:block">Upload PDF</div>
                         </div>
                       </div>
                     </Button>
@@ -538,15 +532,15 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
                   <DialogTrigger asChild>
                     <Button
                       variant="outline"
-                      className="group relative bg-violet-500/5 hover:bg-violet-500/10 border-violet-500/20 hover:border-violet-500/30 text-violet-600 transition-all duration-300 h-auto py-3 w-full"
+                      className="group relative bg-violet-500/5 hover:bg-violet-500/10 border-violet-500/20 hover:border-violet-500/30 text-violet-600 transition-all duration-300 h-auto py-1.5 sm:py-3 px-1 sm:px-4 w-full"
                     >
-                      <div className="relative flex flex-col items-center gap-1.5 w-full">
-                        <div className="flex items-center justify-center w-9 h-9 rounded-full bg-violet-500/10">
-                          <Upload className="h-5 w-5" />
+                      <div className="relative flex flex-col items-center gap-0.5 sm:gap-1.5 w-full">
+                        <div className="flex items-center justify-center w-6 h-6 sm:w-9 sm:h-9 rounded-full bg-violet-500/10">
+                          <Upload className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
                         </div>
                         <div className="text-center">
-                          <div className="font-semibold text-xs text-violet-600 leading-tight">Text Import</div>
-                          <div className="text-[10px] text-violet-600/70 leading-tight hidden sm:block">Any content</div>
+                          <div className="font-bold text-[9px] sm:text-xs text-violet-600 leading-tight">Text Import</div>
+                          <div className="text-[9px] sm:text-[10px] text-violet-600/70 leading-tight hidden sm:block">Any content</div>
                         </div>
                       </div>
                     </Button>
@@ -664,23 +658,23 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
           </div>
         </div>
 
-        {/* Enhanced Tabs with smooth transitions and connected design */}
-        <div>
-          <div>
+        {/* Profile Tabs */}
+        <div className="relative">
+          <div className="w-full">
             <Tabs defaultValue="basic" className="w-full">
-              <TabsList className="h-full relative bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-1 sm:p-2 flex overflow-x-auto scrollbar-hide gap-1 sm:gap-2 shadow-sm">
+              <TabsList className="h-full w-full justify-start relative bg-white/50 dark:bg-zinc-950/50 border border-zinc-200 dark:border-zinc-800 rounded-xl p-1 sm:p-1.5 flex overflow-x-auto no-scrollbar scrollbar-hide gap-1 shadow-sm min-h-[48px]">
                 <TabsTrigger 
                   value="basic" 
-                  className="group shrink-0 flex items-center gap-2 px-3 sm:px-6 py-2.5 sm:py-3 rounded-lg font-semibold tracking-wide transition-all duration-200
+                  className="group shrink-0 flex items-center gap-2 px-3 sm:px-6 py-3 sm:py-3 rounded-lg font-semibold tracking-wide transition-all duration-200 min-h-[44px]
                     data-[state=active]:bg-zinc-100 data-[state=active]:text-zinc-900 dark:data-[state=active]:bg-zinc-800 dark:data-[state=active]:text-zinc-50
                     data-[state=inactive]:text-zinc-500 data-[state=inactive]:hover:bg-zinc-50 dark:data-[state=inactive]:hover:bg-zinc-900"
                 >
                   <User className="h-4 w-4 sm:h-5 sm:w-5" />
-                  <span className="text-xs sm:text-base">Basic Info</span>
+                  <span className="text-xs sm:text-base">Basic</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="experience" 
-                  className="group shrink-0 flex items-center gap-2 px-3 sm:px-6 py-2.5 sm:py-3 rounded-lg font-semibold tracking-wide transition-all duration-200
+                  className="group shrink-0 flex items-center gap-2 px-3 sm:px-6 py-3 sm:py-3 rounded-lg font-semibold tracking-wide transition-all duration-200 min-h-[44px]
                     data-[state=active]:bg-zinc-100 data-[state=active]:text-zinc-900 dark:data-[state=active]:bg-zinc-800 dark:data-[state=active]:text-zinc-50
                     data-[state=inactive]:text-zinc-500 data-[state=inactive]:hover:bg-zinc-50 dark:data-[state=inactive]:hover:bg-zinc-900"
                 >
@@ -689,7 +683,7 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
                 </TabsTrigger>
                 <TabsTrigger 
                   value="projects" 
-                  className="group shrink-0 flex items-center gap-2 px-3 sm:px-6 py-2.5 sm:py-3 rounded-lg font-semibold tracking-wide transition-all duration-200
+                  className="group shrink-0 flex items-center gap-2 px-3 sm:px-6 py-3 sm:py-3 rounded-lg font-semibold tracking-wide transition-all duration-200 min-h-[44px]
                     data-[state=active]:bg-zinc-100 data-[state=active]:text-zinc-900 dark:data-[state=active]:bg-zinc-800 dark:data-[state=active]:text-zinc-50
                     data-[state=inactive]:text-zinc-500 data-[state=inactive]:hover:bg-zinc-50 dark:data-[state=inactive]:hover:bg-zinc-900"
                 >
@@ -698,7 +692,7 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
                 </TabsTrigger>
                 <TabsTrigger 
                   value="education" 
-                  className="group shrink-0 flex items-center gap-2 px-3 sm:px-6 py-2.5 sm:py-3 rounded-lg font-semibold tracking-wide transition-all duration-200
+                  className="group shrink-0 flex items-center gap-2 px-3 sm:px-6 py-3 sm:py-3 rounded-lg font-semibold tracking-wide transition-all duration-200 min-h-[44px]
                     data-[state=active]:bg-zinc-100 data-[state=active]:text-zinc-900 dark:data-[state=active]:bg-zinc-800 dark:data-[state=active]:text-zinc-50
                     data-[state=inactive]:text-zinc-500 data-[state=inactive]:hover:bg-zinc-50 dark:data-[state=inactive]:hover:bg-zinc-900"
                 >
@@ -707,7 +701,7 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
                 </TabsTrigger>
                 <TabsTrigger 
                   value="skills" 
-                  className="group shrink-0 flex items-center gap-2 px-3 sm:px-6 py-2.5 sm:py-3 rounded-lg font-semibold tracking-wide transition-all duration-200
+                  className="group shrink-0 flex items-center gap-2 px-3 sm:px-6 py-3 sm:py-3 rounded-lg font-semibold tracking-wide transition-all duration-200 min-h-[44px]
                     data-[state=active]:bg-zinc-100 data-[state=active]:text-zinc-900 dark:data-[state=active]:bg-zinc-800 dark:data-[state=active]:text-zinc-50
                     data-[state=inactive]:text-zinc-500 data-[state=inactive]:hover:bg-zinc-50 dark:data-[state=inactive]:hover:bg-zinc-900"
                 >
@@ -769,7 +763,7 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
                   <TabsContent value="skills" className="mt-6 animate-in fade-in-50 slide-in-from-bottom-2 duration-500">
                     <Card className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-sm relative overflow-hidden group">
                       
-                      <div className="relative p-8">
+                      <div className="relative p-4 sm:p-8">
                         <ProfileSkillsForm
                           skills={profile.skills}
                           onChange={(skills) => updateField('skills', skills)}

@@ -19,7 +19,7 @@ export function ProfileBasicInfoForm({ profile, onChange }: ProfileBasicInfoForm
           <div className="space-y-6">
             {/* Name Row */}
             <div className="flex flex-col md:flex-row md:items-start gap-4">
-              <div className="relative group flex-1">
+              <div className="relative group flex-1 min-w-0">
                 <div className="absolute right-3 top-1/2 -translate-y-1/2">
                   <div className="p-1.5 rounded-md bg-zinc-100 dark:bg-zinc-800 transition-transform duration-300 group-focus-within:scale-105">
                     <User className="h-4 w-4 text-zinc-500" />
@@ -37,7 +37,7 @@ export function ProfileBasicInfoForm({ profile, onChange }: ProfileBasicInfoForm
                   First Name
                 </div>
               </div>
-              <div className="relative group flex-1">
+              <div className="relative group flex-1 min-w-0">
                 <div className="absolute right-3 top-1/2 -translate-y-1/2">
                   <div className="p-1.5 rounded-md bg-zinc-100 dark:bg-zinc-800 transition-transform duration-300 group-focus-within:scale-105">
                     <User className="h-4 w-4 text-zinc-500" />
@@ -59,7 +59,7 @@ export function ProfileBasicInfoForm({ profile, onChange }: ProfileBasicInfoForm
 
             {/* Contact Info */}
             <div className="flex flex-col md:flex-row md:items-start gap-4">
-              <div className="relative group flex-1">
+              <div className="relative group flex-1 min-w-0">
                 <div className="absolute right-3 top-1/2 -translate-y-1/2">
                   <div className="p-1.5 rounded-md bg-zinc-100 dark:bg-zinc-800 transition-transform duration-300 group-focus-within:scale-105">
                     <Mail className="h-4 w-4 text-zinc-500" />
@@ -78,7 +78,7 @@ export function ProfileBasicInfoForm({ profile, onChange }: ProfileBasicInfoForm
                   Email
                 </div>
               </div>
-              <div className="relative group flex-1">
+              <div className="relative group flex-1 min-w-0">
                 <div className="absolute right-3 top-1/2 -translate-y-1/2">
                   <div className="p-1.5 rounded-md bg-zinc-100 dark:bg-zinc-800 transition-transform duration-300 group-focus-within:scale-105">
                     <Phone className="h-4 w-4 text-zinc-500" />
@@ -128,7 +128,7 @@ export function ProfileBasicInfoForm({ profile, onChange }: ProfileBasicInfoForm
           <div className="space-y-6">
             {/* Website and LinkedIn */}
             <div className="flex flex-col md:flex-row md:items-start gap-4">
-              <div className="relative group flex-1">
+              <div className="relative group flex-1 min-w-0">
                 <div className="absolute right-3 top-1/2 -translate-y-1/2">
                   <div className="p-1.5 rounded-md bg-zinc-100 dark:bg-zinc-800 transition-transform duration-300 group-focus-within:scale-105">
                     <Globe className="h-4 w-4 text-zinc-500" />
@@ -147,7 +147,7 @@ export function ProfileBasicInfoForm({ profile, onChange }: ProfileBasicInfoForm
                   Website
                 </div>
               </div>
-              <div className="relative group flex-1">
+              <div className="relative group flex-1 min-w-0">
                 <div className="absolute right-3 top-1/2 -translate-y-1/2">
                   <div className="p-1.5 rounded-md bg-zinc-100 dark:bg-zinc-800 transition-transform duration-300 group-focus-within:scale-105">
                     <Linkedin className="h-4 w-4 text-zinc-500" />

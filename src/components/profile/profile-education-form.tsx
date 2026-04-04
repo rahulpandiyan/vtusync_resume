@@ -70,7 +70,7 @@ export function ProfileEducationForm({ education, onChange }: ProfileEducationFo
               <div className="px-4 pb-4 pt-2 space-y-4">
                 {/* School Name and Delete Button Row */}
                 <div className="flex items-center justify-between gap-3">
-                  <div className="relative group flex-1">
+                  <div className="relative group flex-1 min-w-0">
                     <Input
                       value={edu.school}
                       onChange={(e) => updateEducation(index, 'school', e.target.value)}
@@ -110,7 +110,7 @@ export function ProfileEducationForm({ education, onChange }: ProfileEducationFo
 
                 {/* Degree and Field Row */}
                 <div className="flex flex-col md:flex-row md:items-start gap-3">
-                  <div className="relative group flex-1">
+                  <div className="relative group flex-1 min-w-0">
                     <Input
                       value={edu.degree}
                       onChange={(e) => updateEducation(index, 'degree', e.target.value)}
@@ -123,7 +123,7 @@ export function ProfileEducationForm({ education, onChange }: ProfileEducationFo
                       Degree
                     </div>
                   </div>
-                  <div className="relative group flex-1">
+                  <div className="relative group flex-1 min-w-0">
                     <Input
                       value={edu.field}
                       onChange={(e) => updateEducation(index, 'field', e.target.value)}
@@ -140,7 +140,7 @@ export function ProfileEducationForm({ education, onChange }: ProfileEducationFo
 
                 {/* Date and GPA Row */}
                 <div className="flex flex-col md:flex-row md:items-start gap-3">
-                  <div className="relative group flex-1">
+                  <div className="relative group flex-1 min-w-0">
                     <Input
                       type="text"
                       value={edu.date}

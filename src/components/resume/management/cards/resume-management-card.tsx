@@ -135,8 +135,8 @@ export function ResumeManagementCard({
             type={type}
             accentColor={accentColor}
             className={cn(
-              "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6",
-              "auto-rows-[minmax(120px,1fr)]",
+              "grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6",
+              "auto-rows-[minmax(140px,1fr)]",
               "gap-3 pb-2"
             )}
             itemClassName={cn(

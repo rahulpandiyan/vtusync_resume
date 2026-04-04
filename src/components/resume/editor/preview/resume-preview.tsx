@@ -119,9 +119,8 @@ export const ResumePreview = memo(function ResumePreview({ resume, variant = 'ba
   // Convert percentage to pixels based on parent container
   const getPixelWidth = useCallback(() => {
     if (typeof window === 'undefined') return 0;
-    // console.log('debouncedWidth (INSIDE)'+containerWidth);
-    // console.log('debouncedWidth * 10 (INSIDE)'+debouncedWidth * 10);
-    return ((debouncedWidth));
+    const width = debouncedWidth || 0;
+    return Math.max(width, 280);
   }, [debouncedWidth]);
 
   // Generate resume hash for caching
@@ -268,67 +267,21 @@ export const ResumePreview = memo(function ResumePreview({ resume, variant = 'ba
 
   // Display the generated PDF using react-pdf
   return (
-    <div className=" h-full relative bg-black/15">
+    <div className="h-full relative bg-black/10 w-full">
         <Document
           key={url ?? 'resume-preview'}
           file={url}
           onLoadSuccess={onDocumentLoadSuccess}
           onLoadError={onDocumentLoadError}
-          className="relative h-full   "
+          className="relative h-full flex justify-center"
           externalLinkTarget="_blank"
           loading={
-            <div className="w-full aspect-[8.5/11] bg-white  p-8">
-              <div className="space-y-24 animate-pulse">
-                {/* Header skeleton */}
-                <div className="space-y-4">
-                  <div className="h-8 bg-gray-200 rounded-md w-1/3 mx-auto" />
-                  <div className="flex justify-center gap-4">
-                    <div className="h-3 bg-gray-200 rounded w-24" />
-                    <div className="h-3 bg-gray-200 rounded w-24" />
-                    <div className="h-3 bg-gray-200 rounded w-24" />
-                  </div>
-                </div>
-
-                {/* Summary skeleton */}
-                <div className="space-y-2">
-                  <div className="h-4 bg-gray-200 rounded w-24" />
-                  <div className="space-y-2">
-                    <div className="h-3 bg-gray-200 rounded w-full" />
-                    <div className="h-3 bg-gray-200 rounded w-5/6" />
-                  </div>
-                </div>
-
-                {/* Experience skeleton */}
-                <div className="space-y-2">
-                  <div className="h-4 bg-gray-200 rounded w-32" />
-                  <div className="space-y-4">
-                    {[...Array(3)].map((_, i) => (
-                      <div key={i} className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <div className="h-3 bg-gray-200 rounded w-48" />
-                          <div className="h-3 bg-gray-200 rounded w-24" />
-                        </div>
-                        <div className="h-3 bg-gray-200 rounded w-full" />
-                        <div className="h-3 bg-gray-200 rounded w-5/6" />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Education skeleton */}
-                <div className="space-y-2">
-                  <div className="h-4 bg-gray-200 rounded w-28" />
-                  <div className="space-y-4">
-                    {[...Array(2)].map((_, i) => (
-                      <div key={i} className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <div className="h-3 bg-gray-200 rounded w-40" />
-                          <div className="h-3 bg-gray-200 rounded w-24" />
-                        </div>
-                        <div className="h-3 bg-gray-200 rounded w-3/4" />
-                      </div>
-                    ))}
-                  </div>
+            <div className="w-full max-w-md mx-auto aspect-[8.5/11] bg-white p-4 sm:p-8 shadow-lg">
+              <div className="space-y-4 animate-pulse">
+                <div className="h-6 bg-gray-200 rounded w-1/2 mx-auto" />
+                <div className="flex justify-center gap-2">
+                  <div className="h-3 bg-gray-200 rounded w-16" />
+                  <div className="h-3 bg-gray-200 rounded w-16" />
                 </div>
               </div>
             </div>
@@ -338,7 +291,7 @@ export const ResumePreview = memo(function ResumePreview({ resume, variant = 'ba
             <Page
               key={`page_${index + 1}`}
               pageNumber={index + 1}
-              className="mb-4 shadow-xl "
+              className="mb-4 shadow-xl"
               width={getPixelWidth()}
               renderAnnotationLayer={true}
               renderTextLayer={shouldRenderTextLayer}

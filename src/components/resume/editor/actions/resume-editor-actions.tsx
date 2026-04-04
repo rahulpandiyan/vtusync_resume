@@ -77,7 +77,7 @@ export function ResumeEditorActions({
   const buttonBaseStyle = cn(
     "transition-all duration-300",
     "relative overflow-hidden",
-    "h-8 px-3 text-[11px] font-medium",
+    "h-8 sm:h-9 px-2 sm:px-3 text-[10px] sm:text-[11px] font-medium",
     "rounded-md border-none",
     "text-white shadow-sm",
     "hover:shadow-md hover:-translate-y-[1px]",
@@ -99,13 +99,13 @@ export function ResumeEditorActions({
   );
 
   return (
-    <div className="px-1 py-2">
-      <div className="grid grid-cols-3 gap-2">
+    <div className="py-1.5 sm:py-2">
+      <div className="flex items-center justify-center gap-2 sm:gap-3">
         {/* Text Import Button */}
         <TextImport
           resume={resume}
           onResumeChange={onResumeChange}
-          className={importButtonClasses}
+          className={cn(importButtonClasses, "flex-1 sm:flex-none justify-center")}
         />
 
         {/* Download Button */}
@@ -146,11 +146,7 @@ export function ResumeEditorActions({
                           backgroundColor: 'red',
                           useCORS: true,
                           letterRendering: true,
-                          // width: 700,
-                          // height: 1000,
-                          // windowWidth: 700,
                           logging: true,
-                          // windowHeight: 2000
                         },
                         jsPDF: { 
                           unit: 'in', 
@@ -175,10 +171,10 @@ export function ResumeEditorActions({
                     });
                   }
                 }}
-                className={actionButtonClasses}
+                className={cn(actionButtonClasses, "flex-1 sm:flex-none justify-center")}
               >
-                <Download className="mr-1.5 h-3.5 w-3.5" />
-                Download
+                <Download className="h-3.5 w-3.5" />
+                <span className="ml-1 hidden xs:inline">Download</span>
               </Button>
             </TooltipTrigger>
             <TooltipContent 
@@ -231,17 +227,17 @@ export function ResumeEditorActions({
         <Button 
           onClick={handleSave} 
           disabled={isSaving}
-          className={actionButtonClasses}
+          className={cn(actionButtonClasses, "flex-1 sm:flex-none justify-center")}
         >
           {isSaving ? (
             <>
-              <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-              Saving...
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              <span className="ml-1 hidden sm:inline">Saving...</span>
             </>
           ) : (
             <>
-              <Save className="mr-1.5 h-3.5 w-3.5" />
-              Save
+              <Save className="h-3.5 w-3.5" />
+              <span className="ml-1 hidden xs:inline">Save</span>
             </>
           )}
         </Button>

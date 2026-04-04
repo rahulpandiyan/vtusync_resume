@@ -172,7 +172,7 @@ export function OptimizedSubscriptionPage({ initialProfile }: OptimizedSubscript
   );
 
   return (
-    <div className="min-h-screen bg-zinc-50/50 dark:bg-zinc-950/50 relative">
+    <div className="min-h-screen bg-zinc-50/50 dark:bg-zinc-950/50 relative pb-16 lg:pb-0">
       <div className="relative z-10 container mx-auto px-4 py-20 max-w-5xl pb-32">
         {/* Simplified Header */}
         <div className="text-center mb-16">
@@ -223,7 +223,7 @@ export function OptimizedSubscriptionPage({ initialProfile }: OptimizedSubscript
 
         {/* Social Proof (Subtle) */}
         <div className="mt-20 flex flex-col items-center gap-4 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
-           <div className="flex items-center gap-4 text-sm text-zinc-500 font-medium">
+           <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-sm text-zinc-500 font-medium text-center">
              <Users className="h-4 w-4" />
              <span>Trusted by 12,000+ professionals</span>
              <span className="w-px h-4 bg-zinc-300 dark:bg-zinc-800" />
