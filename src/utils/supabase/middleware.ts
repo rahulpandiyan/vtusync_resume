@@ -14,6 +14,10 @@ const SUBSCRIPTION_EXEMPT_ROUTES = [
   '/subscription/checkout-return',
   '/auth',
   '/api',
+  '/privacy',
+  '/terms',
+  '/how-it-works',
+  '/blog',
 ]
 
 function isSubscriptionExemptRoute(pathname: string): boolean {
@@ -84,7 +88,10 @@ export async function updateSession(request: NextRequest) {
     const isPublicRoute =
       pathname === '/' ||
       pathname.startsWith('/auth') ||
-      pathname.startsWith('/blog')
+      pathname.startsWith('/blog') ||
+      pathname.startsWith('/privacy') ||
+      pathname.startsWith('/terms') ||
+      pathname.startsWith('/how-it-works')
 
     if (isPublicRoute) {
       console.log('✅ Allowing unauthenticated access to public route:', pathname)

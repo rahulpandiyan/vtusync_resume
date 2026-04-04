@@ -115,7 +115,7 @@ export const BasicInfoForm = memo(function BasicInfoFormComponent({
 
           <div className="space-y-2 sm:space-y-3">
             {/* Name Row */}
-            <div className="grid grid-cols-2 gap-2 sm:gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
               <BasicInfoField
                 field="first_name"
                 value={resume.first_name}

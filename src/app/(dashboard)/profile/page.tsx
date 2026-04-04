@@ -25,7 +25,7 @@ export default async function EditProfilePage() {
   }
 
   return (
-    <main className="min-h-screen relative bg-white pb-12">
+    <main className="min-h-screen relative bg-white pb-4 sm:pb-12">
       {/* Main Content Layer */}
       <div className="relative z-10">
         <Suspense fallback={<div className="flex items-center justify-center min-h-[400px]"><div className="h-12 w-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>}>

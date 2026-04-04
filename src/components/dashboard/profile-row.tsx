@@ -12,8 +12,8 @@ interface ProfileRowProps {
 
 export function ProfileRow({ profile }: ProfileRowProps) {
   return (
-    <div className="relative border-b border-zinc-100 dark:border-zinc-900 pb-10 mb-10">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
+    <div className="relative border-b border-zinc-100 dark:border-zinc-900 pb-6 sm:pb-10 mb-6 sm:mb-10">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 sm:gap-8">
         {/* Left section with avatar, name and stats */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-8 flex-1 min-w-0">
           {/* Avatar and Name group */}
@@ -35,7 +35,7 @@ export function ProfileRow({ profile }: ProfileRowProps) {
           <div className="h-10 w-px bg-zinc-100 dark:bg-zinc-800 hidden lg:block mx-2" />
 
           {/* Stats Row */}
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="grid grid-cols-3 gap-2 sm:gap-3 w-full sm:w-auto">
             {[
               { 
                 icon: Briefcase, 
@@ -55,12 +55,12 @@ export function ProfileRow({ profile }: ProfileRowProps) {
             ].map((stat) => (
               <div 
                 key={stat.label} 
-                className="flex items-center gap-3 px-4 py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 transition-all hover:border-zinc-300 dark:hover:border-zinc-700"
+                className="flex items-center gap-1.5 sm:gap-3 px-2 sm:px-4 py-2 sm:py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 transition-all hover:border-zinc-300 dark:hover:border-zinc-700 justify-center sm:justify-start"
               >
-                <stat.icon className="h-4 w-4 text-zinc-400" />
-                <div className="flex items-baseline gap-2">
+                <stat.icon className="hidden sm:block h-4 w-4 text-zinc-400" />
+                <div className="flex flex-col sm:flex-row items-center sm:items-baseline gap-0.5 sm:gap-2">
                   <span className="text-sm font-bold text-zinc-900 dark:text-zinc-50">{stat.count}</span>
-                  <span className="text-[10px] font-semibold text-zinc-400">{stat.label}</span>
+                  <span className="text-[9px] sm:text-[10px] font-semibold text-zinc-400">{stat.label}</span>
                 </div>
               </div>
             ))}

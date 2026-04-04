@@ -1,4 +1,5 @@
 'use client'
+import Link from "next/link";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Menu, X } from "lucide-react";
@@ -36,9 +37,27 @@ function NavLink({ href, children, className, onClick }: NavLinkProps) {
     onClick?.();
   };
 
+  const isHash = href.startsWith('#');
+  const targetHref = isHash && pathname !== '/' ? `/${href}` : href;
+
+  if (isHash) {
+    return (
+      <a
+        href={targetHref}
+        onClick={handleClick}
+        className={cn(
+          "text-sm font-medium text-muted-foreground/90 hover:text-foreground transition-colors duration-200",
+          className
+        )}
+      >
+        {children}
+      </a>
+    );
+  }
+
   return (
-    <a
-      href={href.startsWith('#') && pathname !== '/' ? `/${href}` : href}
+    <Link
+      href={targetHref}
       onClick={handleClick}
       className={cn(
         "text-sm font-medium text-muted-foreground/90 hover:text-foreground transition-colors duration-200",
@@ -46,7 +65,7 @@ function NavLink({ href, children, className, onClick }: NavLinkProps) {
       )}
     >
       {children}
-    </a>
+    </Link>
   );
 }
 
@@ -54,7 +73,7 @@ const navItems = [
   { href: "#features", label: "Features" },
   { href: "/how-it-works", label: "How it Works" },
   { href: "#pricing", label: "Pricing" },
-  { href: "#creator-story", label: "About" },
+  { href: "#about", label: "About" },
   { href: "/blog", label: "Blog" },
 ];
 

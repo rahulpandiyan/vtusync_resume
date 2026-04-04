@@ -125,7 +125,7 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={nunito.className}>
         <DisableRightClick />
         <PostHogProvider>
@@ -145,16 +145,8 @@ export default async function RootLayout({
           </div>
           <Toaster
             richColors
-            position="top-right"
+            position="top-center"
             closeButton
-            toastOptions={{
-              style: {
-                fontSize: '1rem',
-                padding: '16px',
-                minWidth: '400px',
-                maxWidth: '500px'
-              }
-            }}
           />
         </PostHogProvider>
       </body>

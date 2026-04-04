@@ -6,9 +6,10 @@ import { cn } from "@/lib/utils";
 interface LogoProps {
   className?: string;
   asLink?: boolean;
+  href?: string;
 }
 
-export function Logo({ className, asLink = true }: LogoProps) {
+export function Logo({ className, asLink = true, href = "/" }: LogoProps) {
   const logoContent = (
     <div className={cn("flex items-center gap-2 group", className)}>
       <div className="flex items-center justify-center w-8 h-8 rounded-md bg-zinc-900 dark:bg-zinc-100 text-zinc-50 dark:text-zinc-950 font-bold text-lg select-none transition-all group-hover:scale-105 active:scale-95">
@@ -23,7 +24,7 @@ export function Logo({ className, asLink = true }: LogoProps) {
 
   if (asLink) {
     return (
-      <Link href="/" aria-label="ResuSync Home">
+      <Link href={href} aria-label="ResuSync Home">
         {logoContent}
       </Link>
     );

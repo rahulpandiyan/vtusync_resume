@@ -380,7 +380,7 @@ export function TailoredJobCard({
 
   return (
     <Card className={cn(
-      "relative group border-none px-8",
+      "relative group border-none px-4 sm:px-8",
     )}>
 
       <div className="relative">
@@ -397,7 +397,7 @@ export function TailoredJobCard({
               className="p-4 space-y-6"
             >
               {/* Job Details Grid */}
-              <div className="grid grid-cols-2 gap-x-2 gap-y-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-2 gap-y-3">
                 {[
                   { icon: MapPin, text: effectiveJob.location || 'Location not specified' },
                   { icon: Briefcase, text: formatWorkLocation(effectiveJob.work_location) },

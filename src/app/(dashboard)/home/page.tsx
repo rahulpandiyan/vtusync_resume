@@ -96,17 +96,17 @@ export default async function Home({
   }
 
   return (
-    <main className="min-h-screen relative sm:pb-12 pb-40 bg-white dark:bg-zinc-950">
+    <main className="min-h-screen relative pb-24 sm:pb-12 bg-white dark:bg-zinc-950">
       <WelcomeDialog isOpen={!!isNewSignup} />
       
-      <div className="relative z-10 w-full max-w-4xl mx-auto pt-8 px-4 sm:px-6">
-        <div className="space-y-8">
+      <div className="relative z-10 w-full max-w-4xl mx-auto pt-4 sm:pt-8 px-4 sm:px-6">
+        <div className="space-y-4 sm:space-y-8">
           {/* Profile Overview */}
-          <section className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6 sm:p-8">
+          <section className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-4 sm:p-8">
             <ProfileRow profile={profile} />
           </section>
           
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* API Key Alert */}
             {!isProPlan && <ApiKeyAlert variant="upgrade" />}
             
@@ -123,8 +123,8 @@ export default async function Home({
             </div>
 
             {/* Resume Sections */}
-            <div className="space-y-8 pt-2">
-              <section className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6 sm:p-8">
+            <div className="space-y-4 sm:space-y-8 pt-2">
+              <section className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-4 sm:p-8">
                 <ResumesSection
                   type="base"
                   resumes={baseResumes}
@@ -137,7 +137,7 @@ export default async function Home({
                 />
               </section>
 
-              <section className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6 sm:p-8">
+              <section className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-4 sm:p-8">
                 <ResumesSection
                   type="tailored"
                   resumes={tailoredResumes}

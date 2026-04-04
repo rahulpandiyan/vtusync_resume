@@ -1,0 +1,250 @@
+
+> resume-lm@0.1.0 dev
+> next dev -p 3005
+
+   ▲ Next.js 15.1.11
+   - Local:        http://localhost:3005
+   - Network:      http://192.168.1.7:3005
+   - Environments: .env.local
+   - Experiments (use with caution):
+     · turbo
+
+ ✓ Starting...
+ ✓ Ready in 2.9s
+ ○ Compiling /src/middleware ...
+ ✓ Compiled /src/middleware in 730ms (216 modules)
+🧩 Root middleware invoked for: /
+🔍 updateSession running on: /
+👤 User authenticated: false user_id: undefined
+✅ Allowing unauthenticated access to public route: /
+ ○ Compiling / ...
+ ✓ Compiled / in 12.6s (2253 modules)
+Image with src "/alex.webp" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+ ✓ Compiled in 1605ms (801 modules)
+ GET / 200 in 14232ms
+🧩 Root middleware invoked for: /
+🔍 updateSession running on: /
+AuthApiError: Invalid Refresh Token: Refresh Token Not Found {
+  __isAuthError: true,
+  status: 400,
+  code: 'refresh_token_not_found'
+}
+AuthApiError: Invalid Refresh Token: Refresh Token Not Found {
+  __isAuthError: true,
+  status: 400,
+  code: 'refresh_token_not_found'
+}
+👤 User authenticated: false user_id: undefined
+✅ Allowing unauthenticated access to public route: /
+ GET / 200 in 136ms
+🧩 Root middleware invoked for: /
+🔍 updateSession running on: /
+👤 User authenticated: false user_id: undefined
+✅ Allowing unauthenticated access to public route: /
+🧩 Root middleware invoked for: /
+🔍 updateSession running on: /
+👤 User authenticated: true user_id: bd86ae2a-bdd2-4f75-9d4b-71f92c32776d
+🛡️ Route check: { pathname: '/', isExempt: false }
+🧭 Subscription check for path: /
+📦 Subscription record: {
+  stripe_subscription_id: null,
+  subscription_status: 'active',
+  current_period_end: null,
+  trial_end: null
+}
+✅ accessCheck: {
+  status: 'active',
+  isTrialing: false,
+  isWithinAccessWindow: false,
+  hasProtectedRouteAccess: false
+}
+🚫 User subscription access expired or invalid, redirecting to home
+🧩 Root middleware invoked for: /home
+🔍 updateSession running on: /home
+👤 User authenticated: true user_id: bd86ae2a-bdd2-4f75-9d4b-71f92c32776d
+🛡️ Route check: { pathname: '/home', isExempt: true }
+✅ User authenticated, allowing access
+ ○ Compiling /home ...
+ ✓ Compiled /home in 14s (2869 modules)
+🧮 checkSubscriptionPlan {
+  userId: 'bd86ae2a-bdd2-4f75-9d4b-71f92c32776d',
+  subscription_plan: 'free',
+  subscription_status: 'active',
+  stripe_subscription_id: null,
+  current_period_end: null,
+  trial_end: null,
+  isTrialing: false,
+  hasProAccess: false,
+  effectivePlan: 'free'
+}
+ GET /home 200 in 15483ms
+ POST / 303 in 17044ms
+🧩 Root middleware invoked for: /resumes/d3bf7016-779e-41a7-a913-c47bc8e79c00
+🔍 updateSession running on: /resumes/d3bf7016-779e-41a7-a913-c47bc8e79c00
+👤 User authenticated: true user_id: bd86ae2a-bdd2-4f75-9d4b-71f92c32776d
+🛡️ Route check: {
+  pathname: '/resumes/d3bf7016-779e-41a7-a913-c47bc8e79c00',
+  isExempt: true
+}
+✅ User authenticated, allowing access
+ ○ Compiling /resumes/[id] ...
+ ✓ Compiled /resumes/[id] in 19.7s (4943 modules)
+ GET /resumes/d3bf7016-779e-41a7-a913-c47bc8e79c00 200 in 26862ms
+🧩 Root middleware invoked for: /home
+🔍 updateSession running on: /home
+👤 User authenticated: true user_id: bd86ae2a-bdd2-4f75-9d4b-71f92c32776d
+🛡️ Route check: { pathname: '/home', isExempt: true }
+✅ User authenticated, allowing access
+🧮 checkSubscriptionPlan {
+  userId: 'bd86ae2a-bdd2-4f75-9d4b-71f92c32776d',
+  subscription_plan: 'free',
+  subscription_status: 'active',
+  stripe_subscription_id: null,
+  current_period_end: null,
+  trial_end: null,
+  isTrialing: false,
+  hasProAccess: false,
+  effectivePlan: 'free'
+}
+ GET /home 200 in 1137ms
+🧩 Root middleware invoked for: /home
+🔍 updateSession running on: /home
+👤 User authenticated: true user_id: bd86ae2a-bdd2-4f75-9d4b-71f92c32776d
+🛡️ Route check: { pathname: '/home', isExempt: true }
+✅ User authenticated, allowing access
+🧩 Root middleware invoked for: /
+🔍 updateSession running on: /
+👤 User authenticated: false user_id: undefined
+✅ Allowing unauthenticated access to public route: /
+ GET / 200 in 96ms
+ POST /home 303 in 657ms
+🧩 Root middleware invoked for: /.well-known/appspecific/com.chrome.devtools.json
+🔍 updateSession running on: /.well-known/appspecific/com.chrome.devtools.json
+👤 User authenticated: false user_id: undefined
+🚫 Redirecting unauthenticated user to landing page
+🧩 Root middleware invoked for: /
+🔍 updateSession running on: /
+👤 User authenticated: false user_id: undefined
+✅ Allowing unauthenticated access to public route: /
+Image with src "/alex.webp" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+ GET / 200 in 500ms
+🧩 Root middleware invoked for: /
+🔍 updateSession running on: /
+👤 User authenticated: false user_id: undefined
+✅ Allowing unauthenticated access to public route: /
+ GET / 200 in 61ms
+🧩 Root middleware invoked for: /
+🔍 updateSession running on: /
+👤 User authenticated: false user_id: undefined
+✅ Allowing unauthenticated access to public route: /
+🧩 Root middleware invoked for: /
+🔍 updateSession running on: /
+👤 User authenticated: true user_id: bd86ae2a-bdd2-4f75-9d4b-71f92c32776d
+🛡️ Route check: { pathname: '/', isExempt: false }
+🧭 Subscription check for path: /
+📦 Subscription record: {
+  stripe_subscription_id: null,
+  subscription_status: 'active',
+  current_period_end: null,
+  trial_end: null
+}
+✅ accessCheck: {
+  status: 'active',
+  isTrialing: false,
+  isWithinAccessWindow: false,
+  hasProtectedRouteAccess: false
+}
+🚫 User subscription access expired or invalid, redirecting to home
+🧩 Root middleware invoked for: /home
+🔍 updateSession running on: /home
+👤 User authenticated: true user_id: bd86ae2a-bdd2-4f75-9d4b-71f92c32776d
+🛡️ Route check: { pathname: '/home', isExempt: true }
+✅ User authenticated, allowing access
+🧮 checkSubscriptionPlan {
+  userId: 'bd86ae2a-bdd2-4f75-9d4b-71f92c32776d',
+  subscription_plan: 'free',
+  subscription_status: 'active',
+  stripe_subscription_id: null,
+  current_period_end: null,
+  trial_end: null,
+  isTrialing: false,
+  hasProAccess: false,
+  effectivePlan: 'free'
+}
+ GET /home 200 in 708ms
+ POST / 303 in 2310ms
+🧩 Root middleware invoked for: /
+🔍 updateSession running on: /
+👤 User authenticated: true user_id: bd86ae2a-bdd2-4f75-9d4b-71f92c32776d
+🛡️ Route check: { pathname: '/', isExempt: false }
+🧭 Subscription check for path: /
+📦 Subscription record: {
+  stripe_subscription_id: null,
+  subscription_status: 'active',
+  current_period_end: null,
+  trial_end: null
+}
+✅ accessCheck: {
+  status: 'active',
+  isTrialing: false,
+  isWithinAccessWindow: false,
+  hasProtectedRouteAccess: false
+}
+🚫 User subscription access expired or invalid, redirecting to home
+🧩 Root middleware invoked for: /home
+🔍 updateSession running on: /home
+👤 User authenticated: true user_id: bd86ae2a-bdd2-4f75-9d4b-71f92c32776d
+🛡️ Route check: { pathname: '/home', isExempt: true }
+✅ User authenticated, allowing access
+🧮 checkSubscriptionPlan {
+  userId: 'bd86ae2a-bdd2-4f75-9d4b-71f92c32776d',
+  subscription_plan: 'free',
+  subscription_status: 'active',
+  stripe_subscription_id: null,
+  current_period_end: null,
+  trial_end: null,
+  isTrialing: false,
+  hasProAccess: false,
+  effectivePlan: 'free'
+}
+ GET /home 200 in 1023ms
+🧩 Root middleware invoked for: /.well-known/appspecific/com.chrome.devtools.json
+🔍 updateSession running on: /.well-known/appspecific/com.chrome.devtools.json
+👤 User authenticated: true user_id: bd86ae2a-bdd2-4f75-9d4b-71f92c32776d
+🛡️ Route check: {
+  pathname: '/.well-known/appspecific/com.chrome.devtools.json',
+  isExempt: false
+}
+🧭 Subscription check for path: /.well-known/appspecific/com.chrome.devtools.json
+📦 Subscription record: {
+  stripe_subscription_id: null,
+  subscription_status: 'active',
+  current_period_end: null,
+  trial_end: null
+}
+✅ accessCheck: {
+  status: 'active',
+  isTrialing: false,
+  isWithinAccessWindow: false,
+  hasProtectedRouteAccess: false
+}
+🚫 User subscription access expired or invalid, redirecting to home
+🧩 Root middleware invoked for: /home
+🔍 updateSession running on: /home
+👤 User authenticated: true user_id: bd86ae2a-bdd2-4f75-9d4b-71f92c32776d
+🛡️ Route check: { pathname: '/home', isExempt: true }
+✅ User authenticated, allowing access
+🧮 checkSubscriptionPlan {
+  userId: 'bd86ae2a-bdd2-4f75-9d4b-71f92c32776d',
+  subscription_plan: 'free',
+  subscription_status: 'active',
+  stripe_subscription_id: null,
+  current_period_end: null,
+  trial_end: null,
+  isTrialing: false,
+  hasProAccess: false,
+  effectivePlan: 'free'
+}
+ GET /home 200 in 1099ms

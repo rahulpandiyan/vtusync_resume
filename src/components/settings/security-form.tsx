@@ -81,24 +81,25 @@ export function SecurityForm({ user }: SecurityFormProps) {
           <Label>Email Address</Label>
           <p className="text-sm text-muted-foreground">Current email: {user?.email}</p>
           <div className="space-y-4">
-            <div className="flex gap-4">
+          <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row gap-4">
               <Input
                 type="email"
                 placeholder="Enter new email address"
                 value={newEmail}
                 onChange={(e) => setNewEmail(e.target.value)}
-                className="flex-1"
+                className="w-full sm:flex-1"
               />
               <Input
                 type="password"
                 placeholder="Current password"
                 value={emailCurrentPassword}
                 onChange={(e) => setEmailCurrentPassword(e.target.value)}
-                className="flex-1"
+                className="w-full sm:flex-1"
               />
               <Button 
                 variant="default"
-                className="bg-zinc-900 text-zinc-50 hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
+                className="w-full sm:w-auto bg-zinc-900 text-zinc-50 hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
                 onClick={handleEmailUpdate}
                 disabled={isUpdatingEmail || !newEmail || !emailCurrentPassword}
               >
@@ -107,6 +108,7 @@ export function SecurityForm({ user }: SecurityFormProps) {
               </Button>
             </div>
           </div>
+          </div>
         </div>
       </div>
 
@@ -114,24 +116,24 @@ export function SecurityForm({ user }: SecurityFormProps) {
       <div className="space-y-4">
         <div className="space-y-2">
           <Label>Password</Label>
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-4">
             <Input
               type="password"
               placeholder="Enter current password"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              
+              className="w-full sm:flex-1"
             />
             <Input
               type="password"
               placeholder="Enter new password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              
+              className="w-full sm:flex-1"
             />
             <Button 
               variant="default"
-              className="bg-zinc-900 text-zinc-50 hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200 whitespace-nowrap"
+              className="w-full sm:w-auto bg-zinc-900 text-zinc-50 hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200 whitespace-nowrap"
               onClick={handlePasswordUpdate}
               disabled={isUpdatingPassword || !currentPassword || !newPassword}
             >

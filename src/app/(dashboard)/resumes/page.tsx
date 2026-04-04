@@ -53,22 +53,22 @@ export default async function ResumesPage({
     <div className="min-h-screen bg-white">
       <div className="container max-w-7xl mx-auto p-6 space-y-10">
         {/* Header with controls */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b-2 border-muted pb-8">
-          <div className="space-y-2">
-            <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 md:gap-6 border-b border-zinc-100 dark:border-zinc-800 pb-6 md:pb-8">
+          <div className="space-y-1 md:space-y-2">
+            <h1 className="text-2xl md:text-3xl font-black tracking-tight text-zinc-900 dark:text-zinc-50">
               My Resumes
             </h1>
-            <p className="text-sm font-medium text-zinc-500">
+            <p className="text-xs md:text-sm font-medium text-zinc-500">
               Manage all your resumes in one place
             </p>
           </div>
           
-          <div className="flex flex-wrap items-center gap-4">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
             <Suspense>
               <ResumeSortControls />
             </Suspense>
-            <Link href="/resumes/new">
-              <Button className="h-10 px-4 font-medium bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200">
+            <Link href="/resumes/new" className="w-full sm:w-auto">
+              <Button className="w-full h-10 px-4 font-medium bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200">
                 Create Resume
               </Button>
             </Link>
@@ -78,7 +78,7 @@ export default async function ResumesPage({
         {/* Resumes Grid */}
         <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6 sm:p-8">
           <Suspense fallback={<ResumesLoadingSkeleton />}>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
               {paginatedResumes.map((resume) => (
                 <Link href={`/resumes/${resume.id}`} key={resume.id} className="transition-transform duration-200 active:scale-95">
                   <MiniResumePreview
@@ -90,8 +90,8 @@ export default async function ResumesPage({
                 </Link>
               ))}
               {paginatedResumes.length === 0 && (
-                <div className="col-span-full py-20 text-center">
-                  <p className="text-xl font-bold text-muted-foreground">No resumes found.</p>
+                <div className="col-span-full py-16 md:py-20 text-center">
+                  <p className="text-lg md:text-xl font-bold text-muted-foreground italic">No resumes found.</p>
                 </div>
               )}
             </div>

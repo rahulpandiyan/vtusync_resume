@@ -117,6 +117,14 @@ body {
   .animate-float-delayed {
     animation: float-delayed 7s ease-in-out infinite;
   }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
 
 .custom-scrollbar {

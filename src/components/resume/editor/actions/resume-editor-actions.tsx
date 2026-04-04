@@ -99,7 +99,7 @@ export function ResumeEditorActions({
   );
 
   return (
-    <div className="px-1 py-2 @container">
+    <div className="px-1 py-2">
       <div className="grid grid-cols-3 gap-2">
         {/* Text Import Button */}
         <TextImport

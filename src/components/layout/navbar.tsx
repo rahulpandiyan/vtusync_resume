@@ -1,53 +1,18 @@
 'use client';
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
-
+import { Logo } from "@/components/ui/logo";
 import { LogoutButton } from "@/components/auth/logout-button";
 
 export function Navbar() {
-  const pathname = usePathname();
-
-  const isActive = (path: string) => {
-    return pathname === path;
-  };
-
   return (
-    <nav className="h-16 border-b bg-white/50 backdrop-blur-lg sticky top-0 w-full z-50">
-      <div className="max-w-[2000px] mx-auto h-full px-6 flex items-center justify-between">
+    <nav className="h-14 border-b border-zinc-100 dark:border-zinc-900 sticky top-0 w-full bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md z-[100] transition-all lg:hidden">
+      <div className="max-w-7xl mx-auto h-full px-4 sm:px-6 flex items-center justify-between">
         <div className="flex items-center gap-8">
-          {/* Logo/Brand */}
-          <Link href="/home" className="text-xl font-semibold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">
-            Resume.AI
-          </Link>
-
-          {/* Navigation Links */}
-          <div className="flex items-center gap-6">
-            <Link 
-              href="/home" 
-              className={cn(
-                "text-sm transition-colors hover:text-teal-600",
-                isActive('/home') ? "text-teal-600" : "text-muted-foreground"
-              )}
-            >
-              Dashboard
-            </Link>
-            <Link 
-              href="/jobs" 
-              className={cn(
-                "text-sm transition-colors hover:text-teal-600",
-                isActive('/jobs') ? "text-teal-600" : "text-muted-foreground"
-              )}
-            >
-              Jobs
-            </Link>
-          </div>
+          <Logo asLink href="/home" className="scale-90 origin-left" />
         </div>
-
-        {/* Right Side Actions */}
-        <div className="flex items-center gap-4">
-          <LogoutButton />
+        
+        <div className="flex items-center gap-2">
+          <LogoutButton className="h-8 text-xs px-3 font-semibold bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 border-none" />
         </div>
       </div>
     </nav>

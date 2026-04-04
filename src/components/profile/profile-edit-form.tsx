@@ -74,16 +74,12 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
     try {
       setIsSubmitting(true);
       await updateProfile(profile);
-      toast.success("Changes saved successfully", {
-        position: "bottom-right",
-      });
+      toast.success("Changes saved successfully");
       // Force a server revalidation
       router.refresh();
     } catch (error) {
       void error;
-      toast.error("Unable to save your changes. Please try again.", {
-        position: "bottom-right",
-      });
+      toast.error("Unable to save your changes. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -118,16 +114,12 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
       // Save to database
       await updateProfile(resetProfile);
       
-      toast.success("Profile reset successfully", {
-        position: "bottom-right",
-      });
+      toast.success("Profile reset successfully");
       
       // Force a server revalidation
       router.refresh();
     } catch (error: unknown) {
-      toast.error("Failed to reset profile. Please try again.", {
-        position: "bottom-right",
-      });
+      toast.error("Failed to reset profile. Please try again.");
       console.error(error);
     } finally {
       setIsResetting(false);
@@ -135,9 +127,7 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
   };
 
   const handleLinkedInImport = () => {
-    toast.info("LinkedIn import feature coming soon!", {
-      position: "bottom-right",
-    });
+    toast.info("LinkedIn import feature coming soon!");
   };
 
   const handleResumeUpload = async (content: string) => {
@@ -233,9 +223,7 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
           ...prev,
           ...cleanedProfile
         }));
-        toast.success("Content imported successfully - Don't forget to save your changes", {
-          position: "bottom-right",
-        });
+        toast.success("Content imported successfully - Don't forget to save your changes");
         setIsResumeDialogOpen(false);
         setIsTextImportDialogOpen(false);
         setResumeContent("");
@@ -249,9 +237,7 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
             'API key required. Please add your OpenAI API key in settings or upgrade to our Pro Plan.'
           );
         } else {
-          toast.error("Failed to process content: " + error.message, {
-            position: "bottom-right",
-          });
+          toast.error("Failed to process content: " + error.message);
         }
       }
     } finally {
@@ -285,14 +271,10 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
         setContent(prev => prev + (prev ? "\n\n" : "") + text);
       } catch (error) {
         console.error("PDF processing error:", error);
-        toast.error("Failed to extract text from the PDF. Please try again or paste the content manually.", {
-          position: "bottom-right",
-        });
+        toast.error("Failed to extract text from the PDF. Please try again or paste the content manually.");
       }
     } else {
-      toast.error("Please drop a PDF file.", {
-        position: "bottom-right",
-      });
+      toast.error("Please drop a PDF file.");
     }
   };
 
@@ -304,9 +286,7 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
         setContent(prev => prev + (prev ? "\n\n" : "") + text);
       } catch (error) {
         console.error("PDF processing error:", error);
-        toast.error("Failed to extract text from the PDF. Please try again or paste the content manually.", {
-          position: "bottom-right",
-        });
+        toast.error("Failed to extract text from the PDF. Please try again or paste the content manually.");
       }
     }
   };
@@ -318,8 +298,8 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
       {/* Action Bar */}
       <div className="z-50 mt-4 mb-6">
         <div className="max-w-[2000px] mx-auto">
-          <div className="mx-6">
-            <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 flex items-center justify-between gap-4">
+          <div className="mx-4 sm:mx-6">
+            <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 sm:p-4 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
               <div className="flex items-center gap-2">
                 <div className="w-2.5 h-2.5 rounded-full bg-zinc-900 dark:bg-zinc-50" />
                 <span className="text-sm font-semibold tracking-wide text-zinc-500">Profile Editor</span>
@@ -332,7 +312,7 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
                     <Button
                       size="sm"
                       variant="outline"
-                      className="font-semibold text-red-500 border-red-200 hover:bg-red-50 dark:border-red-900/50 dark:hover:bg-red-900/20"
+                      className="w-full sm:w-auto font-semibold text-red-500 border-red-200 hover:bg-red-50 dark:border-red-900/50 dark:hover:bg-red-900/20"
                       disabled={isResetting}
                     >
                       {isResetting ? (
@@ -373,7 +353,7 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
                   onClick={handleSubmit} 
                   disabled={isSubmitting}
                   size="sm"
-                  className="font-semibold bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200"
+                  className="w-full sm:w-auto font-semibold bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200"
                 >
                   {isSubmitting ? (
                     <>
@@ -394,10 +374,10 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
       </div>
 
       {/* Main content container with consistent styling */}
-      <div className="relative px-6 md:px-8 lg:px-10 pb-10">
+      <div className="relative px-4 sm:px-8 lg:px-10 pb-4 sm:pb-10">
         {/* Import Actions Row */}
         <div className="relative mb-6">
-          <div className="bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6 shadow-sm">
+          <div className="bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800 p-4 sm:p-8 shadow-sm">
             <div className="flex flex-col gap-4">
               
               {/* Import Options Text */}
@@ -409,21 +389,19 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
               </div>
 
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {/* LinkedIn Import Button */}
+              <div className="grid grid-cols-3 gap-2">
                 <Button
                   variant="outline"
                   onClick={handleLinkedInImport}
-                  className="group relative bg-[#0077b5]/5 hover:bg-[#0077b5]/10 border-[#0077b5]/20 hover:border-[#0077b5]/30 text-[#0077b5] transition-all duration-500 hover:scale-[1.02] h-auto py-4"
+                  className="group relative bg-[#0077b5]/5 hover:bg-[#0077b5]/10 border-[#0077b5]/20 hover:border-[#0077b5]/30 text-[#0077b5] transition-all duration-300 h-auto py-3"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#0077b5]/0 via-[#0077b5]/5 to-[#0077b5]/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <div className="relative flex items-center gap-4">
-                    <div className="flex items-center justify-center w-12 h-12 rounded-full bg-[#0077b5]/10 group-hover:scale-110 transition-transform duration-500">
-                      <Linkedin className="h-6 w-6" />
+                  <div className="relative flex flex-col items-center gap-1.5 w-full">
+                    <div className="flex items-center justify-center w-9 h-9 rounded-full bg-[#0077b5]/10">
+                      <Linkedin className="h-5 w-5" />
                     </div>
-                    <div className="text-left">
-                      <div className="font-semibold text-[#0077b5]">LinkedIn Import</div>
-                      <div className="text-sm text-[#0077b5]/70">Sync with your LinkedIn profile</div>
+                    <div className="text-center">
+                      <div className="font-semibold text-xs leading-tight">LinkedIn</div>
+                      <div className="text-[10px] text-[#0077b5]/70 leading-tight hidden sm:block">Sync profile</div>
                     </div>
                   </div>
                 </Button>
@@ -433,15 +411,15 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
                   <DialogTrigger asChild>
                     <Button
                       variant="outline"
-                      className="group relative border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-900 h-auto py-5 rounded-xl"
+                      className="group relative border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-900 h-auto py-3 w-full"
                     >
-                      <div className="relative flex items-center gap-4">
-                        <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-zinc-100 dark:bg-zinc-800 group-hover:scale-105 transition-transform duration-300">
-                          <Upload className="h-6 w-6" />
+                      <div className="relative flex flex-col items-center gap-1.5 w-full">
+                        <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-zinc-100 dark:bg-zinc-800">
+                          <Upload className="h-5 w-5" />
                         </div>
-                        <div className="text-left">
-                          <div className="font-semibold tracking-wide text-zinc-900 dark:text-zinc-100">Resume Upload</div>
-                          <div className="text-xs text-zinc-500">Import from existing resume</div>
+                        <div className="text-center">
+                          <div className="font-semibold text-xs leading-tight">Resume</div>
+                          <div className="text-[10px] text-zinc-500 leading-tight hidden sm:block">Upload PDF</div>
                         </div>
                       </div>
                     </Button>
@@ -560,16 +538,15 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
                   <DialogTrigger asChild>
                     <Button
                       variant="outline"
-                      className="group relative bg-violet-500/5 hover:bg-violet-500/10 border-violet-500/20 hover:border-violet-500/30 text-violet-600 transition-all duration-500 hover:scale-[1.02] h-auto py-4"
+                      className="group relative bg-violet-500/5 hover:bg-violet-500/10 border-violet-500/20 hover:border-violet-500/30 text-violet-600 transition-all duration-300 h-auto py-3 w-full"
                     >
-                      <div className="absolute inset-0 bg-gradient-to-r from-violet-500/0 via-violet-500/5 to-violet-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                      <div className="relative flex items-center gap-4">
-                        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-violet-500/10 group-hover:scale-110 transition-transform duration-500">
-                          <Upload className="h-6 w-6" />
+                      <div className="relative flex flex-col items-center gap-1.5 w-full">
+                        <div className="flex items-center justify-center w-9 h-9 rounded-full bg-violet-500/10">
+                          <Upload className="h-5 w-5" />
                         </div>
-                        <div className="text-left">
-                          <div className="font-semibold text-violet-600">Import From Text</div>
-                          <div className="text-sm text-violet-600/70">Import from any text content</div>
+                        <div className="text-center">
+                          <div className="font-semibold text-xs text-violet-600 leading-tight">Text Import</div>
+                          <div className="text-[10px] text-violet-600/70 leading-tight hidden sm:block">Any content</div>
                         </div>
                       </div>
                     </Button>
@@ -691,57 +668,57 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
         <div>
           <div>
             <Tabs defaultValue="basic" className="w-full">
-              <TabsList className="h-full relative bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-2 flex overflow-x-auto gap-2 shadow-sm">
+              <TabsList className="h-full relative bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-1 sm:p-2 flex overflow-x-auto scrollbar-hide gap-1 sm:gap-2 shadow-sm">
                 <TabsTrigger 
                   value="basic" 
-                  className=" group flex items-center gap-2.5 px-6 py-3 rounded-lg font-semibold tracking-wide transition-all duration-200
+                  className="group shrink-0 flex items-center gap-2 px-3 sm:px-6 py-2.5 sm:py-3 rounded-lg font-semibold tracking-wide transition-all duration-200
                     data-[state=active]:bg-zinc-100 data-[state=active]:text-zinc-900 dark:data-[state=active]:bg-zinc-800 dark:data-[state=active]:text-zinc-50
                     data-[state=inactive]:text-zinc-500 data-[state=inactive]:hover:bg-zinc-50 dark:data-[state=inactive]:hover:bg-zinc-900"
                 >
-                  <User className="h-5 w-5" />
-                  <span>Basic Info</span>
+                  <User className="h-4 w-4 sm:h-5 sm:w-5" />
+                  <span className="text-xs sm:text-base">Basic Info</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="experience" 
-                  className="group flex items-center gap-2.5 px-6 py-3 rounded-lg font-semibold tracking-wide transition-all duration-200
+                  className="group shrink-0 flex items-center gap-2 px-3 sm:px-6 py-2.5 sm:py-3 rounded-lg font-semibold tracking-wide transition-all duration-200
                     data-[state=active]:bg-zinc-100 data-[state=active]:text-zinc-900 dark:data-[state=active]:bg-zinc-800 dark:data-[state=active]:text-zinc-50
                     data-[state=inactive]:text-zinc-500 data-[state=inactive]:hover:bg-zinc-50 dark:data-[state=inactive]:hover:bg-zinc-900"
                 >
-                  <Briefcase className="h-5 w-5" />
-                  <span>Experience</span>
+                  <Briefcase className="h-4 w-4 sm:h-5 sm:w-5" />
+                  <span className="text-xs sm:text-base">Experience</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="projects" 
-                  className="group flex items-center gap-2.5 px-6 py-3 rounded-lg font-semibold tracking-wide transition-all duration-200
+                  className="group shrink-0 flex items-center gap-2 px-3 sm:px-6 py-2.5 sm:py-3 rounded-lg font-semibold tracking-wide transition-all duration-200
                     data-[state=active]:bg-zinc-100 data-[state=active]:text-zinc-900 dark:data-[state=active]:bg-zinc-800 dark:data-[state=active]:text-zinc-50
                     data-[state=inactive]:text-zinc-500 data-[state=inactive]:hover:bg-zinc-50 dark:data-[state=inactive]:hover:bg-zinc-900"
                 >
-                  <FolderGit2 className="h-5 w-5" />
-                  <span>Projects</span>
+                  <FolderGit2 className="h-4 w-4 sm:h-5 sm:w-5" />
+                  <span className="text-xs sm:text-base">Projects</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="education" 
-                  className="group flex items-center gap-2.5 px-6 py-3 rounded-lg font-semibold tracking-wide transition-all duration-200
+                  className="group shrink-0 flex items-center gap-2 px-3 sm:px-6 py-2.5 sm:py-3 rounded-lg font-semibold tracking-wide transition-all duration-200
                     data-[state=active]:bg-zinc-100 data-[state=active]:text-zinc-900 dark:data-[state=active]:bg-zinc-800 dark:data-[state=active]:text-zinc-50
                     data-[state=inactive]:text-zinc-500 data-[state=inactive]:hover:bg-zinc-50 dark:data-[state=inactive]:hover:bg-zinc-900"
                 >
-                  <GraduationCap className="h-5 w-5" />
-                  <span>Education</span>
+                  <GraduationCap className="h-4 w-4 sm:h-5 sm:w-5" />
+                  <span className="text-xs sm:text-base">Education</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="skills" 
-                  className="group flex items-center gap-2.5 px-6 py-3 rounded-lg font-semibold tracking-wide transition-all duration-200
+                  className="group shrink-0 flex items-center gap-2 px-3 sm:px-6 py-2.5 sm:py-3 rounded-lg font-semibold tracking-wide transition-all duration-200
                     data-[state=active]:bg-zinc-100 data-[state=active]:text-zinc-900 dark:data-[state=active]:bg-zinc-800 dark:data-[state=active]:text-zinc-50
                     data-[state=inactive]:text-zinc-500 data-[state=inactive]:hover:bg-zinc-50 dark:data-[state=inactive]:hover:bg-zinc-900"
                 >
-                  <Wrench className="h-5 w-5" />
-                  <span>Skills</span>
+                  <Wrench className="h-4 w-4 sm:h-5 sm:w-5" />
+                  <span className="text-xs sm:text-base">Skills</span>
                 </TabsTrigger>
               </TabsList>
               <div className="relative mt-8">
                 <div className="relative space-y-6">
                   <TabsContent value="basic" className="mt-0 outline-none">
-                    <Card className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6 shadow-sm">
+                    <Card className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-4 sm:p-6 shadow-sm">
                         <ProfileBasicInfoForm
                           profile={profile}
                           onChange={(field, value) => {
@@ -756,7 +733,7 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
                   <TabsContent value="experience" className="mt-6 animate-in fade-in-50 slide-in-from-bottom-2 duration-500">
                     <Card className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-sm relative overflow-hidden group">
                       
-                      <div className="relative p-8">
+                      <div className="relative p-4 sm:p-8">
                         <ProfileWorkExperienceForm
                           experiences={profile.work_experience}
                           onChange={(experiences) => updateField('work_experience', experiences)}
@@ -768,7 +745,7 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
                   <TabsContent value="projects" className="mt-6 animate-in fade-in-50 slide-in-from-bottom-2 duration-500">
                     <Card className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-sm relative overflow-hidden group">
                       
-                      <div className="relative p-8">
+                      <div className="relative p-4 sm:p-8">
                         <ProfileProjectsForm
                           projects={profile.projects}
                           onChange={(projects) => updateField('projects', projects)}
@@ -780,7 +757,7 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
                   <TabsContent value="education" className="mt-6 animate-in fade-in-50 slide-in-from-bottom-2 duration-500">
                     <Card className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-sm relative overflow-hidden group">
                       
-                      <div className="relative p-8">
+                      <div className="relative p-4 sm:p-8">
                         <ProfileEducationForm
                           education={profile.education}
                           onChange={(education) => updateField('education', education)}

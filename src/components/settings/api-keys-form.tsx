@@ -257,30 +257,36 @@ export function ApiKeysForm({ isProPlan }: { isProPlan: boolean }) {
                   </div>
                 ) : (
                   <>
-                    <div className="flex gap-2">
-                      <Input
-                        type={isVisible ? "text" : "password"}
-                        placeholder="Enter API key"
-                        value={newKeyValues[provider.id] || ''}
-                        onChange={(e) => setNewKeyValues(prev => ({
-                          ...prev,
-                          [provider.id]: e.target.value
-                        }))}
-                        className="flex-1 h-9 text-sm"
-                      />
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setVisibleKeys(prev => ({
-                          ...prev,
-                          [provider.id]: !prev[provider.id]
-                        }))}
-                        className="h-9 w-9"
-                      >
-                        {isVisible ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
-                      </Button>
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <div className="flex gap-2 flex-1">
+                        <Input
+                          type={isVisible ? "text" : "password"}
+                          placeholder="Enter API key"
+                          value={newKeyValues[provider.id] || ""}
+                          onChange={(e) =>
+                            setNewKeyValues((prev) => ({
+                              ...prev,
+                              [provider.id]: e.target.value,
+                            }))
+                          }
+                          className="flex-1 h-9 text-sm"
+                        />
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() =>
+                            setVisibleKeys((prev) => ({
+                              ...prev,
+                              [provider.id]: !prev[provider.id],
+                            }))
+                          }
+                          className="h-9 w-9 shrink-0"
+                        >
+                          {isVisible ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                        </Button>
+                      </div>
                       <Button 
-                        className="bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 h-9 px-4 text-sm transition-colors"
+                        className="w-full sm:w-auto bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 h-9 px-4 text-sm transition-colors"
                         onClick={() => handleUpdateKey(provider.id)}
                       >
                         Save
@@ -393,30 +399,36 @@ export function ApiKeysForm({ isProPlan }: { isProPlan: boolean }) {
                     </div>
                   ) : (
                     <>
-                      <div className="flex gap-2">
-                        <Input
-                          type={isVisible ? "text" : "password"}
-                          placeholder="Enter API key"
-                          value={newKeyValues[provider.id] || ''}
-                          onChange={(e) => setNewKeyValues(prev => ({
-                            ...prev,
-                            [provider.id]: e.target.value
-                          }))}
-                          className="flex-1 h-9 text-sm"
-                        />
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => setVisibleKeys(prev => ({
-                            ...prev,
-                            [provider.id]: !prev[provider.id]
-                          }))}
-                          className="h-9 w-9"
-                        >
-                          {isVisible ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
-                        </Button>
+                      <div className="flex flex-col sm:flex-row gap-2">
+                        <div className="flex gap-2 flex-1">
+                          <Input
+                            type={isVisible ? "text" : "password"}
+                            placeholder="Enter API key"
+                            value={newKeyValues[provider.id] || ""}
+                            onChange={(e) =>
+                              setNewKeyValues((prev) => ({
+                                ...prev,
+                                [provider.id]: e.target.value,
+                              }))
+                            }
+                            className="flex-1 h-9 text-sm"
+                          />
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() =>
+                              setVisibleKeys((prev) => ({
+                                ...prev,
+                                [provider.id]: !prev[provider.id],
+                              }))
+                            }
+                            className="h-9 w-9 shrink-0"
+                          >
+                            {isVisible ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                          </Button>
+                        </div>
                         <Button 
-                          className="bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 h-9 px-4 text-sm transition-colors"
+                          className="w-full sm:w-auto bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 h-9 px-4 text-sm transition-colors"
                           onClick={() => handleUpdateKey(provider.id)}
                         >
                           Save

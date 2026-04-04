@@ -51,11 +51,11 @@ export function ResumeEditorTabs() {
         </TabsList>
       </div>
 
-      <TabsList className="h-full w-full relative bg-white/80 backdrop-blur-xl border border-white/40 rounded-lg overflow-hidden grid grid-cols-3 @[500px]:grid-cols-6 gap-0.5 p-0.5 shadow-lg">
+      <TabsList className="h-full w-full relative bg-white/80 backdrop-blur-xl border border-white/40 rounded-lg flex overflow-x-auto scrollbar-hide items-center gap-1 p-1 shadow-lg justify-start sm:justify-center">
         {/* Basic Info Tab */}
         <TabsTrigger 
           value="basic" 
-          className="group flex items-center gap-1.5 px-2 py-1 rounded-md font-medium transition-all duration-200
+          className="group shrink-0 flex items-center gap-1.5 px-2 py-1 rounded-md font-medium transition-all duration-200
             data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-950 data-[state=active]:border data-[state=active]:border-zinc-200 dark:data-[state=active]:border-zinc-800 data-[state=active]:shadow-sm
             data-[state=inactive]:text-zinc-500 dark:data-[state=inactive]:text-zinc-400 data-[state=inactive]:hover:text-zinc-900 dark:data-[state=inactive]:hover:text-zinc-100"
         >
@@ -70,7 +70,7 @@ export function ResumeEditorTabs() {
         {/* Work Tab */}
         <TabsTrigger 
           value="work" 
-          className="group flex items-center gap-1.5 px-2 py-1 rounded-md font-medium transition-all duration-200
+          className="group shrink-0 flex items-center gap-1.5 px-2 py-1 rounded-md font-medium transition-all duration-200
             data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-950 data-[state=active]:border data-[state=active]:border-zinc-200 dark:data-[state=active]:border-zinc-800 data-[state=active]:shadow-sm
             data-[state=inactive]:text-zinc-500 dark:data-[state=inactive]:text-zinc-400 data-[state=inactive]:hover:text-zinc-900 dark:data-[state=inactive]:hover:text-zinc-100"
         >
@@ -85,7 +85,7 @@ export function ResumeEditorTabs() {
         {/* Projects Tab */}
         <TabsTrigger 
           value="projects" 
-          className="group flex items-center gap-1.5 px-2 py-1 rounded-md font-medium transition-all duration-200
+          className="group shrink-0 flex items-center gap-1.5 px-2 py-1 rounded-md font-medium transition-all duration-200
             data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-950 data-[state=active]:border data-[state=active]:border-zinc-200 dark:data-[state=active]:border-zinc-800 data-[state=active]:shadow-sm
             data-[state=inactive]:text-zinc-500 dark:data-[state=inactive]:text-zinc-400 data-[state=inactive]:hover:text-zinc-900 dark:data-[state=inactive]:hover:text-zinc-100"
         >
@@ -100,7 +100,7 @@ export function ResumeEditorTabs() {
         {/* Education Tab */}
         <TabsTrigger 
           value="education" 
-          className="group flex items-center gap-1.5 px-2 py-1 rounded-md font-medium transition-all duration-200
+          className="group shrink-0 flex items-center gap-1.5 px-2 py-1 rounded-md font-medium transition-all duration-200
             data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-950 data-[state=active]:border data-[state=active]:border-zinc-200 dark:data-[state=active]:border-zinc-800 data-[state=active]:shadow-sm
             data-[state=inactive]:text-zinc-500 dark:data-[state=inactive]:text-zinc-400 data-[state=inactive]:hover:text-zinc-900 dark:data-[state=inactive]:hover:text-zinc-100"
         >
@@ -115,7 +115,7 @@ export function ResumeEditorTabs() {
         {/* Skills Tab */}
         <TabsTrigger 
           value="skills" 
-          className="group flex items-center gap-1.5 px-2 py-1 rounded-md font-medium transition-all duration-200
+          className="group shrink-0 flex items-center gap-1.5 px-2 py-1 rounded-md font-medium transition-all duration-200
             data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-950 data-[state=active]:border data-[state=active]:border-zinc-200 dark:data-[state=active]:border-zinc-800 data-[state=active]:shadow-sm
             data-[state=inactive]:text-zinc-500 dark:data-[state=inactive]:text-zinc-400 data-[state=inactive]:hover:text-zinc-900 dark:data-[state=inactive]:hover:text-zinc-100"
         >
@@ -130,7 +130,7 @@ export function ResumeEditorTabs() {
         {/* Settings Tab */}
         <TabsTrigger 
           value="settings" 
-          className="group flex items-center gap-1.5 px-2 py-1 rounded-md font-medium transition-all duration-200
+          className="group shrink-0 flex items-center gap-1.5 px-2 py-1 rounded-md font-medium transition-all duration-200
             data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-950 data-[state=active]:border data-[state=active]:border-zinc-200 dark:data-[state=active]:border-zinc-800 data-[state=active]:shadow-sm
             data-[state=inactive]:text-zinc-500 dark:data-[state=inactive]:text-zinc-400 data-[state=inactive]:hover:text-zinc-900 dark:data-[state=inactive]:hover:text-zinc-100"
         >
