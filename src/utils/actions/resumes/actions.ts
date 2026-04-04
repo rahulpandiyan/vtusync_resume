@@ -110,7 +110,6 @@ export async function getResumeById(resumeId: string): Promise<{ resume: Resume;
       job
     };
   } catch (error) {
-    console.error('❌ [getResumeById Error]:', error);
     if (error instanceof Error) throw error;
     throw new Error('An unexpected error occurred while fetching your resume.');
   }
@@ -189,7 +188,6 @@ export async function deleteResume(resumeId: string): Promise<void> {
     revalidatePath('/jobs', 'layout');
 
   } catch (error) {
-    console.error('❌ [deleteResume Error]:', error);
     if (error instanceof Error) throw error;
     throw new Error('Failed to delete resume. Please try again.');
   }
@@ -332,10 +330,6 @@ export async function createTailoredResume(
   companyName: string,
   tailoredContent: z.infer<typeof simplifiedResumeSchema>
 ) {
-  console.log('[createTailoredResume] Received jobId:', jobId);
-  console.log('[createTailoredResume] baseResume ID:', baseResume?.id);
-  console.log('[createTailoredResume] Is jobId valid UUID?:', /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(jobId || ''));
-
   const supabase = await createClient();
   const { data: { user }, error: userError } = await supabase.auth.getUser();
   
@@ -374,7 +368,6 @@ export async function createTailoredResume(
     .single();
 
   if (error) {
-    console.error('❌ [createTailoredResume Error]:', error);
     throw new Error(`Failed to create tailored resume: ${error.message}`);
   }
   return data;
@@ -575,7 +568,6 @@ export async function generateResumeScore(
     // console.log("THE OUTPUTTED object", object);
     return object
   } catch (error) {
-    console.error('Error SCORING resume:', error);
     throw error;
   }
 }

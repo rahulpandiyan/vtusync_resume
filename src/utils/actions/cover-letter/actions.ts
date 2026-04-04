@@ -93,29 +93,17 @@ export async function generate(input: string, config?: AIConfig) {
         model: aiClient as LanguageModelV1,
         system,
         prompt: input,
-        onFinish: ({ usage }) => {
-         const { promptTokens, completionTokens, totalTokens } = usage;
-  
-         // your own logic, e.g. for saving the chat history or recording usage
-         console.log('----------Usage:----------');
-         console.log('Prompt tokens:', promptTokens);
-         console.log('Completion tokens:', completionTokens);
-         console.log('Total tokens:', totalTokens);
-       },
- 
       });
 
       for await (const delta of textStream) {
         stream.update(delta);
       }
 
-     
       stream.done();
     })();
 
     return { output: stream.value };
   } catch (error) {
-    console.error('Error generating cover letter:', error);
     throw error;
   }
 }

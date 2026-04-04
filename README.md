@@ -1,13 +1,13 @@
-# ResumeLM - Free AI Resume Builder | Create ATS-Optimized Resumes in Minutes
+# ResuSync - Free AI Resume Builder | Create ATS-Optimized Resumes in Minutes
 
 <div align="center">
 
-![ResumeLM Logo](public/og.webp)
-
 **🚀 The AI-Powered Resume Builder That Gets You Hired**
 
-[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-resumelm.com-blue?style=for-the-badge)](https://resumelm.com)
-[![GitHub Stars](https://img.shields.io/github/stars/olyaiy/resume-lm?style=for-the-badge)](https://github.com/olyaiy/resume-lm/stargazers)
+> **Live Demo:** [https://resume.vtusync.in](https://resume.vtusync.in)
+
+[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-resume.vtusync.in-blue?style=for-the-badge)](https://resume.vtusync.in)
+[![GitHub Stars](https://img.shields.io/github/stars/rahulpandiyan/vtusync_resume?style=for-the-badge)](https://github.com/rahulpandiyan/vtusync_resume/stargazers)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg?style=for-the-badge)](https://www.gnu.org/licenses/agpl-3.0)
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 
@@ -23,14 +23,15 @@
 
 </div>
 
-## 🎯 Why Choose ResumeLM?
+## 🎯 Why Choose ResuSync?
 
-**ResumeLM** is a free, open-source AI resume builder that helps job seekers create professional, ATS-optimized resumes that increase interview chances by up to **3x**. Our intelligent platform combines cutting-edge AI technology with proven resume best practices to help you land your dream job.
+**ResuSync** is a free, open-source AI resume builder that helps job seekers create professional, ATS-optimized resumes that increase interview chances by up to **3x**. Our intelligent platform combines cutting-edge AI technology with proven resume best practices to help you land your dream job.
 
-## ✨ Key Features & Screenshots
+## ✨ Key Features
+
+*See the live demo at [https://resume.vtusync.in](https://resume.vtusync.in) for visual screenshots*
 
 ### 🤖 AI-Powered Resume Assistant
-![AI Resume Assistant](public/SS%20Chat.png)
 
 **90% More Effective Bullet Points**
 - Smart content suggestions based on your experience
@@ -39,14 +40,12 @@
 - ATS-friendly formatting and keyword optimization
 
 ### 📊 Beautiful Resume Dashboard
-![Resume Dashboard](public/Dashboard%20Image.png)
 
 **Organize Your Entire Job Search**
 - Centralized resume management system
 - Create base resumes and tailored versions
 
 ### 📈 Resume Performance Scoring
-![Resume Scoring](public/SS%20Score.png)
 
 **3x Higher Response Rates**
 - ATS compatibility scoring and analysis
@@ -55,7 +54,6 @@
 - Performance metrics and analytics
 
 ### 📝 AI Cover Letter Generator
-![Cover Letter Generator](public/SS%20Cover%20Letter.png)
 
 **Save 30+ Minutes Per Application**
 - Tailored to match specific job requirements
@@ -65,7 +63,7 @@
 
 ## 🚀 Live Demo & Getting Started
 
-**[Try ResumeLM Now - 100% Free](https://resumelm.com)**
+**[Try ResuSync Now - 100% Free](https://resume.vtusync.in)**
 
 No credit card required • No signup fees • Open source
 
@@ -99,7 +97,7 @@ No credit card required • No signup fees • Open source
 
 ## 📱 Mobile-First Design
 
-ResumeLM is built with a mobile-first approach, ensuring your resume building experience is seamless across all devices:
+ResuSync is built with a mobile-first approach, ensuring your resume building experience is seamless across all devices:
 
 - 📱 **Mobile Optimized** - Full functionality on smartphones
 - 💻 **Desktop Enhanced** - Rich editing experience on larger screens
@@ -127,8 +125,8 @@ ResumeLM is built with a mobile-first approach, ensuring your resume building ex
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/olyaiy/resume-lm.git
-cd resume-lm
+git clone https://github.com/rahulpandiyan/vtusync_resume.git
+cd vtusync_resume
 ```
 
 2. **Install dependencies**
@@ -144,69 +142,29 @@ cp .env.example .env.local
 4. **Configure environment variables**
 ```env
 # Database
-DATABASE_URL=your_postgresql_url
-SUPABASE_URL=your_supabase_url
-SUPABASE_ANON_KEY=your_supabase_anon_key
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 
 # AI Services
 OPENAI_API_KEY=your_openai_key
 ANTHROPIC_API_KEY=your_claude_key
 GOOGLE_AI_API_KEY=your_gemini_key
-
-# Authentication
-NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=your_secret_key
+DEEPSEEK_API_KEY=your_deepseek_key
+GROQ_API_KEY=your_groq_key
 
 # Payments (Optional)
 STRIPE_SECRET_KEY=your_stripe_secret
-STRIPE_PUBLISHABLE_KEY=your_stripe_public
+STRIPE_WEBHOOK_SECRET=your_stripe_webhook
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_public
 ```
 
-5. **Database setup**
-```bash
-# Run the schema.sql file in your Supabase SQL editor
-# Or use the Supabase CLI:
-supabase db push --db-url=your_supabase_db_url schema.sql
-```
-
-6. **Start development server**
+5. **Start development server**
 ```bash
 pnpm dev
 ```
 
-Visit `http://localhost:3000` to see your local ResumeLM instance!
-
-### 🐳 Docker Setup (Alternative)
-
-Run the complete stack locally with Docker Compose - includes Supabase, PostgreSQL, Redis, and all services:
-
-```bash
-# 1. Copy environment file and add your AI API key
-cp .env.example .env.local
-# Edit .env.local and add at least one: OPENAI_API_KEY, ANTHROPIC_API_KEY, or OPENROUTER_API_KEY
-
-# 2. Start Docker services
-cd docker
-docker compose --env-file ../.env.local up -d
-
-# 3. Wait for services to be healthy (~60 seconds)
-docker compose --env-file ../.env.local ps
-
-# 4. Run the app locally (from project root)
-cd ..
-pnpm dev
-```
-
-**Login:** http://localhost:3000 with `admin@admin.com` / `Admin123` (Pro subscription auto-granted)
-
-| Service | URL | Description |
-|---------|-----|-------------|
-| **App** | http://localhost:3000 | Next.js application |
-| **Supabase API** | http://localhost:54321 | API Gateway |
-| **Supabase Studio** | http://localhost:54323 | Database dashboard |
-| **Redis Commander** | http://localhost:8081 | Redis management UI |
-
-> 📖 See [docker/DOCKER.md](docker/DOCKER.md) for full Docker documentation including full-stack mode.
+Visit `http://localhost:3000` to see your local ResuSync instance!
 
 ## 📊 Database Architecture
 
@@ -276,13 +234,13 @@ pnpm dev
 
 ## 🔮 Roadmap & Future Features
 
-### Short Term (Q1 2025)
+### Short Term
 - [ ] Enhanced AI tailoring algorithms
 - [ ] Additional resume templates and themes
 - [ ] Advanced PDF customization options
 - [ ] Job application tracking system
 
-### Long Term (2025)
+### Long Term
 - [ ] LinkedIn integration and sync
 - [ ] Interview preparation tools
 - [ ] Salary negotiation guidance
@@ -318,7 +276,6 @@ We welcome contributions from developers of all skill levels! Here's how you can
 ### Stay Updated
 - ⭐ **Star this repo** - Get notified of new releases
 - 👀 **Watch releases** - Stay informed about updates
-- 🐦 **Follow on social media** - Latest news and tips
 
 ## 📄 License & Legal
 
@@ -344,8 +301,8 @@ For businesses requiring proprietary licenses or commercial support, please cont
 
 **Ready to land your dream job?**
 
-[![Get Started Free](https://img.shields.io/badge/🚀_Get_Started_Free-resumelm.com-blue?style=for-the-badge&color=6366f1)](https://resumelm.com)
-[![View Source Code](https://img.shields.io/badge/📚_View_Source-GitHub-black?style=for-the-badge&logo=github)](https://github.com/olyaiy/resume-lm)
+[![Get Started Free](https://img.shields.io/badge/🚀_Get_Started_Free-resume.vtusync.in-blue?style=for-the-badge&color=6366f1)](https://resume.vtusync.in)
+[![View Source Code](https://img.shields.io/badge/📚_View_Source-GitHub-black?style=for-the-badge&logo=github)](https://github.com/rahulpandiyan/vtusync_resume)
 
 **Built with ❤️ using Next.js**
 

@@ -74,33 +74,17 @@ export async function manageSubscriptionStatusChange(
   customerId: string,
   isSubscriptionNew: boolean
 ) {
-  console.log('🔄 Starting subscription status change:', {
-    subscriptionId,
-    customerId,
-    isNew: isSubscriptionNew,
-    timestamp: new Date().toISOString()
-  });
-
   const supabase = await createServiceClient();
 
   // Get customer's UUID from Stripe metadata
-  console.log('🔍 Retrieving customer data from Stripe...');
   const customerData = await getStripe().customers.retrieve(customerId);
   if ('deleted' in customerData) {
-    console.error('❌ Customer has been deleted');
     throw new Error('Customer has been deleted');
   }
   const uuid = customerData.metadata.supabaseUUID;
-  console.log('✅ Retrieved customer UUID:', uuid);
 
-  console.log('📦 Retrieving subscription details from Stripe...');
   const subscription = await getStripe().subscriptions.retrieve(subscriptionId, {
     expand: ['default_payment_method', 'items.data.price']
-  });
-  console.log('✅ Retrieved subscription details:', {
-    id: subscription.id,
-    status: subscription.status,
-    currentPeriodEnd: new Date(subscription.items.data[0].current_period_end * 1000).toISOString()
   });
 
   // Map price ID to plan
@@ -134,10 +118,8 @@ export async function manageSubscriptionStatusChange(
       : null,
     updated_at: new Date().toISOString()
   };
-  console.log('\n📋 Prepared subscription data:', subscriptionData);
 
   try {
-    console.log('🔍 Checking for existing subscription in database...');
     const { data: existingSubscription } = await supabase
       .from('subscriptions')
       .select('id')
@@ -145,19 +127,15 @@ export async function manageSubscriptionStatusChange(
       .single();
 
     if (existingSubscription) {
-      console.log('🔄 Updating existing subscription:', existingSubscription.id);
       const { error } = await supabase
         .from('subscriptions')
         .update(subscriptionData)
         .eq('user_id', uuid);
 
       if (error) {
-        console.error('❌ Error updating subscription:', error);
         throw error;
       }
-      console.log('✅ Subscription updated successfully');
     } else {
-      console.log('➕ Creating new subscription record');
       const { error } = await supabase
         .from('subscriptions')
         .upsert(
@@ -172,18 +150,10 @@ export async function manageSubscriptionStatusChange(
         );
 
       if (error) {
-        console.error('❌ Error creating subscription:', error);
         throw error;
       }
-      console.log('✅ Subscription created successfully');
     }
-
-    console.log('🎉 Subscription management completed successfully!');
   } catch (error) {
-    console.error('💥 Error managing subscription:', {
-      error: error instanceof Error ? error.message : 'Unknown error',
-      timestamp: new Date().toISOString()
-    });
     throw error;
   }
 }
@@ -232,7 +202,7 @@ export async function getSubscriptionStatus() {
     throw new Error('User not authenticated');
   }
 
-  console.log(' looking for user ', user.id);
+
 
   const { data: subscription, error: subscriptionError } = await supabase
     .from('subscriptions')
@@ -291,18 +261,6 @@ export async function checkSubscriptionPlan() {
 
   const subscriptionState = getSubscriptionAccessState(data);
   const effectivePlan = data ? subscriptionState.effectivePlan : '';
-
-  console.log('🧮 checkSubscriptionPlan', {
-    userId: user.id,
-    subscription_plan: data?.subscription_plan,
-    subscription_status: data?.subscription_status,
-    stripe_subscription_id: data?.stripe_subscription_id,
-    current_period_end: data?.current_period_end,
-    trial_end: data?.trial_end,
-    isTrialing: subscriptionState.isTrialing,
-    hasProAccess: subscriptionState.hasProAccess,
-    effectivePlan,
-  });
   
   return {
     plan: effectivePlan,

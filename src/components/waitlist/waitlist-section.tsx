@@ -24,29 +24,16 @@ export function WaitlistSection() {
 
     try {
       const formData = new FormData(e.currentTarget);
-      
-      // Log form data
-      const formDataObj = {
-        email: formData.get('email'),
-        firstName: formData.get('firstName'),
-        lastName: formData.get('lastName'),
-      };
-      console.log('Submitting form with data:', formDataObj);
-
       const result = await joinWaitlist(formData);
-      console.log('Received result from server:', result);
 
       if (result.success) {
-        console.log('Successfully joined waitlist');
         setStatus('success');
         (e.target as HTMLFormElement).reset();
       } else {
-        console.error('Failed to join waitlist:', result.error);
         setStatus('error');
         setErrorMessage(result.error || 'Something went wrong. Please try again.');
       }
     } catch (error) {
-      console.error('Error in form submission:', error);
       setStatus('error');
       setErrorMessage(error instanceof Error ? error.message : 'An unexpected error occurred');
     }

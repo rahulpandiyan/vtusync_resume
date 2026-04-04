@@ -135,7 +135,6 @@ export default function ChatBot({ resume, onResumeChange, job }: ChatBotProps) {
             }), {});
         
         addToolResult({ toolCallId: toolCall.toolCallId, result });
-        console.log('Tool call READ RESUME result:', result);
         return result;
       }
 
