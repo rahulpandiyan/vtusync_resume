@@ -38,8 +38,6 @@ export function ResumeManagementCard({
   description,
   emptyTitle,
   emptyDescription,
-  gradientFrom,
-  gradientTo,
   accentColor,
 }: ResumeManagementCardProps) {
   const isDisabled = type === 'tailored' && (!baseResumes || baseResumes.length === 0);

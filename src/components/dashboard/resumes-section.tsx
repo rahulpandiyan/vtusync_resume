@@ -12,7 +12,7 @@ import type { Profile, ResumeSummary } from '@/lib/types';
 import { deleteResume, copyResume } from '@/utils/actions/resumes/actions';
 import { Pagination, PaginationContent, PaginationItem } from '@/components/ui/pagination';
 import { useState, useOptimistic, useTransition } from 'react';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel"
 import { toast } from 'sonner';
 
 // Extended Resume type for optimistic updates
@@ -326,7 +326,7 @@ export function ResumesSection({
                       <AlertDialogHeader>
                         <AlertDialogTitle>Upgrade Required</AlertDialogTitle>
                         <AlertDialogDescription>
-                          You've reached the maximum number of {type} resumes allowed. 
+                          You&apos;ve reached the maximum number of {type} resumes allowed. 
                           Upgrade to Pro to create unlimited resumes.
                         </AlertDialogDescription>
                       </AlertDialogHeader>

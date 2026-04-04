@@ -3,10 +3,10 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { DocumentSettings, Profile } from "@/lib/types";
 import { Button } from "@/components/ui/button";
-import { ChevronUp, ChevronDown, LayoutTemplate, Shield, LockOpen, Loader2 } from "lucide-react";
+import { ChevronUp, ChevronDown, LayoutTemplate, LockOpen, Loader2 } from "lucide-react";
 import { SavedStylesDialog } from "./saved-styles-dialog";
 import { useState } from "react";
-import { getSubscriptionAccessState } from "@/lib/subscription-access";
+import { getSubscriptionAccessState, type SubscriptionSnapshot } from "@/lib/subscription-access";
 import { createRazorpayOrder, verifyRazorpayPayment } from "@/utils/actions/payments/actions";
 
 interface DocumentSettingsFormProps {
@@ -67,7 +67,7 @@ function NumberInput({ value, onChange, min, max, step }: NumberInputProps) {
 
 export function DocumentSettingsForm({ documentSettings, onChange, profile, showWatermark = false, resumeId }: DocumentSettingsFormProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const subscriptionAccess = getSubscriptionAccessState(profile as any);
+  const subscriptionAccess = getSubscriptionAccessState(profile as unknown as SubscriptionSnapshot);
   const { hasProAccess, hasWatermarkAccess } = subscriptionAccess;
 
   const startPayment = async () => {
@@ -76,7 +76,7 @@ export function DocumentSettingsForm({ documentSettings, onChange, profile, show
 
     try {
       const loaded = await new Promise<boolean>((resolve) => {
-        if ((window as any).Razorpay) return resolve(true);
+        if ((window as Window & { Razorpay?: unknown }).Razorpay) return resolve(true);
         const script = document.createElement('script');
         script.src = 'https://checkout.razorpay.com/v1/checkout.js';
         script.onload = () => resolve(true);
@@ -86,7 +86,7 @@ export function DocumentSettingsForm({ documentSettings, onChange, profile, show
       if (!loaded) throw new Error('Failed to load Razorpay');
 
       const order = await createRazorpayOrder('watermark', resumeId);
-      const RazorpayCtor = (window as any).Razorpay;
+      const RazorpayCtor = (window as Window & { Razorpay?: new (options: Record<string, unknown>) => { open: () => void } }).Razorpay;
       if (!RazorpayCtor) throw new Error('Razorpay unavailable');
 
       const instance = new RazorpayCtor({
@@ -97,7 +97,7 @@ export function DocumentSettingsForm({ documentSettings, onChange, profile, show
         name: 'ResuSync',
         description: 'Remove watermark (Rs 49)',
         theme: { color: '#18181b' },
-        handler: async (response: any) => {
+        handler: async (response: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) => {
           await verifyRazorpayPayment({ purpose: 'watermark', ...response, resumeId });
           window.location.reload();
         },
@@ -111,203 +111,193 @@ export function DocumentSettingsForm({ documentSettings, onChange, profile, show
   };
 
   const defaultSettings = {
-    // Global Settings
     document_font_size: 10,
     document_line_height: 1.5,
     document_margin_vertical: 36,
     document_margin_horizontal: 36,
-
-    // Header Settings
     header_name_size: 24,
     header_name_bottom_spacing: 24,
-
-    // Skills Section
     skills_margin_top: 2,
     skills_margin_bottom: 2,
     skills_margin_horizontal: 0,
     skills_item_spacing: 2,
-
-    // Experience Section
     experience_margin_top: 2,
     experience_margin_bottom: 2,
     experience_margin_horizontal: 0,
     experience_item_spacing: 4,
-
-    // Projects Section
     projects_margin_top: 2,
     projects_margin_bottom: 2,
     projects_margin_horizontal: 0,
     projects_item_spacing: 4,
-
-    // Education Section
     education_margin_top: 2,
     education_margin_bottom: 2,
     education_margin_horizontal: 0,
     education_item_spacing: 4,
   };
 
-  // Initialize document_settings if it doesn't exist
   if (!documentSettings) {
     onChange('document_settings', defaultSettings);
-    return null; // Return null while initializing to prevent errors
+    return null;
   }
 
   const handleSettingsChange = (newSettings: DocumentSettings) => {
-
     onChange('document_settings', newSettings);
   };
 
   const handleFontSizeChange = (value: number) => {
     const newSettings: DocumentSettings = {
-      ...documentSettings, // Don't spread defaultSettings here
+      ...documentSettings,
       document_font_size: value
     };
     handleSettingsChange(newSettings);
   };
 
+  const SectionSettings = ({ title, section }: { title: string; section: 'skills' | 'experience' | 'projects' | 'education' }) => {
+    const marginTopKey = `${section}_margin_top` as keyof DocumentSettings;
+    const marginBottomKey = `${section}_margin_bottom` as keyof DocumentSettings;
+    const marginHorizontalKey = `${section}_margin_horizontal` as keyof DocumentSettings;
+    const itemSpacingKey = `${section}_item_spacing` as keyof DocumentSettings;
 
-
-  const SectionSettings = ({ title, section }: { title: string; section: 'skills' | 'experience' | 'projects' | 'education' }) => (
-    <div className="space-y-4 bg-slate-50/50 rounded-lg border border-slate-200/50">
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <Label className="text-sm font-medium text-muted-foreground">Space Above {title} Section</Label>
-          <div className="flex items-center">
-            <NumberInput
-              value={documentSettings?.[`${section}_margin_top`] ?? 2}
-              min={0}
-              max={48}
-              step={1}
-              onChange={(value) => 
-                handleSettingsChange({
-                  ...documentSettings,
-                  [`${section}_margin_top`]: value
-                })
-              }
-            />
-            <span className="text-xs text-muted-foreground/60 ml-1">pt</span>
+    return (
+      <div className="space-y-4 bg-slate-50/50 rounded-lg border border-slate-200/50 p-4">
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <Label className="text-sm font-medium text-muted-foreground">Space Above {title} Section</Label>
+            <div className="flex items-center">
+              <NumberInput
+                value={Number(documentSettings[marginTopKey]) ?? 2}
+                min={0}
+                max={48}
+                step={1}
+                onChange={(value) => 
+                  handleSettingsChange({
+                    ...documentSettings,
+                    [marginTopKey]: value
+                  })
+                }
+              />
+              <span className="text-xs text-muted-foreground/60 ml-1">pt</span>
+            </div>
           </div>
+          <Slider
+            value={[Number(documentSettings[marginTopKey] ?? 2)]}
+            min={0}
+            max={48}
+            step={1}
+            onValueChange={([value]) => 
+              handleSettingsChange({
+                ...documentSettings,
+                [marginTopKey]: value
+              })
+            }
+          />
         </div>
-        <Slider
-          value={[Number(documentSettings?.[`${section}_margin_top`] ?? 2)]}
-          min={0}
-          max={48}
-          step={1}
-          onValueChange={([value]) => 
-            handleSettingsChange({
-              ...documentSettings,
-              [`${section}_margin_top`]: value
-            })
-          }
-        />
-      </div>
 
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <Label className="text-sm font-medium text-muted-foreground">Space Below {title} Section</Label>
-          <div className="flex items-center">
-            <NumberInput
-              value={documentSettings?.[`${section}_margin_bottom`] ?? 2}
-              min={0}
-              max={48}
-              step={1}
-              onChange={(value) => 
-                handleSettingsChange({
-                  ...documentSettings,
-                  [`${section}_margin_bottom`]: value
-                })
-              }
-            />
-            <span className="text-xs text-muted-foreground/60 ml-1">pt</span>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <Label className="text-sm font-medium text-muted-foreground">Space Below {title} Section</Label>
+            <div className="flex items-center">
+              <NumberInput
+                value={Number(documentSettings[marginBottomKey]) ?? 2}
+                min={0}
+                max={48}
+                step={1}
+                onChange={(value) => 
+                  handleSettingsChange({
+                    ...documentSettings,
+                    [marginBottomKey]: value
+                  })
+                }
+              />
+              <span className="text-xs text-muted-foreground/60 ml-1">pt</span>
+            </div>
           </div>
+          <Slider
+            value={[Number(documentSettings[marginBottomKey] ?? 2)]}
+            min={0}
+            max={48}
+            step={1}
+            onValueChange={([value]) => 
+              handleSettingsChange({
+                ...documentSettings,
+                [marginBottomKey]: value
+              })
+            }
+          />
         </div>
-        <Slider
-          value={[Number(documentSettings?.[`${section}_margin_bottom`] ?? 2)]}
-          min={0}
-          max={48}
-          step={1}
-          onValueChange={([value]) => 
-            handleSettingsChange({
-              ...documentSettings,
-              [`${section}_margin_bottom`]: value
-            })
-          }
-        />
-      </div>
 
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <Label className="text-sm font-medium text-muted-foreground">Horizontal Margins</Label>
-          <div className="flex items-center">
-            <NumberInput
-              value={documentSettings?.[`${section}_margin_horizontal`] ?? 0}
-              min={0}
-              max={72}
-              step={2}
-              onChange={(value) => 
-                handleSettingsChange({
-                  ...documentSettings,
-                  [`${section}_margin_horizontal`]: value
-                })
-              }
-            />
-            <span className="text-xs text-muted-foreground/60 ml-1">pt</span>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <Label className="text-sm font-medium text-muted-foreground">Horizontal Margins</Label>
+            <div className="flex items-center">
+              <NumberInput
+                value={Number(documentSettings[marginHorizontalKey]) ?? 0}
+                min={0}
+                max={72}
+                step={2}
+                onChange={(value) => 
+                  handleSettingsChange({
+                    ...documentSettings,
+                    [marginHorizontalKey]: value
+                  })
+                }
+              />
+              <span className="text-xs text-muted-foreground/60 ml-1">pt</span>
+            </div>
           </div>
+          <Slider
+            value={[Number(documentSettings[marginHorizontalKey] ?? 0)]}
+            min={0}
+            max={72}
+            step={2}
+            onValueChange={([value]) => 
+              handleSettingsChange({
+                ...documentSettings,
+                [marginHorizontalKey]: value
+              })
+            }
+          />
         </div>
-        <Slider
-          value={[Number(documentSettings?.[`${section}_margin_horizontal`] ?? 0)]}
-          min={0}
-          max={72}
-          step={2}
-          onValueChange={([value]) => 
-            handleSettingsChange({
-              ...documentSettings,
-              [`${section}_margin_horizontal`]: value
-            })
-          }
-        />
-      </div>
 
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <Label className="text-sm font-medium text-muted-foreground">Space Between Items</Label>
-          <div className="flex items-center">
-            <NumberInput
-              value={documentSettings?.[`${section}_item_spacing`] ?? 4}
-              min={0}
-              max={16}
-              step={0.5}
-              onChange={(value) => 
-                handleSettingsChange({
-                  ...documentSettings,
-                  [`${section}_item_spacing`]: value
-                })
-              }
-            />
-            <span className="text-xs text-muted-foreground/60 ml-1">pt</span>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <Label className="text-sm font-medium text-muted-foreground">Space Between Items</Label>
+            <div className="flex items-center">
+              <NumberInput
+                value={Number(documentSettings[itemSpacingKey]) ?? 4}
+                min={0}
+                max={16}
+                step={0.5}
+                onChange={(value) => 
+                  handleSettingsChange({
+                    ...documentSettings,
+                    [itemSpacingKey]: value
+                  })
+                }
+              />
+              <span className="text-xs text-muted-foreground/60 ml-1">pt</span>
+            </div>
           </div>
+          <Slider
+            value={[Number(documentSettings[itemSpacingKey] ?? 4)]}
+            min={0}
+            max={16}
+            step={0.5}
+            onValueChange={([value]) => 
+              handleSettingsChange({
+                ...documentSettings,
+                [itemSpacingKey]: value
+              })
+            }
+          />
         </div>
-        <Slider
-          value={[Number(documentSettings?.[`${section}_item_spacing`] ?? 4)]}
-          min={0}
-          max={16}
-          step={0.5}
-          onValueChange={([value]) => 
-            handleSettingsChange({
-              ...documentSettings,
-              [`${section}_item_spacing`]: value
-            })
-          }
-        />
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="">
         <Card className="">
-
-        {/* Buttons */}
         <CardHeader className="flex flex-col space-y-4">
           <div className="flex items-center space-x-2 w-full">
             <SavedStylesDialog
@@ -329,45 +319,6 @@ export function DocumentSettingsForm({ documentSettings, onChange, profile, show
                   <LayoutTemplate className="w-3 h-3 inline-block mr-1" />
                   Default Layout
                 </div>
-                <div className="flex-1 w-full p-2 flex flex-col justify-between">
-                  {/* Mock resume content - Default */}
-                  <div>
-                    <div className="w-3/4 h-2 bg-slate-300 rounded mb-6" />
-                    <div className="flex space-x-2 mb-4">
-                      <div className="w-1/3 h-1 bg-slate-300 rounded" />
-                      <div className="w-1/3 h-1 bg-slate-300 rounded" />
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <div className="w-1/3 h-1.5 bg-slate-300 rounded" />
-                      <div className="space-y-1.5">
-                        <div className="w-full h-1 bg-slate-300 rounded" />
-                        <div className="w-11/12 h-1 bg-slate-300 rounded" />
-                        <div className="w-10/12 h-1 bg-slate-300 rounded" />
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <div className="w-1/3 h-1.5 bg-slate-300 rounded" />
-                      <div className="space-y-1.5">
-                        <div className="w-full h-1 bg-slate-300 rounded" />
-                        <div className="w-11/12 h-1 bg-slate-300 rounded" />
-                        <div className="w-10/12 h-1 bg-slate-300 rounded" />
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <div className="w-1/3 h-1.5 bg-slate-300 rounded" />
-                      <div className="space-y-1.5">
-                        <div className="w-full h-1 bg-slate-300 rounded" />
-                        <div className="w-11/12 h-1 bg-slate-300 rounded" />
-                        <div className="w-10/12 h-1 bg-slate-300 rounded" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
               </div>
             </Button>
 
@@ -376,8 +327,6 @@ export function DocumentSettingsForm({ documentSettings, onChange, profile, show
               size="sm"
               onClick={() => handleSettingsChange({
                 ...documentSettings,
-                footer_width: 0,
-                show_ubc_footer: false,
                 header_name_size: 24,
                 skills_margin_top: 0,
                 document_font_size: 10,
@@ -408,56 +357,6 @@ export function DocumentSettingsForm({ documentSettings, onChange, profile, show
                 <div className="w-full p-2 text-xs font-medium text-pink-600 border-b border-slate-200 bg-slate-50/80">
                   <LayoutTemplate className="w-3 h-3 inline-block mr-1" />
                   Compact Layout
-                </div>
-                <div className="flex-1 w-full p-2 flex flex-col justify-start space-y-2">
-                  {/* Mock resume content - Compact */}
-                  <div>
-                    <div className="w-2/3 h-2 bg-slate-300 rounded mb-3" />
-                    <div className="flex space-x-1.5 mb-2">
-                      <div className="w-1/4 h-1 bg-slate-300 rounded" />
-                      <div className="w-1/4 h-1 bg-slate-300 rounded" />
-                      <div className="w-1/4 h-1 bg-slate-300 rounded" />
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-3">
-                    <div className="space-y-1">
-                      <div className="w-1/4 h-1.5 bg-slate-300 rounded" />
-                      <div className="space-y-1">
-                        <div className="w-full h-1 bg-slate-300 rounded" />
-                        <div className="w-11/12 h-1 bg-slate-300 rounded" />
-                        <div className="w-10/12 h-1 bg-slate-300 rounded" />
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-1">
-                      <div className="w-1/4 h-1.5 bg-slate-300 rounded" />
-                      <div className="space-y-1">
-                        <div className="w-full h-1 bg-slate-300 rounded" />
-                        <div className="w-11/12 h-1 bg-slate-300 rounded" />
-                        <div className="w-10/12 h-1 bg-slate-300 rounded" />
-                        <div className="w-9/12 h-1 bg-slate-300 rounded" />
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-1">
-                      <div className="w-1/4 h-1.5 bg-slate-300 rounded" />
-                      <div className="space-y-1">
-                        <div className="w-full h-1 bg-slate-300 rounded" />
-                        <div className="w-11/12 h-1 bg-slate-300 rounded" />
-                        <div className="w-9/12 h-1 bg-slate-300 rounded" />
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-1">
-                      <div className="w-1/4 h-1.5 bg-slate-300 rounded" />
-                      <div className="space-y-1">
-                        <div className="w-full h-1 bg-slate-300 rounded" />
-                        <div className="w-11/12 h-1 bg-slate-300 rounded" />
-                        <div className="w-9/12 h-1 bg-slate-300 rounded" />
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </div>
             </Button>

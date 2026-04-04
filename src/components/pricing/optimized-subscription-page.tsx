@@ -2,19 +2,13 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { 
   Check, 
   Clock, 
   Users, 
-  TrendingUp, 
   Shield, 
-  Crown,
   Star,
-  Zap,
-  ArrowRight,
-  Loader2,
-  LockOpen
+  Loader2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getSubscriptionAccessState, type SubscriptionSnapshot } from '@/lib/subscription-access';
@@ -33,32 +27,11 @@ interface OptimizedSubscriptionPageProps {
   initialProfile: Profile | null;
 }
 
-const testimonials = [
-  {
-    name: "Sarah Chen",
-    role: "Software Engineer at Google",
-    content: "ResuSync helped me land 3 interviews in my first week. The AI suggestions were spot-on.",
-    avatar: "SC"
-  },
-  {
-    name: "Marcus Johnson", 
-    role: "Product Manager at Meta",
-    content: "Went from 2% to 15% response rate. This tool paid for itself with my first interview.",
-    avatar: "MJ"
-  },
-  {
-    name: "Emily Rodriguez",
-    role: "Data Scientist at Microsoft", 
-    content: "The tailored resumes feature is a game-changer. Got my dream job in 3 weeks.",
-    avatar: "ER"
-  }
-];
-
 export function OptimizedSubscriptionPage({ initialProfile }: OptimizedSubscriptionPageProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const subscriptionAccessState = getSubscriptionAccessState(initialProfile);
-  const { hasProAccess, hasWatermarkAccess, isCanceling, isExpiredProAccess, daysRemaining, currentPeriodEndLabel } =
+  const { hasProAccess, isCanceling, isExpiredProAccess, currentPeriodEndLabel } =
     subscriptionAccessState;
 
   const loadRazorpayScript = async () => {

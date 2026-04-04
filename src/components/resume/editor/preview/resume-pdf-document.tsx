@@ -338,7 +338,6 @@ function createResumeStyles(settings: Resume['document_settings'] = {
     education_margin_bottom = 2,
     education_margin_horizontal = 0,
     education_item_spacing = 4,
-    footer_width = 95,
   } = settings;
 
   return StyleSheet.create({

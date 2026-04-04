@@ -1,8 +1,7 @@
 "use client"
 
-import React, { useRef } from 'react';
-import { motion, useInView } from "framer-motion";
-import { HelpCircle, Sparkles } from "lucide-react";
+import React from 'react';
+import { HelpCircle } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 interface FAQItem {
@@ -31,12 +30,8 @@ export function FAQ() {
     }
   ];
 
-  const sectionRef = useRef<HTMLElement>(null);
-  const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
-
   return (
     <section 
-      ref={sectionRef}
       className="py-24 md:py-32 px-4 relative bg-white dark:bg-zinc-950 scroll-mt-20" 
       id="faq"
     >

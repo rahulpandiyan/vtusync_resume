@@ -1,5 +1,6 @@
 "use server";
 
+import Razorpay from "razorpay";
 import crypto from "crypto";
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
@@ -19,18 +20,10 @@ function getRazorpayClient() {
     throw new Error("Razorpay keys are not configured.");
   }
 
-  // Use dynamic require to avoid build-time errors if the package is missing
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const Razorpay = require("razorpay");
-    return new Razorpay({
-      key_id: keyId,
-      key_secret: keySecret,
-    });
-  } catch (error) {
-    console.error("Failed to load razorpay package:", error);
-    throw new Error("Razorpay integration is not available.");
-  }
+  return new Razorpay({
+    key_id: keyId,
+    key_secret: keySecret,
+  });
 }
 
 export async function getBillingStatus() {

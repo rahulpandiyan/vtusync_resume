@@ -2,7 +2,6 @@
 
 import { Profile } from "@/lib/types";
 import { User, Briefcase, GraduationCap, Code, Pencil } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 

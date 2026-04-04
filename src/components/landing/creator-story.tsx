@@ -1,6 +1,5 @@
 "use client"
 import Image from "next/image";
-import { motion } from "framer-motion";
 import { Instagram, Globe } from "lucide-react";
 export function CreatorStory() {
   return (

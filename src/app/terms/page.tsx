@@ -1,6 +1,5 @@
 import { Metadata } from 'next';
 import { Footer } from '@/components/layout/footer';
-import { PageTitle } from '@/components/layout/page-title';
 
 export const metadata: Metadata = {
   title: 'Terms of Service | ResuSync',

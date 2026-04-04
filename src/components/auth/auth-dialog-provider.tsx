@@ -11,8 +11,6 @@ import { SignupForm } from "@/components/auth/signup-form";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
-import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export type AuthTab = "login" | "signup";
 
@@ -22,24 +20,6 @@ interface AuthDialogContextValue {
 
 const AuthDialogContext = createContext<AuthDialogContextValue | undefined>(undefined);
 
-function TabButton({ value, children }: { value: AuthTab; children: React.ReactNode }) {
-  return (
-    <TabsTrigger
-      value={value}
-      className="
-        relative flex-1 h-12 text-sm font-black uppercase tracking-wider
-        transition-all duration-200 ease-out
-        data-[state=inactive]:text-muted-foreground data-[state=inactive]:bg-transparent
-        data-[state=active]:text-secondary data-[state=active]:border-b-4 data-[state=active]:border-secondary
-        data-[state=inactive]:hover:text-gray-600 data-[state=inactive]:hover:bg-gray-100/50
-        border-b-4 border-transparent shadow-none
-        focus-visible:outline-none 
-      "
-    >
-      {children}
-    </TabsTrigger>
-  );
-}
 
 function SocialAuth() {
   const [isLoading, setIsLoading] = useState(false);

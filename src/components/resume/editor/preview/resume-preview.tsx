@@ -166,9 +166,10 @@ export const ResumePreview = memo(function ResumePreview({ resume, variant = 'ba
     setNumPages(0);
     generatePDF();
 
+    const genRef = generationRef;
     // Cleanup function
     return () => {
-      if (generationRef.current === generationId && currentUrl && !pdfCache.has(resumeHash)) {
+      if (genRef.current === generationId && currentUrl && !pdfCache.has(resumeHash)) {
         URL.revokeObjectURL(currentUrl);
       }
     };

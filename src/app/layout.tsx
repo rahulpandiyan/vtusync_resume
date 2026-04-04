@@ -3,8 +3,7 @@ import { DisableRightClick } from "@/components/layout/disable-right-click";
 
 import "./globals.css";
 import { Toaster } from "sonner";
-import { Footer } from "@/components/layout/footer";
-import { AppHeader } from "@/components/layout/app-header";
+
 import { createClient } from "@/utils/supabase/server";
 import { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/react";
@@ -15,7 +14,7 @@ import {
   IMPERSONATION_STATE_COOKIE_NAME,
   parseImpersonationStateCookieValue,
 } from "@/lib/impersonation";
-import { getSubscriptionAccessState } from "@/lib/subscription-access";
+
 
 // Only enable Vercel Analytics when running on Vercel platform
 const isVercel = process.env.VERCEL === '1';
@@ -98,31 +97,7 @@ export default async function RootLayout({
   const isImpersonating = Boolean(impersonationState);
 
   
-  let showUpgradeButton = false;
-  let isProPlan = false;
-  let upgradeButtonVariant: 'trial' | 'upgrade' = 'upgrade';
-  if (user) {
-    try {
-      const { data: subscription } = await supabase
-        .from('subscriptions')
-        .select('subscription_plan, subscription_status, current_period_end, trial_end, stripe_subscription_id')
-        .eq('user_id', user.id)
-        .maybeSingle();
 
-      const subscriptionState = getSubscriptionAccessState(subscription);
-      const hasProAccess = subscriptionState.hasProAccess;
-      const needsTrial = subscriptionState.needsTrial;
-
-      isProPlan = hasProAccess;
-      showUpgradeButton = !hasProAccess;
-      upgradeButtonVariant = needsTrial ? 'trial' : 'upgrade';
-    } catch {
-      // If there's an error, we'll show the upgrade button by default
-      showUpgradeButton = true;
-      isProPlan = false;
-      upgradeButtonVariant = 'upgrade';
-    }
-  }
 
   return (
     <html lang="en" suppressHydrationWarning>

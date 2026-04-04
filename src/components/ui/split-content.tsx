@@ -1,14 +1,12 @@
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { CheckCircle2, Star } from "lucide-react";
-
+import { CheckCircle2 } from "lucide-react";
 
 
 interface SplitContentProps {
   imageSrc: string;
   heading: string;
   description: string;
-  imageOnLeft?: boolean;
   imageOverflowRight?: boolean;
   className?: string;
   children?: React.ReactNode;
@@ -21,7 +19,6 @@ export function SplitContent({
   imageSrc,
   heading,
   description,
-  imageOnLeft = true,
   imageOverflowRight = false,
   className,
   children,
