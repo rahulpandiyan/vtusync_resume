@@ -109,11 +109,11 @@ export default async function Page({
   
     
     return component;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('❌ [Resume Page Error]:', error);
     
     // Check for specific error messages we've defined in our actions
-    const errorMessage = error?.message || 'unknown error';
+    const errorMessage = error instanceof Error ? error.message : 'unknown error';
     if (errorMessage.includes('Resume not found') || errorMessage.includes('Profile not found')) {
       console.log('🔍 [Resume Page]: Resource not found, redirecting to home.');
       redirect("/home");

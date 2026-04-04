@@ -1,7 +1,7 @@
 'use client';
 
 import { Resume } from "@/lib/types";
-import { Document as PDFDocument, Page as PDFPage, Text, View, StyleSheet, Link, Image } from '@react-pdf/renderer';
+import { Document as PDFDocument, Page as PDFPage, Text, View, StyleSheet, Link, Image as PDFImage } from '@react-pdf/renderer';
 import { memo, useMemo, useCallback } from 'react';
 import type { ReactNode } from 'react';
 
@@ -586,10 +586,7 @@ export const ResumePDFDocument = memo(function ResumePDFDocument({ resume, showW
       <PDFPage size="A4" style={styles.page}>
         {showWatermark && (
           <View style={styles.watermarkOverlay} fixed>
-            <Image 
-              src={WATERMARK_IMAGE} 
-              style={styles.watermarkImage}
-            />
+            <PDFImage src={WATERMARK_IMAGE} style={styles.watermarkImage} />
           </View>
         )}
         <HeaderSection resume={resume} styles={styles} />
