@@ -10,9 +10,6 @@ interface ApiKeyErrorAlertProps {
 }
 
 export function ApiKeyErrorAlert({ error, router }: ApiKeyErrorAlertProps) {
-  const errorString = typeof error === 'string' ? error : (error as Error)?.message || '';
-  const errorJson = JSON.stringify(error);
-
   return (
     <div className={cn(
       "mt-2 text-sm px-4",

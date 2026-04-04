@@ -231,14 +231,12 @@ export async function POST(req: Request) {
         const customer = event.data.object as Stripe.Customer;
 
         try {
-          const { error } = await supabase
+          await supabase
             .from('subscriptions')
             .delete()
             .eq('stripe_customer_id', customer.id);
-
-          if (error) throw error;
-        } catch (error) {
-          throw error;
+        } catch {
+          // Subscription may not exist
         }
         break;
       }
@@ -257,9 +255,7 @@ export async function POST(req: Request) {
         headers: { 'Content-Type': 'application/json' }
       }
     )
-  } catch (err) {
-    const error = err instanceof Error ? err : new Error(String(err));
-    
+  } catch {
     return new Response(
       JSON.stringify({ error: 'Webhook handler failed' }),
       { 

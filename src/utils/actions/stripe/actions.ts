@@ -72,6 +72,7 @@ async function upsertCustomerToSupabase(uuid: string, customerId: string) {
 export async function manageSubscriptionStatusChange(
   subscriptionId: string,
   customerId: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   isSubscriptionNew: boolean
 ) {
   const supabase = await createServiceClient();
