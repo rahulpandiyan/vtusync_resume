@@ -24,20 +24,18 @@ export default async function AdminPage() {
         const [
             totalUsers,
             totalResumes,
-            totalSubscriptions, // This might represent total *ever* subscriptions depending on the table
+            totalSubscriptions,
             baseResumes,
             tailoredResumes,
-            proUsers // Fetch pro user count
+            proUsers
         ] = await Promise.all([
             getTotalUserCount(),
             getTotalResumeCount(),
-            getTotalSubscriptionCount(), // Keep or remove based on whether it's distinct from proUsers
+            getTotalSubscriptionCount(),
             getBaseResumeCount(),
             getTailoredResumeCount(),
-            getProUserCount() // Call the new action
+            getProUserCount()
         ]);
-
-        // Removed averageResumesPerUser calculation
 
         return (
             <div className="container mx-auto py-10 px-4 md:px-6 lg:px-8">
@@ -108,16 +106,14 @@ export default async function AdminPage() {
                                 <CardTitle className="text-sm font-medium">
                                     Pro Users
                                 </CardTitle>
-                                <Star className="h-4 w-4 text-muted-foreground" /> {/* Changed Icon */}
+                                <Star className="h-4 w-4 text-muted-foreground" />
                             </CardHeader>
                             <CardContent>
-                                <div className="text-2xl font-bold">{proUsers.toLocaleString()}</div> {/* Display pro users */}
+                                <div className="text-2xl font-bold">{proUsers.toLocaleString()}</div>
                             </CardContent>
                         </Card>
 
-                        {/* Total Subscriptions Card - Keep or remove? Depends if it's different from Pro Users */}
-                        {/* If getTotalSubscriptionCount counts *all* subscriptions (active/inactive), keep it. */}
-                        {/* If it's the same as getProUserCount, remove this card. */}
+                        {/* Total Subscriptions Card */}
                         <Card>
                             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                                 <CardTitle className="text-sm font-medium">
@@ -141,21 +137,33 @@ export default async function AdminPage() {
         );
     } catch (error) {
         console.error("Error during AdminPage server rendering:", error);
-        // Fallback UI to display the error and prevent crashing the client context
         return (
             <div className="container mx-auto py-10 px-4 md:px-6 lg:px-8">
-                <h1 className="text-3xl font-bold text-red-600">Admin Page Server Error</h1>
-                <p className="text-muted-foreground mt-1">An unexpected error occurred while trying to render the admin dashboard on the server.</p>
-                <div className="mt-4 p-4 border border-red-300 bg-red-50 rounded-md">
-                    <h2 className="text-lg font-semibold text-red-700">Error Details:</h2>
-                    <pre className="mt-2 text-sm text-red-700 whitespace-pre-wrap">
-                        {error instanceof Error ? error.message : String(error)}
-                        {error instanceof Error && error.stack ? `\n\nStack Trace:\n${error.stack}` : ''}
-                    </pre>
+                <div className="max-w-2xl mx-auto">
+                    <h1 className="text-3xl font-bold text-red-600 mb-4">Admin Panel Error</h1>
+                    <Card className="border-red-200 bg-red-50 dark:bg-red-900/20">
+                        <CardHeader>
+                            <CardTitle className="text-red-700 dark:text-red-300">Configuration Required</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4 text-sm text-red-600 dark:text-red-400">
+                            <p>
+                                The admin panel requires server-side configuration to function properly.
+                            </p>
+                            <div className="bg-white dark:bg-zinc-900 p-4 rounded-lg border border-red-200 dark:border-red-800">
+                                <p className="font-mono text-xs mb-2">Required environment variable:</p>
+                                <code className="text-xs bg-red-100 dark:bg-red-900 px-2 py-1 rounded">
+                                    SUPABASE_SERVICE_ROLE_KEY
+                                </code>
+                            </div>
+                            <p className="text-xs">
+                                This key is only available on the server (Vercel) and cannot be set locally for security reasons.
+                            </p>
+                            <p className="text-xs">
+                                <strong>Solution:</strong> Test the admin panel in production where the service role key is configured.
+                            </p>
+                        </CardContent>
+                    </Card>
                 </div>
-                <p className="mt-4 text-sm text-gray-600">
-                    Please check the server logs for more information. The client-side portion of the page may not function correctly.
-                </p>
             </div>
         );
     }

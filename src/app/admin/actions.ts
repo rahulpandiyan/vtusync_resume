@@ -82,13 +82,54 @@ export async function checkAdminStatus(): Promise<boolean> {
   if (adminError) {
     console.error('Admin check failed for profiles/admins lookup', {
       userId: user.id,
-      profileError: profileError.message,
+      profileError: profileError?.message,
       adminError: adminError.message,
     });
     return false;
   }
 
   return adminData?.is_admin === true;
+}
+
+/**
+ * Debug function to check admin status and return details
+ */
+export async function debugAdminStatus(): Promise<{
+  isAuthenticated: boolean;
+  userId: string | null;
+  userEmail: string | null;
+  isAdmin: boolean;
+  profileIsAdmin: boolean | null;
+  error: string | null;
+}> {
+  const supabase = await createClient();
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    return {
+      isAuthenticated: false,
+      userId: null,
+      userEmail: null,
+      isAdmin: false,
+      profileIsAdmin: null,
+      error: authError?.message || 'Not authenticated' || null
+    };
+  }
+
+  const { data: profileData } = await supabase
+    .from('profiles')
+    .select('is_admin')
+    .eq('user_id', user.id)
+    .maybeSingle();
+
+  return {
+    isAuthenticated: true,
+    userId: user.id,
+    userEmail: user.email ?? null,
+    isAdmin: profileData?.is_admin === true,
+    profileIsAdmin: profileData?.is_admin ?? null,
+    error: null
+  };
 }
 
 /**

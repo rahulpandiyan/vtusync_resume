@@ -18,6 +18,7 @@ const SUBSCRIPTION_EXEMPT_ROUTES = [
   '/terms',
   '/how-it-works',
   '/blog',
+  '/admin',
 ]
 
 function isSubscriptionExemptRoute(pathname: string): boolean {
