@@ -1,25 +1,10 @@
 'use server';
 
-import { Stripe } from "stripe";
+import { getStripe } from "@/lib/stripe";
 import { createClient, createServiceClient } from '@/utils/supabase/server';
 import { Subscription } from '@/lib/types';
 import { revalidatePath } from "next/cache";
 import { getSubscriptionAccessState } from '@/lib/subscription-access';
-
-// Lazy-initialize Stripe only when needed (allows running without Stripe for local dev)
-let _stripe: Stripe | null = null;
-
-function getStripe(): Stripe {
-  if (!_stripe) {
-    if (!process.env.STRIPE_SECRET_KEY) {
-      throw new Error('STRIPE_SECRET_KEY is not configured. Stripe features are disabled.');
-    }
-    _stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: '2025-04-30.basil'
-    });
-  }
-  return _stripe;
-}
 
 // Create or retrieve a Stripe customer
 export async function createOrRetrieveCustomer({

@@ -2,13 +2,10 @@
 
 import { redirect } from "next/navigation";
 import { NextRequest } from "next/server";
-import Stripe from "stripe";
-
-
-const apiKey = process.env.STRIPE_SECRET_KEY as string;
-const stripe = new Stripe(apiKey);
+import { getStripe } from "@/lib/stripe";
 
 export const GET = async (request: NextRequest) => {
+  const stripe = getStripe();
   const { searchParams } = new URL(request.url);
 
   const stripeSessionId = searchParams.get("session_id");

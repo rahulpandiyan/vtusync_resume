@@ -3,11 +3,9 @@
 import { headers } from 'next/headers'
 import Stripe from 'stripe'
 import { manageSubscriptionStatusChange } from '@/utils/actions/stripe/actions'
+import { getStripe } from '@/lib/stripe'
 import { createServiceClient } from '@/utils/supabase/server'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-04-30.basil'
-})
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!
 
@@ -138,6 +136,7 @@ async function handleSubscriptionChange(
 }
 
 export async function POST(req: Request) {
+  const stripe = getStripe();
   try {
     console.log('🌐 Incoming Webhook Request:', {
       method: req.method,
