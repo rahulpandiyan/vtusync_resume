@@ -75,7 +75,9 @@ export async function updateSession(request: NextRequest) {
       pathname.startsWith('/blog') ||
       pathname.startsWith('/privacy') ||
       pathname.startsWith('/terms') ||
-      pathname.startsWith('/how-it-works')
+      pathname.startsWith('/how-it-works') ||
+      pathname.startsWith('/api/robots') ||
+      pathname.startsWith('/api/sitemap')
 
     if (isPublicRoute) {
       return supabaseResponse
