@@ -7,6 +7,7 @@ import { Toaster } from "sonner";
 import { createClient } from "@/utils/supabase/server";
 import { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { PostHogProvider } from "@/components/analytics/posthog-provider";
@@ -122,6 +123,7 @@ export default async function RootLayout({
             <main className="h-full">
               {children}
               {isVercel && <Analytics />}
+              {isVercel && <SpeedInsights />}
             </main>
           </div>
           <Toaster
