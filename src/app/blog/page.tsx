@@ -5,7 +5,7 @@ import { Calendar, ArrowRight, Sparkles } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "ResuSync Blog",
-  description: "Latest updates, tips, and articles from the ResuSync team.",
+  description: "Latest updates, tips, and articles from the ResuSync team on resume building and career advice.",
 };
 
 export default async function BlogPage() {

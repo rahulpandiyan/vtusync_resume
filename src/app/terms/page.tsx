@@ -3,7 +3,7 @@ import { Footer } from '@/components/layout/footer';
 
 export const metadata: Metadata = {
   title: 'Terms of Service | ResuSync',
-  description: 'Terms of Service for ResuSync (powered by VTUSync).',
+  description: 'Terms of Service for ResuSync - AI Resume Builder (powered by VTUSync).',
 };
 
 export default function TermsOfService() {

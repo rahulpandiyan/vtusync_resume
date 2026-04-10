@@ -47,7 +47,7 @@ export default function PrivacyPolicy() {
 
           <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 pt-4">3. Payment Information</h2>
           <p>
-            All subscriptions and payments are securely processed by Stripe. ResuSync/VTUSync does not collect, 
+            All subscriptions and payments are securely processed by RazorPay. ResuSync/VTUSync does not collect, 
             store, or process your raw credit card information. We only store payment status and subscription tier records.
           </p>
 

@@ -16,16 +16,16 @@ import { AuthDialogProvider } from "@/components/auth/auth-dialog-provider";
 
 // Page-specific metadata that extends the base metadata from layout.tsx
 export const metadata: Metadata = {
-  title: "ResuSync - AI Resume Builder for Tech Jobs",
-  description: "Create ATS-optimized tech resumes in under 10 minutes. 3x your interview chances with AI-powered resume tailoring.",
+  title: "ResuSync - Free AI Resume Builder for Tech Jobs",
+  description: "Create ATS-optimized tech resumes in under 10 minutes. Free AI-powered resume tailoring to 3x your interview chances.",
   openGraph: {
-    title: "ResuSync - AI Resume Builder for Tech Jobs",
-    description: "Create ATS-optimized tech resumes in under 10 minutes. 3x your interview chances with AI-powered resume tailoring.",
-    url: "https://resusync.com",
+    title: "ResuSync - Free AI Resume Builder for Tech Jobs",
+    description: "Create ATS-optimized tech resumes in under 10 minutes. Free AI-powered resume tailoring to 3x your interview chances.",
+    url: "https://resume.vtusync.in",
   },
   twitter: {
-    title: "ResuSync - AI Resume Builder for Tech Jobs",
-    description: "Create ATS-optimized tech resumes in under 10 minutes. 3x your interview chances with AI-powered resume tailoring.",
+    title: "ResuSync - Free AI Resume Builder for Tech Jobs",
+    description: "Create ATS-optimized tech resumes in under 10 minutes. Free AI-powered resume tailoring to 3x your interview chances.",
   },
 };
 
@@ -49,7 +49,7 @@ export default async function Page() {
       "price": "0",
       "priceCurrency": "USD"
     },
-    "description": "Create ATS-optimized tech resumes in under 10 minutes. 3x your interview chances with AI-powered resume tailoring.",
+    "description": "Create ATS-optimized tech resumes in under 10 minutes. Free AI-powered resume tailoring to 3x your interview chances.",
     "operatingSystem": "Web",
     "aggregateRating": {
       "@type": "AggregateRating",

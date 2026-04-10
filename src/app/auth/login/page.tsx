@@ -18,21 +18,21 @@ import { AuthDialogProvider } from "@/components/auth/auth-dialog-provider";
 // import { WaitlistSection } from "@/components/waitlist/waitlist-section";
 
 export const metadata: Metadata = {
-  title: "Login | ResuSync - AI-Powered Resume Builder",
-  description: "Create tailored, ATS-optimized resumes powered by AI. ResuSync helps you land your dream tech job with personalized resume optimization.",
-  keywords: ["resume builder", "AI resume", "ATS optimization", "tech jobs", "career tools", "job application"],
+  title: "Login | ResuSync - Free AI Resume Builder",
+  description: "Create ATS-optimized resumes powered by AI. ResuSync helps you land your dream tech job with free resume optimization.",
+  keywords: ["resume builder", "AI resume", "ATS optimization", "tech jobs", "career tools", "job application", "free resume builder"],
   authors: [{ name: "ResuSync" }],
   openGraph: {
-    title: "ResuSync - AI-Powered Resume Builder",
-    description: "Create tailored, ATS-optimized resumes powered by AI. Land your dream tech job with personalized resume optimization.",
-    url: "https://resusync.com//",
+    title: "ResuSync - Free AI Resume Builder",
+    description: "Create ATS-optimized resumes powered by AI. Land your dream tech job with free resume optimization.",
+    url: "https://resume.vtusync.in/auth/login",
     siteName: "ResuSync",
     images: [
       {
-        url: "/og.webp",
+        url: "https://resume.vtusync.in/og.webp",
         width: 1200,
         height: 630,
-        alt: "ResuSync - AI Resume Builder",
+        alt: "ResuSync - Free AI Resume Builder",
       },
     ],
     locale: "en_US",
@@ -40,9 +40,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "ResuSync - AI-Powered Resume Builder",
-    description: "Create tailored, ATS-optimized resumes powered by AI. Land your dream tech job with personalized resume optimization.",
-    images: ["/og.webp"],
+    title: "ResuSync - Free AI Resume Builder",
+    description: "Create ATS-optimized resumes powered by AI. Land your dream tech job with free resume optimization.",
+    images: ["https://resume.vtusync.in/og.webp"],
     creator: "@resusync",
   },
   robots: {
@@ -56,9 +56,6 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  // verification: {
-  //   google: "google-site-verification-code", // Replace with actual verification code
-  // },
 };
 
 export default async function LoginPage({

@@ -21,13 +21,13 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   const post = getPostBySlug(slug);
   if (!post) return {};
   
-  const url = `https://resusync.com/blog/${slug}`;
+  const url = `https://resume.vtusync.in/blog/${slug}`;
   const publishedTime = new Date(post.frontMatter.date).toISOString();
   
   return {
     title: post.frontMatter.title,
     description: post.frontMatter.description,
-    keywords: ['resume builder', 'tech jobs', 'Vancouver tech', 'career advice', 'AI resume', 'job search'],
+    keywords: ['resume builder', 'tech jobs', 'career advice', 'AI resume', 'job search', 'free resume builder'],
     authors: [{ name: 'ResuSync Team' }],
     creator: 'ResuSync',
     publisher: 'ResuSync',
@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
       authors: ['ResuSync Team'],
       images: [
         {
-          url: '/og.webp',
+          url: 'https://resume.vtusync.in/og.webp',
           width: 1200,
           height: 630,
           alt: post.frontMatter.title,
@@ -56,7 +56,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
       card: 'summary_large_image',
       title: post.frontMatter.title,
       description: post.frontMatter.description,
-      images: ['/og.webp'],
+      images: ['https://resume.vtusync.in/og.webp'],
       creator: '@resusync',
       site: '@resusync',
     },
@@ -96,26 +96,26 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     '@type': 'Article',
     headline: post.frontMatter.title,
     description: post.frontMatter.description,
-    image: 'https://resusync.com/og.webp',
+    image: 'https://resume.vtusync.in/og.webp',
     datePublished: new Date(post.frontMatter.date).toISOString(),
     dateModified: new Date(post.frontMatter.date).toISOString(),
     author: {
       '@type': 'Organization',
       name: 'ResuSync Team',
-      url: 'https://resusync.com',
+      url: 'https://resume.vtusync.in',
     },
     publisher: {
       '@type': 'Organization',
       name: 'ResuSync',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://resusync.com/og.webp',
+        url: 'https://resume.vtusync.in/og.webp',
       },
-      url: 'https://resusync.com',
+      url: 'https://resume.vtusync.in',
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://resusync.com/blog/${slug}`,
+      '@id': `https://resume.vtusync.in/blog/${slug}`,
     },
     articleSection: 'Career Advice',
     keywords: 'resume builder, tech jobs, Vancouver tech, career advice, AI resume, job search',

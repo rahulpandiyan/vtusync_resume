@@ -23,14 +23,14 @@ const isVercel = process.env.VERCEL === '1';
 const nunito = Nunito({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://resusync.com"),
+  metadataBase: new URL("https://resume.vtusync.in"),
   title: {
     default: "ResuSync - AI-Powered Resume Builder",
     template: "%s | ResuSync"
   },
-  description: "Create tailored, ATS-optimized resumes powered by AI. Land your dream tech job with ResuSync's smart resume builder.",
+  description: "Create ATS-optimized resumes with AI assistance. Land your dream tech job with ResuSync's smart resume builder.",
   applicationName: "ResuSync",
-  keywords: ["resume builder", "AI resume", "ATS optimization", "tech jobs", "career tools", "job application", "resusync"],
+  keywords: ["resume builder", "AI resume", "ATS optimization", "tech jobs", "career tools", "job application", "resume maker"],
   authors: [{ name: "ResuSync" }],
   creator: "ResuSync",
   publisher: "ResuSync",
@@ -46,12 +46,14 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
+    locale: "en_US",
+    url: "https://resume.vtusync.in",
     siteName: "ResuSync",
     title: "ResuSync - AI-Powered Resume Builder",
-    description: "Create tailored, ATS-optimized resumes powered by AI. Land your dream tech job with ResuSync's smart resume builder.",
+    description: "Create ATS-optimized resumes with AI assistance. Land your dream tech job with ResuSync's smart resume builder.",
     images: [
       {
-        url: "/og.webp",
+        url: "https://resume.vtusync.in/og.webp",
         width: 1200,
         height: 630,
         alt: "ResuSync - AI Resume Builder",
@@ -61,8 +63,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "ResuSync - AI-Powered Resume Builder",
-    description: "Create tailored, ATS-optimized resumes powered by AI. Land your dream tech job with ResuSync's smart resume builder.",
-    images: ["/og.webp"],
+    description: "Create ATS-optimized resumes with AI assistance. Land your dream tech job with ResuSync's smart resume builder.",
+    images: ["https://resume.vtusync.in/og.webp"],
     creator: "@resusync",
   },
   robots: {
