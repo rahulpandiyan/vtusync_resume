@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { User, Linkedin, Briefcase, GraduationCap, Wrench, FolderGit2, Upload, Save, Trash2} from "lucide-react";
@@ -28,6 +28,7 @@ import { ProfileEducationForm } from "@/components/profile/profile-education-for
 import { ProfileSkillsForm } from "@/components/profile/profile-skills-form";
 // import { ProfileEditorHeader } from "./profile-editor-header";
 import { formatProfileWithAI } from "../../utils/actions/profiles/ai";
+import { getLinkedInAuthUrl, isLinkedInConfigured } from "@/utils/actions/linkedin/actions";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 import { ProUpgradeButton } from "@/components/settings/pro-upgrade-button";
@@ -46,6 +47,7 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
   const [isResetting, setIsResetting] = useState(false);
   const [isResumeDialogOpen, setIsResumeDialogOpen] = useState(false);
   const [isTextImportDialogOpen, setIsTextImportDialogOpen] = useState(false);
+  const [isLinkedInLoading, setIsLinkedInLoading] = useState(false);
   const [resumeContent, setResumeContent] = useState("");
   const [textImportContent, setTextImportContent] = useState("");
   const [isProcessingResume, setIsProcessingResume] = useState(false);
@@ -53,11 +55,44 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
   const [isResumeDragging, setIsResumeDragging] = useState(false);
   const [isTextImportDragging, setIsTextImportDragging] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   // Sync with server state when initialProfile changes
   useEffect(() => {
     setProfile(initialProfile);
   }, [initialProfile]);
+
+  // Handle LinkedIn import result
+  useEffect(() => {
+    const success = searchParams.get('success');
+    const error = searchParams.get('error');
+    
+    if (success === 'linkedin_imported') {
+      const info = searchParams.get('info');
+      if (info === 'manual') {
+        toast.success("Name & email imported! For work experience: On LinkedIn app → Profile → More → Save to PDF, then come back here and click 'Resume' to upload that PDF.");
+      } else {
+        toast.success("Profile imported from LinkedIn successfully!");
+      }
+      router.refresh();
+    } else if (error) {
+      const errorMessages: Record<string, string> = {
+        linkedin_denied: "LinkedIn authorization was denied.",
+        linkedin_no_code: "Authorization code not received.",
+        linkedin_token_failed: "Failed to connect to LinkedIn. Your LinkedIn Developer app may need to be published or you need to be added as a tester.",
+        linkedin_profile_failed: "Failed to fetch LinkedIn profile.",
+        linkedin_update_failed: "Failed to update profile. Please try again.",
+        linkedin_unknown: "An unexpected error occurred. Please ensure your LinkedIn Developer app is in Live mode.",
+      };
+      const detail = searchParams.get('detail');
+      toast.error(errorMessages[error] || detail || "LinkedIn import failed. Please try again.");
+    }
+    
+    // Clear query params after handling
+    if (success || error) {
+      router.replace('/profile');
+    }
+  }, [searchParams, router]);
 
   // Add useEffect to clear error when dialogs close
   useEffect(() => {
@@ -126,8 +161,22 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
     }
   };
 
-  const handleLinkedInImport = () => {
-    toast.info("LinkedIn import feature coming soon!");
+const handleLinkedInImport = async () => {
+    try {
+      const configured = await isLinkedInConfigured();
+      if (!configured) {
+        toast.error("LinkedIn OAuth is not configured. Please use LinkedIn Data Export instead.");
+        return;
+      }
+
+      setIsLinkedInLoading(true);
+      const authUrl = await getLinkedInAuthUrl();
+      window.location.href = authUrl;
+    } catch (error: unknown) {
+      console.error('LinkedIn error:', error);
+      toast.error("For full data: LinkedIn Settings → Data Privacy → Get copy of your data → Profile");
+      setIsLinkedInLoading(false);
+    }
   };
 
   const handleResumeUpload = async (content: string) => {
@@ -387,11 +436,16 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
                 <Button
                   variant="outline"
                   onClick={handleLinkedInImport}
+                  disabled={isLinkedInLoading}
                   className="group relative bg-[#0077b5]/5 hover:bg-[#0077b5]/10 border-[#0077b5]/20 hover:border-[#0077b5]/30 text-[#0077b5] transition-all duration-300 h-auto py-1.5 sm:py-3 px-1 sm:px-4"
                 >
                   <div className="relative flex flex-col items-center gap-0.5 sm:gap-1.5 w-full">
                     <div className="flex items-center justify-center w-6 h-6 sm:w-9 sm:h-9 rounded-full bg-[#0077b5]/10">
-                      <Linkedin className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
+                      {isLinkedInLoading ? (
+                        <Loader2 className="h-3.5 w-3.5 sm:h-5 sm:w-5 animate-spin" />
+                      ) : (
+                        <Linkedin className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
+                      )}
                     </div>
                     <div className="text-center">
                       <div className="font-bold text-[9px] sm:text-xs leading-tight">LinkedIn</div>

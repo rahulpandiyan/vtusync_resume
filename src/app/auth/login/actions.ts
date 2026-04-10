@@ -219,13 +219,13 @@ export async function joinWaitlist(formData: FormData): Promise<AuthResult> {
   }
 } 
 
-// GitHub Sign In
-export async function signInWithGithub(): Promise<GithubAuthResult> {
+// LinkedIn Sign In via custom OAuth
+export async function signInWithLinkedIn(): Promise<GithubAuthResult> {
   const supabase = await createClient();
 
   try {
     const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: 'github',
+      provider: 'linkedin',
       options: {
         redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
         queryParams: {
@@ -249,7 +249,39 @@ export async function signInWithGithub(): Promise<GithubAuthResult> {
       error: error instanceof Error ? error.message : 'An unexpected error occurred' 
     };
   }
-} 
+}
+
+// Google Sign In
+export async function signInWithGoogle(): Promise<GithubAuthResult> {
+  const supabase = await createClient();
+
+  try {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+        queryParams: {
+          next: '/'
+        }
+      }
+    });
+
+    if (error) {
+      return { success: false, error: error.message };
+    }
+
+    if (data?.url) {
+      return { success: true, url: data.url };
+    }
+
+    return { success: false, error: 'Failed to get OAuth URL' };
+  } catch (error) {
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'An unexpected error occurred' 
+    };
+  }
+}
 
 // Check if user is authenticated
 export async function checkAuth(): Promise<{ 

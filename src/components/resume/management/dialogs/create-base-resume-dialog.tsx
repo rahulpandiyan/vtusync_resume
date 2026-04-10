@@ -19,6 +19,7 @@ import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/
 import { Textarea } from "@/components/ui/textarea";
 import { convertTextToResume } from "@/utils/actions/resumes/ai";
 import { ApiErrorDialog } from "@/components/ui/api-error-dialog";
+import { Linkedin } from "lucide-react";
 
 interface CreateBaseResumeDialogProps {
   children: React.ReactNode;
@@ -29,7 +30,7 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
   const [open, setOpen] = useState(false);
   const [targetRole, setTargetRole] = useState('');
   const [isCreating, setIsCreating] = useState(false);
-  const [importOption, setImportOption] = useState<'import-profile' | 'scratch' | 'import-resume'>('import-profile');
+  const [importOption, setImportOption] = useState<'import-profile' | 'scratch' | 'import-resume' | 'import-linkedin'>('import-profile');
   const [isTargetRoleInvalid, setIsTargetRoleInvalid] = useState(false);
   const [currentStep, setCurrentStep] = useState<1 | 2>(1);
   const [selectedItems, setSelectedItems] = useState<{
@@ -51,6 +52,7 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
     description: ""
   });
   const [isDragging, setIsDragging] = useState(false);
+  const [isFetchingLinkedIn, setIsFetchingLinkedIn] = useState(false);
 
   const getItemId = (type: keyof typeof selectedItems, item: WorkExperience | Education | Skill | Project, index?: number): string => {
     const baseId = (() => {
@@ -99,6 +101,33 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
     const sectionItems = profile[section].map((item, index) => getItemId(section, item, index));
     const selectedCount = sectionItems.filter(id => selectedItems[section].includes(id)).length;
     return selectedCount > 0 && selectedCount < sectionItems.length;
+  };
+
+  const handleLinkedInLogin = async () => {
+    try {
+      setIsFetchingLinkedIn(true);
+      const response = await fetch('/api/linkedin/auth');
+      const data = await response.json();
+
+      if (data.error || !data.url) {
+        toast({
+          title: "Error",
+          description: "Failed to connect to LinkedIn. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      window.location.href = data.url;
+    } catch {
+      toast({
+        title: "Error",
+        description: "Failed to connect to LinkedIn. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsFetchingLinkedIn(false);
+    }
   };
 
   const handleNext = () => {
@@ -243,25 +272,38 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
         }
       }
 
-      const selectedContent = {
-        work_experience: profile.work_experience.filter((exp, index) => 
-          selectedItems.work_experience.includes(getItemId('work_experience', exp, index))
-        ),
-        education: profile.education.filter((edu, index) => 
-          selectedItems.education.includes(getItemId('education', edu, index))
-        ),
-        skills: profile.skills.filter((skill, index) => 
-          selectedItems.skills.includes(getItemId('skills', skill, index))
-        ),
-        projects: profile.projects.filter((project, index) => 
-          selectedItems.projects.includes(getItemId('projects', project, index))
-        ),
-      };
+      let selectedContent;
+      let resumeImportOption: 'import-profile' | 'fresh' | 'import-resume';
 
+      if (importOption === 'import-linkedin') {
+        setOpen(false);
+        toast({
+          title: "Connect LinkedIn First",
+          description: "Please connect your LinkedIn account from your profile page first, then return to create a resume using 'From Profile' option.",
+          variant: "default",
+        });
+        return;
+      } else {
+        selectedContent = {
+          work_experience: profile.work_experience.filter((exp, index) => 
+            selectedItems.work_experience.includes(getItemId('work_experience', exp, index))
+          ),
+          education: profile.education.filter((edu, index) => 
+            selectedItems.education.includes(getItemId('education', edu, index))
+          ),
+          skills: profile.skills.filter((skill, index) => 
+            selectedItems.skills.includes(getItemId('skills', skill, index))
+          ),
+          projects: profile.projects.filter((project, index) => 
+            selectedItems.projects.includes(getItemId('projects', project, index))
+          ),
+        };
+        resumeImportOption = importOption === 'scratch' ? 'fresh' : 'import-profile';
+      }
 
       const resume = await createBaseResume(
         targetRole, 
-        importOption === 'scratch' ? 'fresh' : importOption,
+        resumeImportOption,
         selectedContent
       );
 
@@ -494,10 +536,11 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
               {/* Import Options */}
               <div className="space-y-3">
                 <Label className="text-sm font-medium text-gray-900">Resume Content</Label>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {[
-                    { id: 'import-profile', icon: Copy, label: 'From Profile', desc: 'Use existing profile data' },
-                    { id: 'import-resume', icon: Upload, label: 'Import Resume', desc: 'Upload or paste resume' },
+                    { id: 'import-profile', icon: Copy, label: 'From Profile', desc: 'Use existing profile' },
+                    { id: 'import-resume', icon: Upload, label: 'Import Resume', desc: 'Upload or paste' },
+                    { id: 'import-linkedin', icon: Linkedin, label: 'From LinkedIn', desc: 'Import profile' },
                     { id: 'scratch', icon: Wand2, label: 'Start Fresh', desc: 'Create from scratch' }
                   ].map((option) => (
                     <div key={option.id}>
@@ -507,7 +550,7 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
                         name="importOption"
                         value={option.id}
                         checked={importOption === option.id}
-                        onChange={(e) => setImportOption(e.target.value as 'import-profile' | 'scratch' | 'import-resume')}
+                        onChange={(e) => setImportOption(e.target.value as 'import-profile' | 'scratch' | 'import-resume' | 'import-linkedin')}
                         className="sr-only peer"
                       />
                       <Label
@@ -518,7 +561,7 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
                           "peer-checked:border-purple-500 peer-checked:bg-purple-50 peer-checked:shadow-sm"
                         )}
                       >
-                        <option.icon className="w-5 h-5 text-purple-600 mb-2" />
+                        <option.icon className={cn("w-5 h-5 mb-2", option.id === 'import-linkedin' ? "text-blue-600" : "text-purple-600")} />
                         <div className="text-xs font-medium text-center">
                           <div className="text-gray-900">{option.label}</div>
                           <div className="text-gray-500 mt-0.5">{option.desc}</div>
@@ -527,6 +570,46 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
                     </div>
                   ))}
                 </div>
+
+                {/* LinkedIn Import */}
+                {importOption === 'import-linkedin' && (
+                  <div className="mt-4 space-y-3">
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                      <div className="flex items-start gap-3">
+                        <Linkedin className="w-5 h-5 text-blue-600 mt-0.5" />
+                        <div className="flex-1 space-y-3">
+                          <div>
+                            <p className="text-sm font-medium text-blue-900">Import from LinkedIn</p>
+                            <p className="text-xs text-blue-700 mt-1">
+                              Connect your LinkedIn account to automatically import your work experience, education, and skills.
+                            </p>
+                          </div>
+                          <Button
+                            onClick={handleLinkedInLogin}
+                            disabled={isFetchingLinkedIn}
+                            size="sm"
+                            className="bg-blue-600 hover:bg-blue-700"
+                          >
+                            {isFetchingLinkedIn ? (
+                              <>
+                                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                                Connecting...
+                              </>
+                            ) : (
+                              <>
+                                <Linkedin className="h-4 w-4 mr-2" />
+                                Connect LinkedIn
+                              </>
+                            )}
+                          </Button>
+                          <p className="text-xs text-blue-600">
+                            You&apos;ll be redirected to LinkedIn to authorize access.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {/* Profile Import Content Selection */}
                 {importOption === 'import-profile' && (

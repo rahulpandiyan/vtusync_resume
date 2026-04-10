@@ -2,10 +2,11 @@
 
 import { createContext, useCallback, useContext, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Github, Loader2 } from "lucide-react";
+import { Loader2, Mail } from "lucide-react";
+import { signInWithGoogle } from "@/app/auth/login/actions";
+import { getLinkedInAuthUrl, isLinkedInConfigured } from "@/utils/actions/linkedin/actions";
 import { cn } from "@/lib/utils";
 
-import { signInWithGithub } from "@/app/auth/login/actions";
 import { LoginForm } from "@/components/auth/login-form";
 import { SignupForm } from "@/components/auth/signup-form";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -21,34 +22,52 @@ interface AuthDialogContextValue {
 const AuthDialogContext = createContext<AuthDialogContextValue | undefined>(undefined);
 
 
-function SocialAuth() {
-  const [isLoading, setIsLoading] = useState(false);
+function SocialAuth({ onEmailClick }: { onEmailClick?: () => void }) {
+  const [isLoading, setIsLoading] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string>();
+  const authContext = useContext(AuthDialogContext);
 
-  const handleGithubSignIn = async () => {
+  const handleLinkedInSignIn = async () => {
     setErrorMessage(undefined);
-
     try {
-      setIsLoading(true);
-      const result = await signInWithGithub();
+      const configured = await isLinkedInConfigured();
+      if (!configured) {
+        setErrorMessage("LinkedIn OAuth is not configured.");
+        setIsLoading(null);
+        return;
+      }
+      setIsLoading('linkedin');
+      const authUrl = await getLinkedInAuthUrl();
+      window.location.href = authUrl;
+    } catch {
+      setErrorMessage("Failed to start LinkedIn sign in.");
+      setIsLoading(null);
+    }
+  };
 
+  const openEmailAuth = () => {
+    if (authContext) {
+      authContext.openDialog("signup");
+    }
+    if (onEmailClick) {
+      onEmailClick();
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setErrorMessage(undefined);
+    try {
+      setIsLoading('google');
+      const result = await signInWithGoogle();
       if (!result.success) {
-        const message = result.error || "Failed to sign in with GitHub.";
-        setErrorMessage(message);
+        setErrorMessage(result.error || "Failed to sign in with Google.");
+        setIsLoading(null);
         return;
       }
-
-      if (result.url) {
-        window.location.href = result.url;
-        return;
-      }
-
-      setErrorMessage("Failed to start GitHub sign in.");
-    } catch (error) {
-      console.error("Failed to sign in with GitHub:", error);
-      setErrorMessage("Failed to start GitHub sign in.");
-    } finally {
-      setIsLoading(false);
+      if (result.url) window.location.href = result.url;
+    } catch {
+      setErrorMessage("Failed to start Google sign in.");
+      setIsLoading(null);
     }
   };
 
@@ -66,18 +85,44 @@ function SocialAuth() {
       <Button
         variant="outline"
         className="w-full h-10 border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 font-semibold text-sm transition-all"
-        onClick={handleGithubSignIn}
-        disabled={isLoading}
+        onClick={handleGoogleSignIn}
+        disabled={isLoading !== null}
       >
-        {isLoading ? (
+        {isLoading === 'google' ? (
           <Loader2 className="h-4 w-4 animate-spin" />
         ) : (
           <>
-            <Github className="mr-2.5 h-4 w-4 fill-current text-zinc-900 dark:text-zinc-100" />
-            GitHub
+            <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 24 24"><path fill="#000000" d="M6 12a6 6 0 0 0 11.659 2H12v-4h9.805v4H21.8c-.927 4.564-4.962 8-9.8 8c-5.523 0-10-4.477-10-10S6.477 2 12 2a9.99 9.99 0 0 1 8.282 4.393l-3.278 2.295A6 6 0 0 0 6 12Z"/></svg>
+            Google
           </>
         )}
       </Button>
+
+<Button
+        variant="outline"
+        className="w-full h-10 border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 font-semibold text-sm transition-all"
+        onClick={handleLinkedInSignIn}
+        disabled={isLoading !== null}
+      >
+        {isLoading === 'linkedin' ? (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        ) : (
+          <>
+            <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 32 32" fill="#000000"><path fill="#000000" d="M27.26 27.271h-4.733v-7.427c0-1.771-.037-4.047-2.475-4.047c-2.468 0-2.844 1.921-2.844 3.916v7.557h-4.739V11.999h4.552v2.083h.061c.636-1.203 2.183-2.468 4.491-2.468c4.801 0 5.692 3.161 5.692 7.271v8.385zM7.115 9.912a2.75 2.75 0 0 1-2.751-2.756a2.753 2.753 0 1 1 2.751 2.756zm2.374 17.359H4.74V12h4.749zM29.636 0H2.36C1.057 0 0 1.031 0 2.307v27.387c0 1.276 1.057 2.307 2.36 2.307h27.271c1.301 0 2.369-1.031 2.369-2.307V2.307C32 1.031 30.932 0 29.631 0z"/></svg>
+            LinkedIn
+          </>
+        )}
+      </Button>
+
+      <Button
+  variant="outline"
+  className="w-full h-10 border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 font-semibold text-sm transition-all"
+  onClick={openEmailAuth}
+  disabled={isLoading !== null}
+>
+  <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 24 24"><path fill="#000000" d="m21.84 8.561l-.09-.36a5.115 5.115 0 0 0-.47-1a4.75 4.75 0 0 0-1.82-1.74l-5.25-2.84a4.8 4.8 0 0 0-4.51 0l-5.25 2.84a4.75 4.75 0 0 0-1.82 1.74a4.33 4.33 0 0 0-.46 1v.14A4.62 4.62 0 0 0 2 9.571v7.62a4.76 4.76 0 0 0 4.75 4.75h10.5a4.75 4.75 0 0 0 4.75-4.75v-7.63a4.788 4.788 0 0 0-.16-1m-8.26 3.35a3.3 3.3 0 0 1-3.25 0L3.8 8.131c.03-.076.067-.15.11-.22a3.25 3.25 0 0 1 1.25-1.19l5.25-2.84a3.2 3.2 0 0 1 1.54-.39a3.24 3.24 0 0 1 1.55.39l5.25 2.84a3.22 3.22 0 0 1 1.4 1.5z"/></svg>
+  Email
+</Button>
 
       {errorMessage && (
         <Alert variant="destructive" className="bg-red-50/50 dark:bg-red-950/20 border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 rounded-md py-2.5" role="alert">
@@ -92,10 +137,12 @@ export function AuthDialogProvider({ children }: { children: React.ReactNode }) 
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<AuthTab>("signup");
   const [formVersion, setFormVersion] = useState(0);
+  const [showEmailForm, setShowEmailForm] = useState(false);
 
   const resetDialog = useCallback(() => {
     setActiveTab("signup");
     setFormVersion((version) => version + 1);
+    setShowEmailForm(false);
   }, []);
 
   const closeDialog = useCallback(() => {
@@ -106,6 +153,7 @@ export function AuthDialogProvider({ children }: { children: React.ReactNode }) 
   const openDialog = useCallback((tab: AuthTab = "signup") => {
     setActiveTab(tab);
     setOpen(true);
+    setShowEmailForm(false);
   }, []);
 
   const handleOpenChange = useCallback(
@@ -180,15 +228,25 @@ export function AuthDialogProvider({ children }: { children: React.ReactNode }) 
               </p>
             </div>
 
-            <div className="min-h-[220px]">
-              {activeTab === "login" ? (
-                <LoginForm key={`login-${formVersion}`} />
-              ) : (
-                <SignupForm key={`signup-${formVersion}`} onSuccess={handleSignupSuccess} />
-              )}
-            </div>
-
-            <SocialAuth />
+            {showEmailForm ? (
+              <div className="min-h-[220px]">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => setShowEmailForm(false)}
+                  className="mb-4 text-xs text-zinc-500 hover:text-zinc-900"
+                >
+                  ← Back to other options
+                </Button>
+                {activeTab === "login" ? (
+                  <LoginForm key={`login-${formVersion}`} />
+                ) : (
+                  <SignupForm key={`signup-${formVersion}`} onSuccess={handleSignupSuccess} />
+                )}
+              </div>
+            ) : (
+              <SocialAuth onEmailClick={() => setShowEmailForm(true)} />
+            )}
           </div>
         </DialogContent>
       </Dialog>
