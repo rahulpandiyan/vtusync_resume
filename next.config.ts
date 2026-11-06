@@ -2,18 +2,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { NextConfig } from 'next'
-import remarkGfm from 'remark-gfm'
-
-// eslint-disable-next-line import/no-extraneous-dependencies
-import mdx from '@next/mdx'
-
-const withMDX = mdx({
-  extension: /\.mdx?$/,
-  options: {
-    remarkPlugins: [remarkGfm],
-    rehypePlugins: [],
-  },
-});
 
 const nextConfig: NextConfig = {
   // Enable standalone output for Docker builds (prevent Windows symlink EPERM in local dev)
@@ -35,4 +23,4 @@ const nextConfig: NextConfig = {
   reactStrictMode: false,
 }
 
-export default withMDX(nextConfig)
+export default nextConfig
