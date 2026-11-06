@@ -386,7 +386,7 @@ export function DocumentSettingsForm({ documentSettings, onChange, profile, show
                   type="button"
                   onClick={startPayment}
                   disabled={isLoading}
-                  className="w-full h-9 text-xs font-bold bg-white hover:bg-slate-50 text-slate-900 border border-slate-200 shadow-sm"
+                  className="w-full h-11 lg:h-10 text-xs font-bold bg-white hover:bg-slate-50 text-slate-900 border border-slate-200 shadow-sm"
                 >
                   {isLoading ? (
                     <Loader2 className="h-3 w-3 animate-spin" />

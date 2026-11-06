@@ -1,109 +1,140 @@
 'use client';
 
-import { 
-  User, 
-  Briefcase, 
-  FolderGit2, 
-  GraduationCap, 
-  Wrench, 
+import type { ReactNode } from 'react';
+import Image from 'next/image';
+import {
+  User,
+  Briefcase,
+  FolderGit2,
+  GraduationCap,
+  Wrench,
   LayoutTemplate,
   Award,
-  FileText
+  FileText,
 } from "lucide-react";
-import { TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
 
-export function ResumeEditorTabs() {
+import { useEditorSection } from "../section-context";
+
+export type EditorSection = 'basic' | 'work' | 'projects' | 'education' | 'skills' | 'settings' | 'resume-score' | 'cover-letter' | 'synkai';
+
+interface SectionDef {
+  value: EditorSection;
+  label: string;
+  icon: ReactNode;
+  amber?: boolean;
+}
+
+const SyncAIIcon = (
+  <span className="relative flex h-4 w-4 items-center justify-center overflow-hidden rounded-full border border-zinc-200/80 bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800">
+    <Image
+      src="/favicon-16x16.png"
+      alt=""
+      width={16}
+      height={16}
+      className="h-full w-full object-cover scale-110"
+      aria-hidden="true"
+    />
+  </span>
+);
+
+const SECTIONS: SectionDef[] = [
+  { value: "basic", label: "Info", icon: <User className="h-4 w-4" /> },
+  { value: "work", label: "Work", icon: <Briefcase className="h-4 w-4" /> },
+  { value: "projects", label: "Projects", icon: <FolderGit2 className="h-4 w-4" /> },
+  { value: "education", label: "Education", icon: <GraduationCap className="h-4 w-4" /> },
+  { value: "skills", label: "Skills", icon: <Wrench className="h-4 w-4" /> },
+  { value: "settings", label: "Layout", icon: <LayoutTemplate className="h-4 w-4" /> },
+  { value: "resume-score", label: "Score", icon: <Award className="h-4 w-4 text-amber-500" /> },
+  { value: "cover-letter", label: "Letter", icon: <FileText className="h-4 w-4" /> },
+  { value: "synkai", label: "SyncAI", icon: SyncAIIcon },
+];
+
+interface ResumeEditorTabsProps {
+  value: EditorSection;
+  onValueChange: (section: EditorSection) => void;
+  variant?: 'rail' | 'tabs';
+}
+
+export function ResumeEditorTabs({ value, onValueChange, variant = 'tabs' }: ResumeEditorTabsProps) {
+  const { setIsSyncAiOpen, setIsScoreOpen } = useEditorSection();
+
+  const handleTabClick = (v: EditorSection) => {
+    if (v === 'synkai') {
+      setIsSyncAiOpen(true);
+      return;
+    }
+    if (v === 'resume-score') {
+      setIsScoreOpen(true);
+      return;
+    }
+    onValueChange(v);
+  };
+
+  if (variant === 'tabs') {
+    return (
+      <div className="w-full">
+        <div
+          role="tablist"
+          className="flex h-auto w-full gap-1 overflow-x-auto rounded-xl border border-zinc-200/80 bg-zinc-100/80 p-1 no-scrollbar dark:border-zinc-800 dark:bg-zinc-900"
+        >
+          {SECTIONS.map(({ value: v, label, icon }) => {
+            const active = value === v;
+            return (
+              <button
+                key={v}
+                role="tab"
+                aria-selected={active}
+                onClick={() => handleTabClick(v)}
+                className={cn(
+                  "group flex min-h-[40px] shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-all select-none",
+                  active
+                    ? "bg-zinc-900 text-white shadow-xs dark:bg-zinc-100 dark:text-zinc-900"
+                    : "text-zinc-600 hover:text-zinc-900 hover:bg-white/60 dark:text-zinc-400 dark:hover:text-zinc-100 dark:hover:bg-zinc-800/60"
+                )}
+              >
+                <span className={cn("shrink-0", !active && "opacity-75")}>{icon}</span>
+                <span>{label}</span>
+                {v === 'synkai' && (
+                  <span className="text-[9px] px-1 py-0.2 rounded-full bg-[#3861fb]/15 text-[#3861fb] font-bold">
+                    AI
+                  </span>
+                )}
+                {v === 'resume-score' && (
+                  <span className="text-[9px] px-1 py-0.2 rounded-full bg-amber-500/15 text-amber-600 font-bold">
+                    ATS
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="my-3 w-full">
-      <TabsList className="w-full bg-zinc-100 dark:bg-zinc-900 p-1 rounded-xl h-auto flex overflow-x-auto scrollbar-hide gap-1 shadow-sm justify-start sm:justify-between min-h-[40px]">
-        {/* Basic Info Tab */}
-        <TabsTrigger 
-          value="basic" 
-          className="group shrink-0 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-all text-xs
-            data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-900 dark:data-[state=active]:text-zinc-50 data-[state=active]:shadow-sm
-            data-[state=inactive]:text-zinc-500 dark:data-[state=inactive]:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
-        >
-          <User className="h-3.5 w-3.5 text-zinc-400 group-data-[state=active]:text-[#3861fb]" />
-          <span>Info</span>
-        </TabsTrigger>
-
-        {/* Work Tab */}
-        <TabsTrigger 
-          value="work" 
-          className="group shrink-0 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-all text-xs
-            data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-900 dark:data-[state=active]:text-zinc-50 data-[state=active]:shadow-sm
-            data-[state=inactive]:text-zinc-500 dark:data-[state=inactive]:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
-        >
-          <Briefcase className="h-3.5 w-3.5 text-zinc-400 group-data-[state=active]:text-[#3861fb]" />
-          <span>Work</span>
-        </TabsTrigger>
-
-        {/* Projects Tab */}
-        <TabsTrigger 
-          value="projects" 
-          className="group shrink-0 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-all text-xs
-            data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-900 dark:data-[state=active]:text-zinc-50 data-[state=active]:shadow-sm
-            data-[state=inactive]:text-zinc-500 dark:data-[state=inactive]:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
-        >
-          <FolderGit2 className="h-3.5 w-3.5 text-zinc-400 group-data-[state=active]:text-[#3861fb]" />
-          <span>Projects</span>
-        </TabsTrigger>
-
-        {/* Education Tab */}
-        <TabsTrigger 
-          value="education" 
-          className="group shrink-0 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-all text-xs
-            data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-900 dark:data-[state=active]:text-zinc-50 data-[state=active]:shadow-sm
-            data-[state=inactive]:text-zinc-500 dark:data-[state=inactive]:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
-        >
-          <GraduationCap className="h-3.5 w-3.5 text-zinc-400 group-data-[state=active]:text-[#3861fb]" />
-          <span>Education</span>
-        </TabsTrigger>
-
-        {/* Skills Tab */}
-        <TabsTrigger 
-          value="skills" 
-          className="group shrink-0 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-all text-xs
-            data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-900 dark:data-[state=active]:text-zinc-50 data-[state=active]:shadow-sm
-            data-[state=inactive]:text-zinc-500 dark:data-[state=inactive]:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
-        >
-          <Wrench className="h-3.5 w-3.5 text-zinc-400 group-data-[state=active]:text-[#3861fb]" />
-          <span>Skills</span>
-        </TabsTrigger>
-
-        {/* Settings / Design Tab */}
-        <TabsTrigger 
-          value="settings" 
-          className="group shrink-0 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-all text-xs
-            data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-900 dark:data-[state=active]:text-zinc-50 data-[state=active]:shadow-sm
-            data-[state=inactive]:text-zinc-500 dark:data-[state=inactive]:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
-        >
-          <LayoutTemplate className="h-3.5 w-3.5 text-zinc-400 group-data-[state=active]:text-[#3861fb]" />
-          <span>Layout</span>
-        </TabsTrigger>
-
-        {/* Resume Score Tab */}
-        <TabsTrigger 
-          value="resume-score" 
-          className="group shrink-0 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-all text-xs
-            data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-900 dark:data-[state=active]:text-zinc-50 data-[state=active]:shadow-sm
-            data-[state=inactive]:text-zinc-500 dark:data-[state=inactive]:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
-        >
-          <Award className="h-3.5 w-3.5 text-zinc-400 group-data-[state=active]:text-amber-500" />
-          <span>Score</span>
-        </TabsTrigger>
-
-        {/* Cover Letter Tab */}
-        <TabsTrigger 
-          value="cover-letter" 
-          className="group shrink-0 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-all text-xs
-            data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-900 dark:data-[state=active]:text-zinc-50 data-[state=active]:shadow-sm
-            data-[state=inactive]:text-zinc-500 dark:data-[state=inactive]:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
-        >
-          <FileText className="h-3.5 w-3.5 text-zinc-400 group-data-[state=active]:text-[#3861fb]" />
-          <span>Letter</span>
-        </TabsTrigger>
-      </TabsList>
-    </div>
+    <nav className="flex flex-col gap-0.5" aria-label="Resume sections">
+      {SECTIONS.map(({ value: v, label, icon }) => {
+        const active = value === v;
+        return (
+          <button
+            key={v}
+            onClick={() => onValueChange(v)}
+            aria-current={active ? 'page' : undefined}
+            className={cn(
+              "flex min-h-[44px] items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm transition-colors",
+              active
+                ? "bg-zinc-900 font-medium text-white dark:bg-zinc-100 dark:text-zinc-900"
+                : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-900"
+            )}
+          >
+            <span className={cn("shrink-0", v === 'synkai' ? '' : !active && "opacity-70")}>{icon}</span>
+            <span className="flex-1 truncate">{label}</span>
+            {active && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-current opacity-70" aria-hidden="true" />}
+          </button>
+        );
+      })}
+    </nav>
   );
 }

@@ -2,12 +2,11 @@
 
 import { Resume } from "@/lib/types";
 import { Button } from "@/components/ui/button";
-import { Download, Loader2, Save, FileText } from "lucide-react";
+import { Download, Loader2, Save } from "lucide-react";
 import { toast } from "sonner";
 import { pdf } from '@react-pdf/renderer';
 import { TextImport } from "../../text-import";
 import { ResumePDFDocument } from "../preview/resume-pdf-document";
-import { cn } from "@/lib/utils";
 import { useResumeContext } from "../resume-editor-context";
 import { updateResume } from "@/utils/actions/resumes/actions";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -49,7 +48,7 @@ export function ResumeEditorActions({
       <TextImport
         resume={resume}
         onResumeChange={onResumeChange}
-        className="h-8 px-3 text-xs font-medium border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 shadow-sm rounded-lg"
+        className="h-10 lg:h-9 px-3 text-xs font-medium border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded-lg"
       />
 
       {/* Right: Download & Save Buttons */}
@@ -110,7 +109,7 @@ export function ResumeEditorActions({
                     toast.error(error instanceof Error ? error.message : "Unable to download document.");
                   }
                 }}
-                className="h-8 px-3 text-xs font-medium border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded-lg shadow-sm"
+                className="h-10 lg:h-9 px-3 text-xs font-medium border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded-lg"
               >
                 <Download className="h-3.5 w-3.5 mr-1 text-zinc-500" />
                 <span>Download</span>
@@ -154,7 +153,7 @@ export function ResumeEditorActions({
           onClick={handleSave} 
           disabled={isSaving}
           size="sm"
-          className="h-8 px-3.5 text-xs font-semibold bg-[#3861fb] hover:bg-[#3861fb]/90 text-white shadow-sm rounded-lg active:scale-[0.98] transition-all"
+          className="h-10 lg:h-9 rounded-lg bg-zinc-900 px-3.5 text-xs font-semibold text-white transition-colors hover:bg-zinc-800 active:scale-[0.98] dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
         >
           {isSaving ? (
             <>

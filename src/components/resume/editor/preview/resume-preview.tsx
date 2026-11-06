@@ -101,6 +101,7 @@ interface ResumePreviewProps {
   variant?: 'base' | 'tailored';
   containerWidth: number;  // This is now expected to be a percentage (0-100)
   showWatermark?: boolean;
+  onPageCountChange?: (count: number) => void;
 }
 
 /**
@@ -109,19 +110,33 @@ interface ResumePreviewProps {
  * Displays a PDF preview of the resume using react-pdf.
  * Handles PDF generation and responsive display.
  */
-export const ResumePreview = memo(function ResumePreview({ resume, variant = 'base', containerWidth, showWatermark = false }: ResumePreviewProps) {
+export const ResumePreview = memo(function ResumePreview({ 
+  resume, 
+  variant = 'base', 
+  containerWidth, 
+  showWatermark = false,
+  onPageCountChange
+}: ResumePreviewProps) {
   const [url, setUrl] = useState<string | null>(null);
   const [numPages, setNumPages] = useState<number>(0);
   const debouncedWidth = useDebouncedValue(containerWidth, 100);
   const generationRef = useRef(0);
-  
+  // Hydration guard: the measured width is only safe to apply after mount.
+  const [mounted, setMounted] = useState(false);
 
-  // Convert percentage to pixels based on parent container
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Convert percentage to pixels based on parent container.
+  // Before mount (server + first client render) we use a stable default so
+  // the server HTML and the first client render match (avoids hydration mismatch).
   const getPixelWidth = useCallback(() => {
-    if (typeof window === 'undefined') return 0;
+    if (typeof window === 'undefined') return 480;
+    if (!mounted) return 480;
     const width = debouncedWidth || 0;
     return Math.max(width, 280);
-  }, [debouncedWidth]);
+  }, [debouncedWidth, mounted]);
 
   // Generate resume hash for caching
   const resumeHash = useMemo(() => generateResumeHash(resume), [resume]);
@@ -190,12 +205,14 @@ export const ResumePreview = memo(function ResumePreview({ resume, variant = 'ba
   // Modify Page component to conditionally render text layer
   function onDocumentLoadSuccess({ numPages: loadedPages }: { numPages: number }): void {
     setNumPages(loadedPages);
+    onPageCountChange?.(loadedPages);
     // Enable text layer after document is stable
     setTimeout(() => setShouldRenderTextLayer(true), 1000);
   }
 
   function onDocumentLoadError(): void {
     setNumPages(0);
+    onPageCountChange?.(0);
     setShouldRenderTextLayer(false);
   }
 
@@ -207,58 +224,27 @@ export const ResumePreview = memo(function ResumePreview({ resume, variant = 'ba
   // Show loading state while PDF is being generated
   if (!url) {
     return (
-      <div className="w-full aspect-[8.5/11] bg-white shadow-lg p-8">
-        <div className="space-y-0 animate-pulse">
-          {/* Header skeleton */}
-          <div className="space-y-4">
-            <div className="h-8 bg-gray-200  w-1/3 mx-auto" />
-            <div className="flex justify-center gap-4">
-              <div className="h-3 bg-gray-200 rounded w-24" />
-              <div className="h-3 bg-gray-200 rounded w-24" />
-              <div className="h-3 bg-gray-200 rounded w-24" />
-            </div>
+      <div 
+        style={{ width: getPixelWidth() }}
+        className="mx-auto aspect-[1/1.414] bg-white dark:bg-zinc-900 rounded-sm shadow-xl p-8 animate-pulse flex flex-col justify-between"
+      >
+        <div className="space-y-4">
+          <div className="h-7 bg-zinc-200 dark:bg-zinc-800 rounded w-1/3 mx-auto" />
+          <div className="flex justify-center gap-3">
+            <div className="h-3 bg-zinc-200 dark:bg-zinc-800 rounded w-20" />
+            <div className="h-3 bg-zinc-200 dark:bg-zinc-800 rounded w-24" />
+            <div className="h-3 bg-zinc-200 dark:bg-zinc-800 rounded w-20" />
           </div>
-
-          {/* Summary skeleton */}
+          <div className="h-px bg-zinc-100 dark:bg-zinc-800 my-4" />
           <div className="space-y-2">
-            <div className="h-4 bg-gray-200 rounded w-24" />
-            <div className="space-y-2">
-              <div className="h-3 bg-gray-200 rounded w-full" />
-              <div className="h-3 bg-gray-200 rounded w-5/6" />
-            </div>
+            <div className="h-4 bg-zinc-200 dark:bg-zinc-800 rounded w-28" />
+            <div className="h-3 bg-zinc-200 dark:bg-zinc-800 rounded w-full" />
+            <div className="h-3 bg-zinc-200 dark:bg-zinc-800 rounded w-4/5" />
           </div>
-
-          {/* Experience skeleton */}
-          <div className="space-y-2">
-            <div className="h-4 bg-gray-200 rounded w-32" />
-            <div className="space-y-4">
-              {[...Array(3)].map((_, i) => (
-                <div key={i} className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <div className="h-3 bg-gray-200 rounded w-48" />
-                    <div className="h-3 bg-gray-200 rounded w-24" />
-                  </div>
-                  <div className="h-3 bg-gray-200 rounded w-full" />
-                  <div className="h-3 bg-gray-200 rounded w-5/6" />
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Education skeleton */}
-          <div className="space-y-2">
-            <div className="h-4 bg-gray-200 rounded w-28" />
-            <div className="space-y-4">
-              {[...Array(2)].map((_, i) => (
-                <div key={i} className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <div className="h-3 bg-gray-200 rounded w-40" />
-                    <div className="h-3 bg-gray-200 rounded w-24" />
-                  </div>
-                  <div className="h-3 bg-gray-200 rounded w-3/4" />
-                </div>
-              ))}
-            </div>
+          <div className="space-y-2 pt-2">
+            <div className="h-4 bg-zinc-200 dark:bg-zinc-800 rounded w-32" />
+            <div className="h-3 bg-zinc-200 dark:bg-zinc-800 rounded w-full" />
+            <div className="h-3 bg-zinc-200 dark:bg-zinc-800 rounded w-5/6" />
           </div>
         </div>
       </div>
@@ -267,21 +253,24 @@ export const ResumePreview = memo(function ResumePreview({ resume, variant = 'ba
 
   // Display the generated PDF using react-pdf
   return (
-    <div className="h-full relative bg-black/10 w-full">
+    <div className="relative w-full flex flex-col items-center justify-start">
         <Document
           key={url ?? 'resume-preview'}
           file={url}
           onLoadSuccess={onDocumentLoadSuccess}
           onLoadError={onDocumentLoadError}
-          className="relative h-full flex justify-center"
+          className="relative flex flex-col items-center"
           externalLinkTarget="_blank"
           loading={
-            <div className="w-full max-w-md mx-auto aspect-[8.5/11] bg-white p-4 sm:p-8 shadow-lg">
-              <div className="space-y-4 animate-pulse">
-                <div className="h-6 bg-gray-200 rounded w-1/2 mx-auto" />
+            <div 
+              style={{ width: getPixelWidth() }}
+              className="mx-auto aspect-[1/1.414] bg-white dark:bg-zinc-900 rounded-sm shadow-xl p-8 animate-pulse flex flex-col justify-between"
+            >
+              <div className="space-y-4">
+                <div className="h-7 bg-zinc-200 dark:bg-zinc-800 rounded w-1/3 mx-auto" />
                 <div className="flex justify-center gap-2">
-                  <div className="h-3 bg-gray-200 rounded w-16" />
-                  <div className="h-3 bg-gray-200 rounded w-16" />
+                  <div className="h-3 bg-zinc-200 dark:bg-zinc-800 rounded w-16" />
+                  <div className="h-3 bg-zinc-200 dark:bg-zinc-800 rounded w-16" />
                 </div>
               </div>
             </div>
@@ -291,7 +280,7 @@ export const ResumePreview = memo(function ResumePreview({ resume, variant = 'ba
             <Page
               key={`page_${index + 1}`}
               pageNumber={index + 1}
-              className="mb-4 shadow-xl"
+              className="mb-6 shadow-2xl shadow-zinc-950/15 dark:shadow-black/70 ring-1 ring-zinc-900/5 dark:ring-white/10 rounded-sm bg-white overflow-hidden transition-shadow duration-200"
               width={getPixelWidth()}
               renderAnnotationLayer={true}
               renderTextLayer={shouldRenderTextLayer}

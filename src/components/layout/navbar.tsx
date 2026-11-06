@@ -4,20 +4,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { 
   ChevronRight, 
-  Plus, 
-  Sparkles, 
   User as UserIcon, 
   Settings, 
   CreditCard, 
-  LogOut,
-  SlidersHorizontal,
   FileText
 } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { getAvatarSrc } from "@/lib/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,7 +34,7 @@ interface NavbarProps {
   isPro?: boolean;
 }
 
-export function Navbar({ user, isPro = false }: NavbarProps) {
+export function Navbar({ user }: NavbarProps) {
   const pathname = usePathname();
 
   const getPageTitle = (path: string) => {
@@ -74,49 +69,13 @@ export function Navbar({ user, isPro = false }: NavbarProps) {
           </span>
         </div>
 
-        {/* Mobile Logo & Title */}
-        <div className="flex lg:hidden items-center gap-3">
+        {/* Mobile Logo (title removed — redundant with the page) */}
+        <div className="flex lg:hidden items-center">
           <Logo asLink href="/home" className="scale-95" />
-          <span className="text-xs font-semibold text-zinc-400">/</span>
-          <span className="text-xs font-bold text-zinc-800 dark:text-zinc-200 truncate max-w-[120px]">
-            {getPageTitle(pathname)}
-          </span>
         </div>
 
         {/* Right Actions */}
         <div className="flex items-center gap-2.5 sm:gap-3">
-          {/* Pro Status or Upgrade Pill */}
-          {isPro ? (
-            <Badge 
-              variant="outline" 
-              className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-[11px] font-semibold"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              Pro Active
-            </Badge>
-          ) : (
-            <Link href="/subscription" className="hidden sm:inline-flex">
-              <Badge 
-                variant="outline" 
-                className="hover:bg-amber-500/10 cursor-pointer items-center gap-1 px-2.5 py-0.5 rounded-full border-amber-500/30 bg-amber-500/5 text-amber-600 dark:text-amber-400 text-[11px] font-semibold transition-all"
-              >
-                <Sparkles className="w-3 h-3 text-amber-500" />
-                Free Plan
-              </Badge>
-            </Link>
-          )}
-
-          {/* Quick Action Button */}
-          <Link href="/resumes">
-            <Button 
-              size="sm" 
-              className="h-8 px-3 rounded-lg text-xs font-semibold bg-zinc-900 text-zinc-50 hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200 transition-all shadow-sm active:scale-95"
-            >
-              <Plus className="h-3.5 w-3.5 mr-1" />
-              <span>Resume</span>
-            </Button>
-          </Link>
-
           {/* User Profile Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -125,7 +84,7 @@ export function Navbar({ user, isPro = false }: NavbarProps) {
                 aria-label="User menu"
               >
                 <Avatar className="h-8 w-8 border border-zinc-200 dark:border-zinc-800">
-                  <AvatarImage src={user?.user_metadata?.avatar_url || ''} />
+                  <AvatarImage src={getAvatarSrc(user)} />
                   <AvatarFallback className="text-xs font-bold bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100">
                     {userInitials}
                   </AvatarFallback>

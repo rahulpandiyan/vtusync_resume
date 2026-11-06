@@ -362,7 +362,7 @@ export const WorkExperienceForm = memo(function WorkExperienceFormComponent({
               variant="outline" 
               onClick={addExperience}
               className={cn(
-                "flex-1 h-9 min-w-[120px]",
+                "flex-1 h-11 lg:h-10 min-w-[120px]",
                 "bg-white dark:bg-zinc-950",
                 "border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-900",
                 "text-zinc-900 dark:text-zinc-100",
@@ -380,7 +380,7 @@ export const WorkExperienceForm = memo(function WorkExperienceFormComponent({
               onImport={handleImportFromProfile}
               type="work_experience"
               buttonClassName={cn(
-                "flex-1 mb-0 h-9 min-w-[120px]",
+                "flex-1 mb-0 h-11 lg:h-10 min-w-[120px]",
                 "whitespace-nowrap text-[11px] @[300px]:text-sm"
               )}
             />
@@ -413,7 +413,7 @@ export const WorkExperienceForm = memo(function WorkExperienceFormComponent({
                       value={exp.position}
                       onChange={(e) => updateExperience(index, 'position', e.target.value)}
                       className={cn(
-                        "text-sm font-semibold tracking-tight h-9",
+                        "text-sm font-semibold tracking-tight h-11 lg:h-10",
                         "bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 rounded-lg",
                         "focus:border-zinc-400 focus:ring-zinc-400 dark:focus:border-zinc-600 dark:focus:ring-zinc-600",
                         "transition-colors",
@@ -442,7 +442,7 @@ export const WorkExperienceForm = memo(function WorkExperienceFormComponent({
                       value={exp.company}
                       onChange={(e) => updateExperience(index, 'company', e.target.value)}
                       className={cn(
-                        "text-sm font-medium bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 rounded-lg h-9",
+                        "text-sm font-medium bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 rounded-lg h-11 lg:h-10",
                         "focus:border-zinc-400 focus:ring-zinc-400 dark:focus:border-zinc-600 dark:focus:ring-zinc-600",
                         "transition-colors",
                         "placeholder:text-gray-400"
@@ -458,7 +458,7 @@ export const WorkExperienceForm = memo(function WorkExperienceFormComponent({
                       value={exp.location}
                       onChange={(e) => updateExperience(index, 'location', e.target.value)}
                       className={cn(
-                        "bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 rounded-lg h-9",
+                        "bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 rounded-lg h-11 lg:h-10",
                         "focus:border-zinc-400 focus:ring-zinc-400 dark:focus:border-zinc-600 dark:focus:ring-zinc-600",
                         "transition-colors",
                         "placeholder:text-gray-400"
@@ -478,7 +478,7 @@ export const WorkExperienceForm = memo(function WorkExperienceFormComponent({
                     value={exp.date}
                     onChange={(e) => updateExperience(index, 'date', e.target.value)}
                     className={cn(
-                      "w-full bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 rounded-lg h-9",
+                      "w-full bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 rounded-lg h-11 lg:h-10",
                       "focus:border-zinc-400 focus:ring-zinc-400 dark:focus:border-zinc-600 dark:focus:ring-zinc-600",
                       "transition-colors"
                     )}

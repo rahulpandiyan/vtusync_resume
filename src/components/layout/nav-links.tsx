@@ -1,27 +1,31 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { useAuthDialog } from "@/components/auth/auth-dialog-provider";
 import PillNav, { PillNavItem } from "@/components/PillNav";
 
 export function NavLinks() {
   const pathname = usePathname();
   const router = useRouter();
-  const { openDialog } = useAuthDialog();
 
   const navItems: PillNavItem[] = [
     { label: "ATS Engine", href: "#features" },
     { label: "Pricing", href: "#pricing" },
-    { label: "About", href: "#about" },
     { label: "FAQ", href: "#faq" },
     { label: "Blog", href: "/blog" },
-    { label: "Create Resume", href: "#create" },
+    { label: "Sign In", href: "/login" },
+    { label: "Create Resume", href: "/login" },
   ];
 
   const handleItemClick = (item: PillNavItem, _index: number, event: React.MouseEvent<HTMLElement>) => {
-    if (item.href === "#create" || item.label === "Create Resume") {
+    if (item.href === "/login" || item.label === "Create Resume" || item.label === "Sign In") {
       event.preventDefault();
-      openDialog("signup");
+      router.push("/login");
+      return;
+    }
+
+    if (item.href === "/login" || item.label === "Sign In") {
+      event.preventDefault();
+      router.push("/login");
       return;
     }
 

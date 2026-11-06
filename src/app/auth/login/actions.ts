@@ -48,7 +48,7 @@ export async function login(formData: FormData): Promise<AuthResult> {
     return { success: false, error: error.message }
   }
 
-  redirect('/')
+  redirect('/home')
   return { success: true }
 }
 
@@ -229,7 +229,7 @@ export async function signInWithLinkedIn(): Promise<GithubAuthResult> {
       options: {
         redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
         queryParams: {
-          next: '/'
+          next: '/home'
         }
       }
     });
@@ -261,7 +261,7 @@ export async function signInWithGoogle(): Promise<GithubAuthResult> {
       options: {
         redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
         queryParams: {
-          next: '/'
+          next: '/home'
         }
       }
     });

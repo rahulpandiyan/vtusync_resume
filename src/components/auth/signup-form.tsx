@@ -1,7 +1,8 @@
-'use client'
+'use client';
 
-import { useActionState, useState } from "react";
+import { useActionState, useState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
+import Link from "next/link";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 
 import { signupWithState } from "@/app/auth/login/actions";
@@ -18,7 +19,7 @@ function SubmitButton() {
     <Button
       type="submit"
       disabled={pending}
-      className="w-full mt-2"
+      className="w-full mt-2 h-10 rounded-lg font-semibold text-sm bg-zinc-900 text-zinc-50 hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200 shadow-sm active:scale-[0.99] transition-all"
     >
       {pending ? (
         <Loader2 className="h-4 w-4 animate-spin" />
@@ -28,8 +29,6 @@ function SubmitButton() {
     </Button>
   );
 }
-
-import { useEffect } from "react";
 
 interface SignupFormProps {
   onSuccess?: () => void;
@@ -51,10 +50,10 @@ export function SignupForm({ onSuccess }: SignupFormProps) {
   const passwordError = state.fieldErrors?.password?.[0];
 
   return (
-    <form action={formAction} className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="signup-first-name" className="text-xs font-semibold text-zinc-500 ml-0.5">
+    <form action={formAction} className="space-y-3.5">
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-1.5">
+          <Label htmlFor="signup-first-name" className="text-xs font-semibold text-zinc-600 dark:text-zinc-300 ml-0.5">
             First name
           </Label>
           <Input
@@ -63,7 +62,7 @@ export function SignupForm({ onSuccess }: SignupFormProps) {
             name="first_name"
             placeholder="Jane"
             required
-            className="h-10 border-zinc-200 dark:border-zinc-800 rounded-md bg-white dark:bg-zinc-950"
+            className="h-10 border-zinc-200 dark:border-zinc-800 rounded-lg bg-white dark:bg-zinc-900 text-sm focus-visible:border-blue-600 focus-visible:ring-2 focus-visible:ring-blue-500/20"
             aria-invalid={Boolean(firstNameError)}
             aria-describedby={firstNameError ? "signup-first-name-error" : undefined}
           />
@@ -73,8 +72,8 @@ export function SignupForm({ onSuccess }: SignupFormProps) {
             </p>
           )}
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="signup-last-name" className="text-xs font-semibold text-zinc-500 ml-0.5">
+        <div className="space-y-1.5">
+          <Label htmlFor="signup-last-name" className="text-xs font-semibold text-zinc-600 dark:text-zinc-300 ml-0.5">
             Last name
           </Label>
           <Input
@@ -82,7 +81,7 @@ export function SignupForm({ onSuccess }: SignupFormProps) {
             name="last_name"
             placeholder="Doe"
             required
-            className="h-10 border-zinc-200 dark:border-zinc-800 rounded-md bg-white dark:bg-zinc-950"
+            className="h-10 border-zinc-200 dark:border-zinc-800 rounded-lg bg-white dark:bg-zinc-900 text-sm focus-visible:border-blue-600 focus-visible:ring-2 focus-visible:ring-blue-500/20"
             aria-invalid={Boolean(lastNameError)}
             aria-describedby={lastNameError ? "signup-last-name-error" : undefined}
           />
@@ -94,9 +93,9 @@ export function SignupForm({ onSuccess }: SignupFormProps) {
         </div>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="signup-email" className="text-xs font-semibold text-zinc-500 ml-0.5">
-          Email address
+      <div className="space-y-1.5">
+        <Label htmlFor="signup-email" className="text-xs font-semibold text-zinc-600 dark:text-zinc-300 ml-0.5">
+          Work or personal email
         </Label>
         <Input
           id="signup-email"
@@ -105,7 +104,7 @@ export function SignupForm({ onSuccess }: SignupFormProps) {
           placeholder="jane@example.com"
           required
           autoComplete="username"
-          className="h-10 border-zinc-200 dark:border-zinc-800 rounded-md bg-white dark:bg-zinc-950"
+          className="h-10 border-zinc-200 dark:border-zinc-800 rounded-lg bg-white dark:bg-zinc-900 text-sm focus-visible:border-blue-600 focus-visible:ring-2 focus-visible:ring-blue-500/20"
           aria-invalid={Boolean(emailError)}
           aria-describedby={emailError ? "signup-email-error" : undefined}
         />
@@ -116,20 +115,20 @@ export function SignupForm({ onSuccess }: SignupFormProps) {
         )}
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="signup-password" className="text-xs font-semibold text-zinc-500 ml-0.5">
-          Password
+      <div className="space-y-1.5">
+        <Label htmlFor="signup-password" className="text-xs font-semibold text-zinc-600 dark:text-zinc-300 ml-0.5">
+          Create password
         </Label>
         <div className="relative">
           <Input
             id="signup-password"
             name="password"
             type={showPassword ? "text" : "password"}
-            placeholder="••••••••"
+            placeholder="Minimum 8 characters"
             required
             minLength={8}
             autoComplete="new-password"
-            className="h-10 border-zinc-200 dark:border-zinc-800 rounded-md bg-white dark:bg-zinc-950 pr-10"
+            className="h-10 border-zinc-200 dark:border-zinc-800 rounded-lg bg-white dark:bg-zinc-900 text-sm pr-10 focus-visible:border-blue-600 focus-visible:ring-2 focus-visible:ring-blue-500/20"
             aria-invalid={Boolean(passwordError)}
             aria-describedby={passwordError ? "signup-password-error" : undefined}
           />
@@ -150,12 +149,19 @@ export function SignupForm({ onSuccess }: SignupFormProps) {
       </div>
 
       {state.status === "error" && state.message && (
-        <Alert variant="destructive" className="bg-red-50/50 dark:bg-red-950/20 border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 rounded-md py-2.5 px-3" role="alert">
+        <Alert variant="destructive" className="bg-red-50/70 dark:bg-red-950/30 border-red-200 dark:border-red-900/50 text-red-700 dark:text-red-400 rounded-lg py-2.5 px-3" role="alert">
           <AlertDescription className="text-xs font-medium leading-relaxed">
             {state.message}
           </AlertDescription>
         </Alert>
       )}
+
+      <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed px-0.5">
+        By creating an account, you agree to our{" "}
+        <Link href="/terms" className="underline hover:text-zinc-900 dark:hover:text-zinc-200">Terms of Service</Link>
+        {" "}and{" "}
+        <Link href="/privacy" className="underline hover:text-zinc-900 dark:hover:text-zinc-200">Privacy Policy</Link>.
+      </p>
 
       <SubmitButton />
     </form>

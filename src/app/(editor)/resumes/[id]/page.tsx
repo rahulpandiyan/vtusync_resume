@@ -10,26 +10,12 @@ const getResumePageData = cache(async (resumeId: string) => {
   return getResumeById(resumeId);
 });
 
-// Helper function to normalize resume data
 function normalizeResumeData(resume: Resume): Resume {
   return {
     ...resume,
-    // Normalize work experience dates
-    work_experience: resume.work_experience?.map(exp => ({
-      ...exp,
-      date: exp.date || ''
-    })) || [],
-    // Normalize education dates
-    education: resume.education?.map(edu => ({
-      ...edu,
-      date: edu.date || ''
-    })) || [],
-    // Normalize project dates
-    projects: resume.projects?.map(project => ({
-      ...project,
-      date: project.date || ''
-    })) || [],
-    // Initialize document settings with defaults if not present
+    work_experience: resume.work_experience?.map(exp => ({ ...exp, date: exp.date || '' })) || [],
+    education: resume.education?.map(edu => ({ ...edu, date: edu.date || '' })) || [],
+    projects: resume.projects?.map(project => ({ ...project, date: project.date || '' })) || [],
     document_settings: resume.document_settings || {
       document_font_size: 10,
       document_line_height: 1.5,
@@ -69,8 +55,7 @@ export async function generateMetadata({
       title: `${resume.name} | ResuSync`,
       description: `Editing ${resume.name} - ${resume.target_role} resume`,
     };
-  } catch (error) {
-    void error;
+  } catch {
     return {
       title: 'Resume Editor | ResuSync',
       description: 'AI-powered resume editor',
@@ -83,8 +68,6 @@ export default async function Page({
 }: {
   params: Promise<{ id: string }>;
 }) {
-
-  
   try {
     const { id } = await params;
     const [{ resume: rawResume, profile, job }, billing] = await Promise.all([
@@ -92,9 +75,9 @@ export default async function Page({
       getBillingStatus(),
     ]);
     const normalizedResume = normalizeResumeData(rawResume);
-    const component = (
-      <div 
-        className="h-full flex flex-col min-w-0 -mx-2 sm:-mx-4 lg:mx-0"
+    return (
+      <div
+        className="flex h-full w-full min-w-0 flex-col overflow-hidden"
         data-page-title={normalizedResume.name}
         data-resume-type={normalizedResume.is_base_resume ? "Base Resume" : "Tailored Resume"}
       >
@@ -106,21 +89,14 @@ export default async function Page({
         />
       </div>
     );
-  
-    
-    return component;
   } catch (error: unknown) {
-    // Check for specific error messages we've defined in our actions
     const errorMessage = error instanceof Error ? error.message : 'unknown error';
     if (errorMessage.includes('Resume not found') || errorMessage.includes('Profile not found')) {
-      redirect("/home");
+      redirect("/resumes");
     }
-
     if (errorMessage === 'User not authenticated') {
       redirect("/");
     }
-    
-    // Default fallback redirect
-    redirect("/home");
+    redirect("/resumes");
   }
-} 
+}

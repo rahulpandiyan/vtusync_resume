@@ -124,7 +124,7 @@ export function SkillsForm({
           <Button 
             variant="outline" 
             className={cn(
-              "flex-1 h-9 min-w-[120px]",
+              "flex-1 h-11 lg:h-10 min-w-[120px]",
               "bg-white dark:bg-zinc-950",
               "border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-900",
               "text-zinc-900 dark:text-zinc-100",
@@ -143,7 +143,7 @@ export function SkillsForm({
             onImport={handleImportFromProfile}
             type="skills"
             buttonClassName={cn(
-              "flex-1 mb-0 h-9 min-w-[120px]",
+              "flex-1 mb-0 h-11 lg:h-10 min-w-[120px]",
               "whitespace-nowrap text-[11px] @[300px]:text-sm",
               "bg-white dark:bg-zinc-950",
               "border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-900",
@@ -172,7 +172,7 @@ export function SkillsForm({
                     value={skill.category}
                     onChange={(e) => updateSkillCategory(index, 'category', e.target.value)}
                     className={cn(
-                      "text-sm font-medium h-9",
+                      "text-sm font-medium h-11 lg:h-10",
                       "bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 rounded-lg",
                       "focus:border-zinc-400 focus:ring-zinc-400 dark:focus:border-zinc-600 dark:focus:ring-zinc-600",
                       "transition-colors",
@@ -224,7 +224,7 @@ export function SkillsForm({
                     onChange={(e) => setNewSkills({ ...newSkills, [index]: e.target.value })}
                     onKeyPress={(e) => handleKeyPress(e, index)}
                     className={cn(
-                      "h-9 bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 rounded-lg",
+                      "h-11 lg:h-10 bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 rounded-lg",
                       "focus:border-zinc-400 focus:ring-zinc-400 dark:focus:border-zinc-600 dark:focus:ring-zinc-600",
                       "transition-colors",
                       "placeholder:text-zinc-400",
@@ -236,7 +236,7 @@ export function SkillsForm({
                     variant="outline"
                     size="sm"
                     onClick={() => addSkill(index)}
-                    className="h-9 px-2 bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-600 dark:text-zinc-400"
+                    className="h-11 lg:h-10 px-2 bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-600 dark:text-zinc-400"
                   >
                     <Plus className="h-4 w-4" />
                   </Button>

@@ -54,7 +54,7 @@ const BasicInfoField = memo(function BasicInfoField({
           type={type}
           value={value || ''}
           onChange={handleChange}
-          className="pl-9 text-xs bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 rounded-lg h-9
+          className="pl-9 text-xs bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 rounded-lg h-11 lg:h-10
             focus-visible:ring-1 focus-visible:ring-[#3861fb] placeholder:text-zinc-400"
           placeholder={placeholder}
         />
@@ -105,12 +105,9 @@ export const BasicInfoForm = memo(function BasicInfoFormComponent({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
               <CardTitle className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5">
-                <User className="h-4 w-4 text-zinc-500" />
-                <span>Contact & Identity</span>
+                <User className="h-4 w-4 text-[#3861fb]" />
+                <span>Contact Details</span>
               </CardTitle>
-              <CardDescription className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-                Personal details placed in the resume document header.
-              </CardDescription>
             </div>
 
             {profile && (

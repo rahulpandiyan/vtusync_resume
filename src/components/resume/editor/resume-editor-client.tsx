@@ -10,7 +10,9 @@ import { createClient } from "@/utils/supabase/client";
 import { EditorLayout } from "./layout/EditorLayout";
 import { EditorPanel } from './panels/editor-panel';
 import { PreviewPanel } from './panels/preview-panel';
+import { EditorTopBar } from "./header/editor-topbar";
 import { UnsavedChangesDialog } from './dialogs/unsaved-changes-dialog';
+import { EditorSectionProvider } from './section-context';
 
 interface ResumeEditorClientProps {
   initialResume: Resume;
@@ -26,6 +28,15 @@ export function ResumeEditorClient({
   showWatermark = false,
 }: ResumeEditorClientProps) {
   const router = useRouter();
+  const handleRequestExit = () => {
+    if (state.hasUnsavedChanges) {
+      setShowExitDialog(true);
+      return;
+    }
+    router.push('/resumes');
+  };
+
+  // Editor Panel
   const [state, dispatch] = useReducer(resumeReducer, {
     resume: initialResume,
     isSaving: false,
@@ -34,7 +45,7 @@ export function ResumeEditorClient({
   });
 
   const [showExitDialog, setShowExitDialog] = useState(false);
-  const [pendingNavigation, setPendingNavigation] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<'split' | 'form' | 'preview'>('split');
   const debouncedResume = useDebouncedValue(state.resume, 100);
   const [job, setJob] = useState<Job | null>(initialJob ?? null);
   const [isLoadingJob, setIsLoadingJob] = useState(false);
@@ -152,26 +163,39 @@ export function ResumeEditorClient({
 
   return (
     <ResumeContext.Provider value={{ state, dispatch }}>
-      {/* Unsaved Changes Dialog */}
-      <UnsavedChangesDialog
-        isOpen={showExitDialog}
-        onOpenChange={setShowExitDialog}
-        // pendingNavigation={pendingNavigation}
-        onConfirm={() => {
-          if (pendingNavigation) {
-            router.push(pendingNavigation);
-          }
-          setShowExitDialog(false);
-          setPendingNavigation(null);
-        }}
-      />
+      <EditorSectionProvider>
+        {/* Unsaved Changes Dialog */}
+        <UnsavedChangesDialog
+          isOpen={showExitDialog}
+          onOpenChange={setShowExitDialog}
+          onConfirm={() => {
+            setShowExitDialog(false);
+            router.push('/resumes');
+          }}
+        />
 
-      {/* Editor Layout */}
-      <EditorLayout
-        isBaseResume={state.resume.is_base_resume}
-        editorPanel={editorPanel}
-        previewPanel={previewPanel}
-      />
+        <div className="flex h-full min-h-0 flex-col">
+          {/* Full-bleed window bar: exit, identity, actions */}
+          <EditorTopBar
+            resume={state.resume}
+            hasUnsavedChanges={state.hasUnsavedChanges}
+            onRequestExit={handleRequestExit}
+            showWatermark={showWatermark}
+            viewMode={viewMode}
+            onViewModeChange={setViewMode}
+          />
+
+          {/* Editor Layout */}
+          <EditorLayout
+            isBaseResume={state.resume.is_base_resume}
+            resume={state.resume}
+            job={job}
+            editorPanel={editorPanel}
+            previewPanel={previewPanel}
+            viewMode={viewMode}
+          />
+        </div>
+      </EditorSectionProvider>
     </ResumeContext.Provider>
   );
 } 

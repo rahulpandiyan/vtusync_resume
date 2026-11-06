@@ -1,46 +1,50 @@
 'use client';
 
 import { cloneElement, isValidElement } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
-import { AuthTab, useAuthDialog } from "@/components/auth/auth-dialog-provider";
+
+export type AuthTab = "login" | "signup";
 
 interface AuthDialogProps {
   children?: React.ReactNode;
   defaultTab?: AuthTab;
 }
 
-export function AuthDialog({ children, defaultTab = "signup" }: AuthDialogProps) {
-  const { openDialog } = useAuthDialog();
+export function AuthDialog({ children, defaultTab = "login" }: AuthDialogProps) {
+  const router = useRouter();
+  const targetUrl = defaultTab === "login" ? "/login" : "/signup";
 
-  const handleOpen = () => {
-    openDialog(defaultTab);
+  const handleNavigate = () => {
+    router.push(targetUrl);
   };
 
   if (!children) {
     return (
-      <Button
-        size="lg"
-        onClick={handleOpen}
-        className="bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 font-semibold
-          text-lg py-6 px-10 group relative transition-all duration-300
-          rounded-md shadow-sm active:scale-95"
-        aria-label="Open authentication dialog"
-      >
-        <span className="relative z-10 flex items-center justify-center">
-          Start for Free
-          <ArrowRight className="ml-2.5 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-        </span>
-      </Button>
+      <Link href={targetUrl} className="inline-block">
+        <Button
+          size="lg"
+          className="bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 font-semibold
+            text-base py-5 px-8 group relative transition-all duration-200
+            rounded-lg shadow-sm active:scale-95"
+          aria-label={defaultTab === "login" ? "Sign In" : "Start for Free"}
+        >
+          <span className="relative z-10 flex items-center justify-center">
+            {defaultTab === "login" ? "Sign In" : "Start for Free"}
+            <ArrowRight className="ml-2.5 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          </span>
+        </Button>
+      </Link>
     );
   }
 
   if (typeof children === "string") {
     return (
-      <button type="button" onClick={handleOpen}>
+      <Link href={targetUrl} className="inline-block">
         {children}
-      </button>
+      </Link>
     );
   }
 
@@ -52,19 +56,25 @@ export function AuthDialog({ children, defaultTab = "signup" }: AuthDialogProps)
       onClick: (event: React.MouseEvent) => {
         child.props.onClick?.(event);
         if (!event.defaultPrevented) {
-          handleOpen();
+          handleNavigate();
         }
       },
     });
   }
 
   return (
-    <span role="button" tabIndex={0} onClick={handleOpen} onKeyDown={(event) => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        handleOpen();
-      }
-    }}>
+    <span
+      role="button"
+      tabIndex={0}
+      onClick={handleNavigate}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          handleNavigate();
+        }
+      }}
+      className="cursor-pointer"
+    >
       {children}
     </span>
   );

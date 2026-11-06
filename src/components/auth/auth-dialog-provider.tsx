@@ -47,7 +47,7 @@ function SocialAuth({ onEmailClick }: { onEmailClick?: () => void }) {
 
   const openEmailAuth = () => {
     if (authContext) {
-      authContext.openDialog("signup");
+      authContext.openDialog("login");
     }
     if (onEmailClick) {
       onEmailClick();
@@ -138,12 +138,12 @@ function SocialAuth({ onEmailClick }: { onEmailClick?: () => void }) {
 
 export function AuthDialogProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<AuthTab>("signup");
+  const [activeTab, setActiveTab] = useState<AuthTab>("login");
   const [formVersion, setFormVersion] = useState(0);
   const [showEmailForm, setShowEmailForm] = useState(false);
 
   const resetDialog = useCallback(() => {
-    setActiveTab("signup");
+    setActiveTab("login");
     setFormVersion((version) => version + 1);
     setShowEmailForm(false);
   }, []);
@@ -153,7 +153,7 @@ export function AuthDialogProvider({ children }: { children: React.ReactNode }) 
     resetDialog();
   }, [resetDialog]);
 
-  const openDialog = useCallback((tab: AuthTab = "signup") => {
+  const openDialog = useCallback((tab: AuthTab = "login") => {
     setActiveTab(tab);
     setOpen(true);
     setShowEmailForm(false);

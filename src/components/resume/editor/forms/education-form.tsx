@@ -79,7 +79,7 @@ export const EducationForm = memo(function EducationFormComponent({
           <Button 
             variant="outline" 
             className={cn(
-              "flex-1 h-9 min-w-[120px]",
+              "flex-1 h-11 lg:h-10 min-w-[120px]",
               "bg-white dark:bg-zinc-950",
               "border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-900",
               "text-zinc-900 dark:text-zinc-100",
@@ -98,7 +98,7 @@ export const EducationForm = memo(function EducationFormComponent({
             onImport={handleImportFromProfile}
             type="education"
             buttonClassName={cn(
-              "flex-1 mb-0 h-9 min-w-[120px]",
+              "flex-1 mb-0 h-11 lg:h-10 min-w-[120px]",
               "whitespace-nowrap text-[11px] @[300px]:text-sm",
               "bg-white dark:bg-zinc-950",
               "border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-900",
@@ -127,7 +127,7 @@ export const EducationForm = memo(function EducationFormComponent({
                     value={edu.school}
                     onChange={(e) => updateEducation(index, 'school', e.target.value)}
                     className={cn(
-                      "text-sm font-semibold h-9",
+                      "text-sm font-semibold h-11 lg:h-10",
                       "bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 rounded-lg",
                       "focus:border-zinc-400 focus:ring-zinc-400 dark:focus:border-zinc-600 dark:focus:ring-zinc-600",
                       "transition-colors",
@@ -155,7 +155,7 @@ export const EducationForm = memo(function EducationFormComponent({
                   value={edu.location}
                   onChange={(e) => updateEducation(index, 'location', e.target.value)}
                   className={cn(
-                    "h-9 bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 rounded-lg",
+                    "h-11 lg:h-10 bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 rounded-lg",
                     "focus:border-zinc-400 focus:ring-zinc-400 dark:focus:border-zinc-600 dark:focus:ring-zinc-600",
                     "transition-colors",
                     "placeholder:text-gray-400",
@@ -175,7 +175,7 @@ export const EducationForm = memo(function EducationFormComponent({
                     value={edu.degree}
                     onChange={(e) => updateEducation(index, 'degree', e.target.value)}
                     className={cn(
-                      "h-9 bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 rounded-lg",
+                      "h-11 lg:h-10 bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 rounded-lg",
                       "focus:border-zinc-400 focus:ring-zinc-400 dark:focus:border-zinc-600 dark:focus:ring-zinc-600",
                       "transition-colors",
                       "placeholder:text-gray-400",
@@ -192,7 +192,7 @@ export const EducationForm = memo(function EducationFormComponent({
                     value={edu.field}
                     onChange={(e) => updateEducation(index, 'field', e.target.value)}
                     className={cn(
-                      "h-9 bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 rounded-lg",
+                      "h-11 lg:h-10 bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 rounded-lg",
                       "focus:border-zinc-400 focus:ring-zinc-400 dark:focus:border-zinc-600 dark:focus:ring-zinc-600",
                       "transition-colors",
                       "placeholder:text-gray-400",
@@ -213,7 +213,7 @@ export const EducationForm = memo(function EducationFormComponent({
                   value={edu.date}
                   onChange={(e) => updateEducation(index, 'date', e.target.value)}
                   className={cn(
-                    "w-full h-9 bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 rounded-lg",
+                    "w-full h-11 lg:h-10 bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 rounded-lg",
                     "focus:border-zinc-400 focus:ring-zinc-400 dark:focus:border-zinc-600 dark:focus:ring-zinc-600",
                     "transition-colors",
                     "text-[10px] sm:text-xs"
@@ -240,7 +240,7 @@ export const EducationForm = memo(function EducationFormComponent({
                   value={edu.gpa || ''}
                   onChange={(e) => updateEducation(index, 'gpa', e.target.value ? parseFloat(e.target.value) : undefined)}
                   className={cn(
-                    "h-9 bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 rounded-lg",
+                    "h-11 lg:h-10 bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 rounded-lg",
                     "focus:border-zinc-400 focus:ring-zinc-400 dark:focus:border-zinc-600 dark:focus:ring-zinc-600",
                     "transition-colors",
                     "placeholder:text-gray-400",

@@ -19,7 +19,7 @@ function SubmitButton() {
     <Button
       type="submit"
       disabled={pending}
-      className="w-full mt-2"
+      className="w-full mt-2 h-10 rounded-lg font-semibold text-sm bg-zinc-900 text-zinc-50 hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200 shadow-sm active:scale-[0.99] transition-all"
     >
       {pending ? (
         <Loader2 className="h-4 w-4 animate-spin" />
@@ -39,8 +39,8 @@ export function LoginForm() {
 
   return (
     <form action={formAction} className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="login-email" className="text-xs font-semibold text-zinc-500 ml-0.5">
+      <div className="space-y-1.5">
+        <Label htmlFor="login-email" className="text-xs font-semibold text-zinc-600 dark:text-zinc-300 ml-0.5">
           Email address
         </Label>
         <Input
@@ -51,7 +51,7 @@ export function LoginForm() {
           placeholder="name@example.com"
           required
           autoComplete="username"
-          className="h-10 border-zinc-200 dark:border-zinc-800 rounded-md bg-white dark:bg-zinc-950"
+          className="h-10 border-zinc-200 dark:border-zinc-800 rounded-lg bg-white dark:bg-zinc-900 text-sm focus-visible:border-blue-600 focus-visible:ring-2 focus-visible:ring-blue-500/20"
           aria-invalid={Boolean(emailError)}
           aria-describedby={emailError ? "login-email-error" : undefined}
         />
@@ -62,14 +62,14 @@ export function LoginForm() {
         )}
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         <div className="flex items-center justify-between ml-0.5">
-          <Label htmlFor="login-password" className="text-xs font-semibold text-zinc-500">
+          <Label htmlFor="login-password" className="text-xs font-semibold text-zinc-600 dark:text-zinc-300">
             Password
           </Label>
           <Link
             href="/auth/reset-password"
-            className="text-xs font-medium text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors"
+            className="text-xs font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors"
           >
             Forgot password?
           </Link>
@@ -83,7 +83,7 @@ export function LoginForm() {
             required
             minLength={1}
             autoComplete="current-password"
-            className="h-10 border-zinc-200 dark:border-zinc-800 rounded-md bg-white dark:bg-zinc-950 pr-10"
+            className="h-10 border-zinc-200 dark:border-zinc-800 rounded-lg bg-white dark:bg-zinc-900 text-sm pr-10 focus-visible:border-blue-600 focus-visible:ring-2 focus-visible:ring-blue-500/20"
             aria-invalid={Boolean(passwordError)}
             aria-describedby={passwordError ? "login-password-error" : undefined}
           />
@@ -104,7 +104,7 @@ export function LoginForm() {
       </div>
 
       {state.status === "error" && state.message && (
-        <Alert variant="destructive" className="bg-red-50/50 dark:bg-red-950/20 border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 rounded-md py-2.5 px-3" role="alert">
+        <Alert variant="destructive" className="bg-red-50/70 dark:bg-red-950/30 border-red-200 dark:border-red-900/50 text-red-700 dark:text-red-400 rounded-lg py-2.5 px-3" role="alert">
           <AlertDescription className="text-xs font-medium leading-relaxed">
             {state.message}
           </AlertDescription>

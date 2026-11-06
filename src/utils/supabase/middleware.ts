@@ -13,6 +13,9 @@ const SUBSCRIPTION_EXEMPT_ROUTES = [
   '/subscription/checkout',
   '/subscription/checkout-return',
   '/resume-scanner',
+  '/resume-builder',
+  '/login',
+  '/signup',
   '/auth',
   '/api',
   '/privacy',
@@ -72,6 +75,8 @@ export async function updateSession(request: NextRequest) {
   if (!user) {
     const isPublicRoute =
       pathname === '/' ||
+      pathname === '/login' ||
+      pathname === '/signup' ||
       pathname.startsWith('/auth') ||
       pathname.startsWith('/blog') ||
       pathname.startsWith('/privacy') ||
@@ -87,6 +92,13 @@ export async function updateSession(request: NextRequest) {
 
     const url = request.nextUrl.clone()
     url.pathname = '/'
+    return NextResponse.redirect(url)
+  }
+
+  // If user is already authenticated, redirect away from auth pages to /home
+  if (pathname === '/login' || pathname === '/signup' || pathname === '/auth/login') {
+    const url = request.nextUrl.clone()
+    url.pathname = '/home'
     return NextResponse.redirect(url)
   }
 
