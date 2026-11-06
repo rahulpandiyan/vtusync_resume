@@ -15,16 +15,16 @@ import { checkRateLimit } from '@/lib/rateLimiter';
 // Build model candidates list - prioritize user's selected model if provided
 function getModelCandidates(config?: AIConfig) {
   const fallbackModels: AIConfig[] = [
-    { model: 'z-ai/glm-4.6:exacto', apiKeys: config?.apiKeys || [] },
-    { model: 'openai/gpt-5-nano', apiKeys: config?.apiKeys || [] },
-    { model: 'openai/gpt-oss-120b', apiKeys: config?.apiKeys || [] },
-    { model: 'openai/gpt-oss-20b', apiKeys: config?.apiKeys || [] },
-    { model: 'deepseek/deepseek-v3.2:nitro', apiKeys: config?.apiKeys || [] },
+    { model: 'openrouter/free', apiKeys: config?.apiKeys || [], customProviders: config?.customProviders },
+    { model: 'openai/gpt-oss-120b', apiKeys: config?.apiKeys || [], customProviders: config?.customProviders },
+    { model: 'openai/gpt-oss-20b', apiKeys: config?.apiKeys || [], customProviders: config?.customProviders },
+    { model: 'qwen/qwen3.8-27b', apiKeys: config?.apiKeys || [], customProviders: config?.customProviders },
+    { model: 'nvidia/nemotron-3-ultra-550b-a55b:free', apiKeys: config?.apiKeys || [], customProviders: config?.customProviders },
   ];
 
   // If user has a model selected, try it first before fallbacks
   const modelCandidates: AIConfig[] = config?.model
-    ? [{ model: config.model, apiKeys: config.apiKeys || [] }, ...fallbackModels]
+    ? [{ model: config.model, apiKeys: config.apiKeys || [], customProviders: config.customProviders }, ...fallbackModels]
     : fallbackModels;
   return modelCandidates;
 }

@@ -1,8 +1,22 @@
 'use client';
 
 import { Profile } from "@/lib/types";
-import { User, Briefcase, GraduationCap, Code, Pencil } from "lucide-react";
+import { 
+  Briefcase, 
+  GraduationCap, 
+  Code2, 
+  Pencil, 
+  CheckCircle2, 
+  AlertCircle,
+  Linkedin,
+  Github,
+  MapPin
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 
 interface ProfileRowProps {
@@ -10,68 +24,161 @@ interface ProfileRowProps {
 }
 
 export function ProfileRow({ profile }: ProfileRowProps) {
+  // Calculate profile completeness score
+  const checks = [
+    Boolean(profile.first_name && profile.last_name),
+    Boolean(profile.email || profile.phone_number),
+    Boolean(profile.education && profile.education.length > 0),
+    Boolean(profile.work_experience && profile.work_experience.length > 0),
+    Boolean(profile.projects && profile.projects.length > 0),
+    Boolean(profile.skills && profile.skills.length > 0),
+  ];
+  
+  const completedChecks = checks.filter(Boolean).length;
+  const completenessScore = Math.round((completedChecks / checks.length) * 100);
+
+  const isAtsReady = completenessScore >= 80;
+  const userInitials = `${profile.first_name?.[0] || ''}${profile.last_name?.[0] || ''}`.toUpperCase() || 'ST';
+
   return (
-    <div className="relative border-b border-zinc-100 dark:border-zinc-900 pb-4 sm:pb-6 mb-4 sm:mb-6">
-      <div className="flex flex-col gap-4">
-        {/* Top Row: Avatar, Name, and Edit Button */}
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="shrink-0 h-12 w-12 sm:h-14 sm:w-14 rounded-lg bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex items-center justify-center transition-all hover:bg-zinc-200 dark:hover:bg-zinc-800">
-              <User className="h-6 w-6 sm:h-7 sm:w-7 text-zinc-900 dark:text-zinc-100" />
-            </div>
+    <div className="space-y-4">
+      {/* Profile Overview Card */}
+      <Card className="border-border bg-card">
+        <CardContent className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3.5 min-w-0">
+            <Avatar className="h-12 w-12 rounded-xl border border-border">
+              <AvatarFallback className="rounded-xl font-bold text-sm bg-primary text-primary-foreground">
+                {userInitials}
+              </AvatarFallback>
+            </Avatar>
             <div className="min-w-0">
-              <h3 className="text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-50 tracking-tight leading-none truncate">
-                {profile.first_name} {profile.last_name}
-              </h3>
-              <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] text-zinc-400 truncate">
-                Professional Profile
-              </p>
+              <div className="flex items-center gap-2">
+                <h3 className="text-base sm:text-lg font-bold text-foreground tracking-tight truncate">
+                  {profile.first_name || 'Student'} {profile.last_name || ''}
+                </h3>
+                <Badge variant="secondary" className="text-[10px] font-semibold py-0">
+                  Profile Active
+                </Badge>
+              </div>
+              <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground truncate">
+                {profile.location && (
+                  <span className="flex items-center gap-1">
+                    <MapPin className="h-3 w-3" />
+                    {profile.location}
+                  </span>
+                )}
+                {profile.linkedin_url && (
+                  <span className="flex items-center gap-1">
+                    <Linkedin className="h-3 w-3" />
+                    LinkedIn
+                  </span>
+                )}
+                {profile.github_url && (
+                  <span className="flex items-center gap-1">
+                    <Github className="h-3 w-3" />
+                    GitHub
+                  </span>
+                )}
+              </div>
             </div>
           </div>
-          <Link href="/profile" className="shrink-0">  
+
+          <Link href="/profile" className="shrink-0">
             <Button
               variant="outline"
               size="sm"
-              className="h-8 sm:h-9 px-3 sm:px-4 rounded-md border-zinc-200 dark:border-zinc-800 font-semibold text-xs sm:text-sm hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-all"
+              className="h-8 px-3 rounded-lg text-xs font-semibold"
             >
-              <Pencil className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-1.5 sm:mr-2" />
-              <span className="hidden xs:inline">Edit</span>
+              <Pencil className="h-3 w-3 mr-1.5" />
+              <span>Edit Profile</span>
             </Button>
           </Link>
-        </div>
+        </CardContent>
+      </Card>
 
-        {/* Stats Row - Horizontal scroll on mobile */}
-        <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide">
-          {[
-            { 
-              icon: Briefcase, 
-              label: "Experience", 
-              count: profile.work_experience.length,
-            },
-            { 
-              icon: GraduationCap, 
-              label: "Education", 
-              count: profile.education.length,
-            },
-            { 
-              icon: Code, 
-              label: "Projects", 
-              count: profile.projects.length,
-            },
-          ].map((stat) => (
-            <div 
-              key={stat.label} 
-              className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 transition-all hover:border-zinc-300 dark:hover:border-zinc-700 shrink-0"
-            >
-              <stat.icon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-zinc-400" />
-              <div className="flex items-baseline gap-1">
-                <span className="text-sm font-bold text-zinc-900 dark:text-zinc-50">{stat.count}</span>
-                <span className="text-[9px] sm:text-[10px] font-medium text-zinc-400 hidden xs:inline">{stat.label}</span>
-              </div>
+      {/* Official Shadcn KPI Cards Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Card 1: ATS Readiness */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              ATS Readiness
+            </CardTitle>
+            {isAtsReady ? (
+              <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+            ) : (
+              <AlertCircle className="h-4 w-4 text-amber-500" />
+            )}
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <div className="flex items-baseline justify-between">
+              <span className="text-2xl font-bold tracking-tight">{completenessScore}%</span>
+              <span className="text-xs font-medium text-muted-foreground">
+                {isAtsReady ? 'Ready for ATS' : 'In Progress'}
+              </span>
             </div>
-          ))}
-        </div>
+            <Progress value={completenessScore} className="h-2" />
+          </CardContent>
+        </Card>
+
+        {/* Card 2: Work Experience */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Experience
+            </CardTitle>
+            <Briefcase className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{profile.work_experience?.length || 0}</div>
+            <p className="text-xs text-muted-foreground mt-1 truncate">
+              {profile.work_experience?.[0]?.company 
+                ? `Latest: ${profile.work_experience[0].company}` 
+                : 'No roles logged yet'}
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Card 3: Education */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Education
+            </CardTitle>
+            <GraduationCap className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{profile.education?.length || 0}</div>
+            <p className="text-xs text-muted-foreground mt-1 truncate">
+              {profile.education?.[0]?.school 
+                ? profile.education[0].school 
+                : 'Add college or degree'}
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Card 4: Projects & Skills */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Projects & Skills
+            </CardTitle>
+            <Code2 className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-2xl font-bold">{profile.projects?.length || 0}</span>
+              <span className="text-xs text-muted-foreground">proj</span>
+              <span className="text-muted-foreground">/</span>
+              <span className="text-2xl font-bold">{profile.skills?.length || 0}</span>
+              <span className="text-xs text-muted-foreground">skills</span>
+            </div>
+            <p className="text-xs text-muted-foreground mt-1 truncate">
+              Ready to generate bullet points
+            </p>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
-} 
+}

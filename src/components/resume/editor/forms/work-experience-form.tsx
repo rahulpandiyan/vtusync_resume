@@ -9,6 +9,7 @@ import { Plus, Trash2, GripVertical, Check, X, Loader2, Sparkles, ChevronUp, Che
 import { cn, withBasePath } from "@/lib/utils";
 import { ImportFromProfileDialog } from "../../management/dialogs/import-from-profile-dialog";
 import { ApiErrorDialog } from "@/components/ui/api-error-dialog";
+import { readStoredCustomProviders } from "@/hooks/use-custom-providers";
 
 import { useState, useRef, useEffect, memo } from "react";
 import {
@@ -272,7 +273,8 @@ export const WorkExperienceForm = memo(function WorkExperienceFormComponent({
 
       const improvedPoint = await improveWorkExperience(point, customPrompt, {
         model: selectedModel || '',
-        apiKeys
+        apiKeys,
+        customProviders: readStoredCustomProviders()
       });
 
       // Store both original and improved versions

@@ -1,6 +1,7 @@
 import { LanguageModelV1, ToolInvocation, smoothStream, streamText } from 'ai';
 import { Resume, Job } from '@/lib/types';
 import { initializeAIClient, type AIConfig } from '@/utils/ai-tools';
+import { getModelById } from '@/lib/ai-models';
 import { tools } from '@/lib/tools';
 import { getSubscriptionPlan } from '@/utils/actions/stripe/actions';
 import { checkRateLimit } from '@/lib/rateLimiter';
@@ -65,6 +66,9 @@ export async function POST(req: Request) {
     // For OpenRouter models, use the unified 'reasoning' parameter via providerOptions.openrouter
     const isGeminiModel = (config?.model ?? '').toLowerCase().includes('gemini-3');
     const isOpenRouterModel = (config?.model ?? '').includes('/');
+    // Groq free models (GPT-OSS / Qwen) are reasoning models; keep reasoning_effort low
+    // so they return usable output instead of spending the whole budget thinking.
+    const isGroqModel = getModelById(config?.model ?? '')?.provider === 'groq';
     
     // Configure provider options based on model type
     type ProviderOptions = 
@@ -83,11 +87,24 @@ export async function POST(req: Request) {
             };
           };
         }
+      | {
+          openai: {
+            reasoning_effort: 'low' | 'medium' | 'high';
+            include_reasoning: boolean;
+          };
+        }
       | undefined;
     
     let providerOptions: ProviderOptions = undefined;
     
-    if (isGeminiModel) {
+    if (isGroqModel) {
+      providerOptions = {
+        openai: {
+          reasoning_effort: 'low',
+          include_reasoning: false,
+        },
+      };
+    } else if (isGeminiModel) {
       if (isOpenRouterModel) {
         // OpenRouter models: use reasoning parameter via providerOptions.openrouter
         // Set exclude: true to disable reasoning tokens in response (model still thinks internally)

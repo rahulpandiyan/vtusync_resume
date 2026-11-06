@@ -5,7 +5,6 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Accordion } from "@/components/ui/accordion";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Suspense, useRef } from "react";
-import { cn } from "@/lib/utils";
 import { ResumeEditorActions } from "../actions/resume-editor-actions";
 import { TailoredJobAccordion } from "../../management/cards/tailored-job-card";
 import { BasicInfoForm } from "../forms/basic-info-form";
@@ -20,8 +19,6 @@ import {
 } from '../dynamic-components';
 import { ResumeEditorTabs } from "../header/resume-editor-tabs";
 import ResumeScorePanel from "./resume-score-panel";
-
-
 
 interface EditorPanelProps {
   resume: Resume;
@@ -43,27 +40,21 @@ export function EditorPanel({
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div className="flex flex-col lg:mr-4 relative h-full max-h-full min-h-0 w-full overflow-visible">
+    <div className="flex flex-col relative h-full max-h-full min-h-0 w-full overflow-hidden bg-white dark:bg-zinc-950">
+      {/* Scrollable Form Content */}
       <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-        <ScrollArea className="flex-1 lg:pr-2" ref={scrollAreaRef}>
-          <div className="relative w-full min-w-0 px-3 sm:px-4 pb-32">
-            <div className={cn(
-              "sticky top-0 z-20 backdrop-blur-sm -mx-3 sm:-mx-4 px-3 sm:px-4 py-2 w-auto",
-              resume.is_base_resume
-                ? "bg-purple-50/80"
-                : "bg-pink-100/90 shadow-sm shadow-pink-200/50"
-            )}>
-              <div className="flex flex-col gap-3 lg:gap-4">
-                <ResumeEditorActions
-                  onResumeChange={onResumeChange}
-                  showWatermark={showWatermark}
-                />
-              </div>
+        <ScrollArea className="flex-1" ref={scrollAreaRef}>
+          <div className="relative w-full min-w-0 px-3 sm:px-5 pb-8">
+            {/* Clean Sticky Actions Bar */}
+            <div className="sticky top-0 z-20 backdrop-blur-md bg-white/95 dark:bg-zinc-950/95 border-b border-zinc-200/80 dark:border-zinc-800/80 -mx-3 sm:-mx-5 px-3 sm:px-5 py-2.5 shadow-sm">
+              <ResumeEditorActions
+                onResumeChange={onResumeChange}
+                showWatermark={showWatermark}
+              />
             </div>
 
-
-            {/* Tailored Job Accordion */}
-            <Accordion type="single" collapsible defaultValue="basic" className="mt-4 lg:mt-6">
+            {/* Tailored Job Accordion (if tailored resume) */}
+            <Accordion type="single" collapsible defaultValue="basic" className="mt-3">
               <TailoredJobAccordion
                 resume={resume}
                 job={job}
@@ -71,19 +62,19 @@ export function EditorPanel({
               />
             </Accordion>
 
-            {/* Tabs */}  
-            <Tabs defaultValue="basic" className="mt-4 mb-2 sm:mb-3 lg:mb-4 w-full min-w-0">
+            {/* Tabs for Forms */}  
+            <Tabs defaultValue="basic" className="mt-2 mb-4 w-full min-w-0">
               <ResumeEditorTabs />
 
               {/* Basic Info Form */}
-              <TabsContent value="basic" className="w-full min-w-0 overflow-visible">
+              <TabsContent value="basic" className="w-full min-w-0 mt-0 outline-none">
                 <BasicInfoForm
                   profile={profile}
                 />
               </TabsContent>
 
               {/* Work Experience Form */}
-              <TabsContent value="work" className="w-full min-w-0 overflow-visible">
+              <TabsContent value="work" className="w-full min-w-0 mt-0 outline-none">
                 <Suspense fallback={
                   <div className="space-y-4 animate-pulse">
                     <div className="h-8 bg-muted rounded-md w-1/3" />
@@ -101,7 +92,7 @@ export function EditorPanel({
               </TabsContent>
 
               {/* Projects Form */}
-              <TabsContent value="projects" className="w-full min-w-0 overflow-visible">
+              <TabsContent value="projects" className="w-full min-w-0 mt-0 outline-none">
                 <Suspense fallback={
                   <div className="space-y-4 animate-pulse">
                     <div className="h-8 bg-muted rounded-md w-1/3" />
@@ -117,7 +108,7 @@ export function EditorPanel({
               </TabsContent>
 
               {/* Education Form */}
-              <TabsContent value="education" className="w-full min-w-0 overflow-visible">
+              <TabsContent value="education" className="w-full min-w-0 mt-0 outline-none">
                 <Suspense fallback={
                   <div className="space-y-4 animate-pulse">
                     <div className="h-8 bg-muted rounded-md w-1/3" />
@@ -133,7 +124,7 @@ export function EditorPanel({
               </TabsContent>
 
               {/* Skills Form */}
-              <TabsContent value="skills" className="w-full min-w-0 overflow-visible">
+              <TabsContent value="skills" className="w-full min-w-0 mt-0 outline-none">
                 <Suspense fallback={
                   <div className="space-y-4 animate-pulse">
                     <div className="h-8 bg-muted rounded-md w-1/3" />
@@ -149,7 +140,7 @@ export function EditorPanel({
               </TabsContent>
 
               {/* Document Settings Form */}
-              <TabsContent value="settings" className="w-full min-w-0 overflow-visible">
+              <TabsContent value="settings" className="w-full min-w-0 mt-0 outline-none">
                 <Suspense fallback={
                   <div className="space-y-4 animate-pulse">
                     <div className="h-8 bg-muted rounded-md w-1/3" />
@@ -169,16 +160,15 @@ export function EditorPanel({
               </TabsContent>
 
               {/* Cover Letter Form */}
-              <TabsContent value="cover-letter" className="w-full min-w-0 overflow-visible">
+              <TabsContent value="cover-letter" className="w-full min-w-0 mt-0 outline-none">
                 <CoverLetterPanel
                   resume={resume}
                   job={job}
                 />
               </TabsContent>
 
-
               {/* Resume Score Form */}
-              <TabsContent value="resume-score" className="w-full min-w-0 overflow-visible">
+              <TabsContent value="resume-score" className="w-full min-w-0 mt-0 outline-none">
                 <ResumeScorePanel
                   resume={resume}
                   job={job}
@@ -190,27 +180,14 @@ export function EditorPanel({
         </ScrollArea>
       </div>
 
-      <div className={cn(
-        "lg:relative lg:bottom-auto lg:left-auto lg:right-auto lg:z-50 lg:px-0 lg:pb-0", 
-        "fixed bottom-16 left-0 right-0 z-50 px-2 sm:px-4 pb-2", 
-        resume.is_base_resume
-          ? "bg-purple-50/50 lg:bg-transparent"
-          : "bg-pink-50/80 lg:bg-transparent"
-      )}>
-        <div className={cn(
-          "lg:max-w-full rounded-lg border shadow-lg", 
-          "max-w-md mx-auto rounded-lg border shadow-lg", 
-          resume.is_base_resume
-            ? "bg-purple-50/95 border-purple-200/40"
-            : "bg-pink-50/95 border-pink-300/50 shadow-pink-200/20"
-        )}>
-          <ChatBot 
-            resume={resume} 
-            onResumeChange={onResumeChange}
-            job={job}
-          />
-        </div>
+      {/* Docked AI Resume Copilot at bottom of editor */}
+      <div className="shrink-0 z-30 px-3 sm:px-4 py-2 border-t border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50/70 dark:bg-zinc-900/50 backdrop-blur-sm">
+        <ChatBot 
+          resume={resume} 
+          onResumeChange={onResumeChange}
+          job={job}
+        />
       </div>
     </div>
   );
-} 
+}

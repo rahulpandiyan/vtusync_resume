@@ -20,7 +20,7 @@ export function SettingsButton({ className, onAllowedNavigation }: SettingsButto
       onClick={handleClick}
       className={cn(
         "flex items-center gap-1.5 px-3 py-1",
-        "text-sm font-medium text-purple-600/80 hover:text-purple-800",
+        "text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100",
         "transition-colors duration-200",
         className
       )}
@@ -29,4 +29,4 @@ export function SettingsButton({ className, onAllowedNavigation }: SettingsButto
       <span className="hidden sm:inline">Settings</span>
     </Link>
   );
-} 
+}

@@ -42,8 +42,8 @@ export function DescriptionPoint({
   improvementPromptPlaceholder = "e.g., Focus on technical implementation details and performance metrics"
 }: DescriptionPointProps) {
   return (
-    <div className="flex gap-1 items-start group/item">
-      <div className="flex-1">
+    <div className="flex gap-1.5 items-start group/item relative">
+      <div className="flex-1 relative">
         <Tiptap
           content={value}
           onChange={onChange}
@@ -51,67 +51,48 @@ export function DescriptionPoint({
             attributes: {
               placeholder,
               class: cn(
-                "min-h-[80px] text-xs md:text-sm bg-white/50 border-gray-200 rounded-lg",
-                "focus:border-cyan-500/40 focus:ring-2 focus:ring-cyan-500/20",
-                "hover:border-cyan-500/30 hover:bg-white/60 transition-colors",
-                "placeholder:text-gray-400",
+                "min-h-[70px] text-xs md:text-sm bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg p-2.5",
+                "focus:border-[#3861fb] focus:ring-1 focus:ring-[#3861fb]",
+                "hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors",
+                "placeholder:text-zinc-400 text-zinc-900 dark:text-zinc-100",
                 isImproved && [
-                  "border-purple-400",
-                  "bg-gradient-to-r from-purple-50/80 to-indigo-50/80",
-                  "shadow-[0_0_15px_-3px_rgba(168,85,247,0.2)]",
-                  "hover:bg-gradient-to-r hover:from-purple-50/90 hover:to-indigo-50/90"
+                  "border-[#3861fb]/60 dark:border-[#3861fb]/60",
+                  "bg-blue-50/40 dark:bg-blue-950/20",
+                  "shadow-xs"
                 ]
               )
             }
           }}
         />
         {isImproved && (
-          <div className="absolute -top-2.5 right-12 px-2 py-0.5 bg-purple-100 rounded-full">
-            <span className="text-[10px] font-medium text-purple-600 flex items-center gap-1">
-              <Sparkles className="h-3 w-3" />
+          <div className="absolute -top-2.5 right-3 px-2 py-0.5 bg-blue-100 dark:bg-blue-950/80 border border-blue-200 dark:border-blue-800/60 rounded-full z-10 shadow-xs">
+            <span className="text-[10px] font-semibold text-[#3861fb] flex items-center gap-1">
+              <Sparkles className="h-2.5 w-2.5" />
               AI Suggestion
             </span>
           </div>
         )}
       </div>
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1 shrink-0 pt-0.5">
         {isImproved ? (
           <>
             <Button
-              variant="ghost"
+              variant="outline"
               size="icon"
               onClick={onAcceptImprovement}
-              className={cn(
-                "p-0 group-hover/item:opacity-100",
-                "h-8 w-8 rounded-lg",
-                "bg-green-50/80 hover:bg-green-100/80",
-                "text-green-600 hover:text-green-700",
-                "border border-green-200/60",
-                "shadow-sm",
-                "transition-all duration-300",
-                "hover:scale-105 hover:shadow-md",
-                "hover:-translate-y-0.5"
-              )}
+              className="h-7 w-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800 shadow-xs"
+              title="Accept improvement"
             >
-              <Check className="h-4 w-4" />
+              <Check className="h-3.5 w-3.5" />
             </Button>
             <Button
-              variant="ghost"
+              variant="outline"
               size="icon"
               onClick={onUndoImprovement}
-              className={cn(
-                "p-0 group-hover/item:opacity-100",
-                "h-8 w-8 rounded-lg",
-                "bg-rose-50/80 hover:bg-rose-100/80",
-                "text-rose-600 hover:text-rose-700",
-                "border border-rose-200/60",
-                "shadow-sm",
-                "transition-all duration-300",
-                "hover:scale-105 hover:shadow-md",
-                "hover:-translate-y-0.5"
-              )}
+              className="h-7 w-7 rounded-lg bg-zinc-50 dark:bg-zinc-900 hover:bg-red-50 dark:hover:bg-red-950/40 text-zinc-400 hover:text-red-500 border-zinc-200 dark:border-zinc-800 shadow-xs"
+              title="Revert"
             >
-              <X className="h-4 w-4" />
+              <X className="h-3.5 w-3.5" />
             </Button>
           </>
         ) : (
@@ -120,49 +101,35 @@ export function DescriptionPoint({
               variant="ghost"
               size="icon"
               onClick={onDelete}
-              className="p-0 group-hover/item:opacity-100 text-gray-400 hover:text-red-500 transition-all duration-300"
+              className="h-7 w-7 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40"
+              title="Delete bullet point"
             >
-              <Trash2 className="h-4 w-4" />
+              <Trash2 className="h-3.5 w-3.5" />
             </Button>
             <TooltipProvider delayDuration={0}>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
-                    variant="ghost"
+                    variant="outline"
                     size="icon"
                     onClick={onImprove}
                     disabled={isLoading}
-                    className={cn(
-                      "p-0 group-hover/item:opacity-100",
-                      "h-8 w-8 rounded-lg",
-                      "bg-purple-50/80 hover:bg-purple-100/80",
-                      "text-purple-600 hover:text-purple-700",
-                      "border border-purple-200/60",
-                      "shadow-sm",
-                      "transition-all duration-300",
-                      "hover:scale-105 hover:shadow-md",
-                      "hover:-translate-y-0.5"
-                    )}
+                    className="h-7 w-7 rounded-lg bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:text-[#3861fb] border-zinc-200 dark:border-zinc-800 shadow-xs"
+                    title="Improve with AI"
                   >
                     {isLoading ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <Loader2 className="h-3.5 w-3.5 animate-spin text-[#3861fb]" />
                     ) : (
-                      <Sparkles className="h-4 w-4" />
+                      <Sparkles className="h-3.5 w-3.5" />
                     )}
                   </Button>
                 </TooltipTrigger>
                 {onImprovementPromptChange && (
                   <TooltipContent 
                     side="bottom" 
-                    align="start"
-                    sideOffset={2}
-                    className={cn(
-                      "w-72 p-3.5",
-                      "bg-purple-50",
-                      "border-2 border-purple-300",
-                      "shadow-lg shadow-purple-100/50",
-                      "rounded-lg"
-                    )}
+                    align="end"
+                    sideOffset={4}
+                    className="w-72 p-3 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-xl"
                   >
                     <AIImprovementPrompt
                       value={improvementPrompt}
@@ -180,4 +147,4 @@ export function DescriptionPoint({
       </div>
     </div>
   );
-} 
+}

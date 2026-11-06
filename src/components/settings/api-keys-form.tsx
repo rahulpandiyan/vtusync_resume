@@ -11,18 +11,27 @@ import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import replaceSpecialCharacters from 'replace-special-characters'
 import { ModelSelector } from "@/components/shared/model-selector"
-import { AI_MODELS, MODEL_DESIGNATIONS, getProvidersArray } from "@/lib/ai-models"
+import { AI_MODELS, MODEL_DESIGNATIONS, getProvidersArray, type CustomProvider } from "@/lib/ai-models"
 import { useApiKeys, useDefaultModel } from "@/hooks/use-api-keys"
+import { useCustomProviders } from "@/hooks/use-custom-providers"
 
 export function ApiKeysForm({ isProPlan }: { isProPlan: boolean }) {
   // Use synchronized hooks for API keys and default model
   const { apiKeys, setApiKeys } = useApiKeys()
   const { defaultModel, setDefaultModel } = useDefaultModel()
+  const { customProviders, setCustomProviders } = useCustomProviders()
   
   // UI-specific local state
   const [visibleKeys, setVisibleKeys] = useState<Record<ServiceName, boolean>>({} as Record<ServiceName, boolean>)
   const [newKeyValues, setNewKeyValues] = useState<Record<ServiceName, string>>({} as Record<ServiceName, string>)
   const [copiedKey, setCopiedKey] = useState<ServiceName | null>(null)
+
+  // Custom provider form state
+  const [cpName, setCpName] = useState('')
+  const [cpBaseUrl, setCpBaseUrl] = useState('')
+  const [cpApiKey, setCpApiKey] = useState('')
+  const [cpModels, setCpModels] = useState('')
+  const [cpSaving, setCpSaving] = useState(false)
   
   // Track if we've initialized the default model
   const hasInitialized = useRef(false)
@@ -136,6 +145,52 @@ export function ApiKeysForm({ isProPlan }: { isProPlan: boolean }) {
     setTimeout(() => setCopiedKey(null), 1000)
   }
 
+  const handleAddCustomProvider = () => {
+    const name = cpName.trim()
+    const baseUrl = cpBaseUrl.trim().replace(/\/+$/, '')
+    const apiKey = replaceSpecialCharacters(cpApiKey.trim())
+    const modelInput = cpModels.trim()
+
+    if (!name) return toast.error('Please enter a provider name')
+    if (!baseUrl) return toast.error('Please enter the API endpoint URL')
+    if (!apiKey) return toast.error('Please enter your API key')
+    if (!modelInput) return toast.error('Please enter at least one model ID')
+
+    const models = modelInput
+      .split(',')
+      .map(m => m.trim())
+      .filter(Boolean)
+      .map(id => ({ id }))
+
+    if (models.length === 0) return toast.error('Please enter a valid model ID')
+
+    const provider: CustomProvider = {
+      id: `cp_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`,
+      name,
+      baseUrl,
+      apiKey,
+      models,
+    }
+
+    setCustomProviders(prev => [...prev, provider])
+    setCpName('')
+    setCpBaseUrl('')
+    setCpApiKey('')
+    setCpModels('')
+    setCpSaving(false)
+    toast.success(`Custom provider "${name}" added`)
+  }
+
+  const handleRemoveCustomProvider = (id: string) => {
+    setCustomProviders(prev => prev.filter(p => p.id !== id))
+    // If the current default model belongs to this provider, reset it
+    if (defaultModel.startsWith(`custom::${id}::`)) {
+      setDefaultModel(MODEL_DESIGNATIONS.DEFAULT_FREE)
+      toast.info('Switched to the default free model')
+    }
+    toast.success('Custom provider removed')
+  }
+
   return (
     <div className="space-y-6">
       {/* Model Selection Card */}
@@ -144,13 +199,14 @@ export function ApiKeysForm({ isProPlan }: { isProPlan: boolean }) {
           Default AI Model
         </Label>
         <p className="text-sm text-muted-foreground mt-2 mb-3">
-          This model will be used for all AI operations throughout the application. All models require their respective API keys.
+          This model will be used for all AI operations throughout the application. Free models (Groq, custom providers) use your own API key.
         </p>
         <ModelSelector
           value={defaultModel}
           onValueChange={handleModelChange}
           apiKeys={apiKeys}
           isProPlan={isProPlan}
+          customProviders={customProviders}
           className="w-full mt-1"
           placeholder="Select an AI model"
         />
@@ -455,6 +511,115 @@ export function ApiKeysForm({ isProPlan }: { isProPlan: boolean }) {
             })}
           </div>
         </div>
+      </div>
+
+      {/* Help: where to get API keys */}
+      <div className="p-5 rounded-xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 shadow-sm">
+        <Label className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
+          How to get a free API key
+        </Label>
+        <div className="mt-3 space-y-3 text-sm text-muted-foreground">
+          <ol className="list-decimal list-inside space-y-2">
+            <li>
+              <strong className="text-zinc-800 dark:text-zinc-200">Groq</strong> — free, no credit card, ~1,000 requests/day.
+              Sign up at{" "}
+              <a href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 text-zinc-700 dark:text-zinc-300">
+                console.groq.com/keys
+              </a>{" "}
+              and copy a key (starts with <code className="font-mono text-xs">gsk_</code>).
+            </li>
+            <li>
+              <strong className="text-zinc-800 dark:text-zinc-200">OpenRouter</strong> — one key for many models at{" "}
+              <a href="https://openrouter.ai/workspaces/default/keys" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 text-zinc-700 dark:text-zinc-300">
+                openrouter.ai/workspaces/default/keys
+              </a>.
+            </li>
+            <li>
+              <strong className="text-zinc-800 dark:text-zinc-200">Any free provider</strong> — browse{" "}
+              <a href="https://freellm.net/providers/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 text-zinc-700 dark:text-zinc-300">
+                freellm.net/providers
+              </a>{" "}
+              (NVIDIA NIM, Mistral, Cerebras, DeepInfra, SiliconFlow, …). Grab a key, then use the Custom Provider card below.
+            </li>
+          </ol>
+          <p className="text-xs text-muted-foreground">
+            Your keys are stored only in your browser and are never sent to our servers.
+          </p>
+        </div>
+      </div>
+
+      {/* Custom Provider Card */}
+      <div className="p-5 rounded-xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 shadow-sm">
+        <Label className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
+          Custom AI Provider (OpenAI-compatible)
+        </Label>
+        <div className="mt-2 mb-4">
+          <p className="text-sm text-muted-foreground">
+            Add any free OpenAI-compatible provider — Groq, NVIDIA NIM, Mistral, Cerebras, DeepInfra, SiliconFlow and many more. Paste the endpoint, your API key, and one or more model IDs. The models will appear in the model selector above.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <Input
+            placeholder="Provider name (e.g. DeepInfra)"
+            value={cpName}
+            onChange={(e) => setCpName(e.target.value)}
+            className="h-9 text-sm"
+          />
+          <Input
+            placeholder="API endpoint URL (e.g. https://api.deepinfra.com/v1/openai)"
+            value={cpBaseUrl}
+            onChange={(e) => setCpBaseUrl(e.target.value)}
+            className="h-9 text-sm font-mono"
+          />
+          <Input
+            type="password"
+            placeholder="Your API key"
+            value={cpApiKey}
+            onChange={(e) => setCpApiKey(e.target.value)}
+            className="h-9 text-sm"
+          />
+          <Input
+            placeholder="Model IDs, comma-separated (e.g. meta-llama/llama-3.3-70b-instruct)"
+            value={cpModels}
+            onChange={(e) => setCpModels(e.target.value)}
+            className="h-9 text-sm font-mono"
+          />
+          <Button
+            onClick={handleAddCustomProvider}
+            disabled={cpSaving}
+            className="w-full sm:w-auto bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 h-9 px-4 text-sm transition-colors"
+          >
+            Add Provider
+          </Button>
+        </div>
+
+        {customProviders.length > 0 && (
+          <div className="mt-4 space-y-2">
+            {customProviders.map(provider => (
+              <div
+                key={provider.id}
+                className="p-3 rounded-lg bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex items-start justify-between gap-2"
+              >
+                <div className="min-w-0">
+                  <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100">{provider.name}</div>
+                  <div className="text-xs text-muted-foreground truncate">{provider.baseUrl}</div>
+                  <div className="text-xs text-muted-foreground mt-0.5 truncate">
+                    {provider.models.map(m => m.label || m.id).join(', ')}
+                  </div>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleRemoveCustomProvider(provider.id)}
+                  className="h-7 px-2 text-zinc-400 hover:text-red-500 hover:bg-zinc-100 dark:hover:bg-zinc-800 shrink-0"
+                >
+                  Remove
+                </Button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )

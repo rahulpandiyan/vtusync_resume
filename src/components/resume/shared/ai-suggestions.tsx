@@ -22,93 +22,64 @@ export function AISuggestions({ suggestions, onApprove, onDelete }: AISuggestion
   return (
     <div className={cn(
       "relative group/suggestions",
-      "p-6 mt-4",
+      "p-4 sm:p-5 mt-4",
       "rounded-xl",
-      "bg-gradient-to-br from-purple-50/95 via-purple-50/90 to-indigo-50/95",
-      "border border-purple-200/60",
-      "shadow-lg shadow-purple-500/5",
-      "transition-all duration-500",
-      "hover:shadow-xl hover:shadow-purple-500/10",
+      "bg-zinc-50/90 dark:bg-zinc-900/90",
+      "border border-zinc-200 dark:border-zinc-800",
+      "shadow-sm",
+      "transition-all duration-300",
+      "hover:border-zinc-300 dark:hover:border-zinc-700",
       "overflow-hidden"
     )}>
-      {/* Animated Background Pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#8882_1px,transparent_1px),linear-gradient(to_bottom,#8882_1px,transparent_1px)] bg-[size:24px_24px] opacity-10" />
-      
-      {/* Floating Gradient Orbs */}
-      <div className="absolute -top-1/2 -right-1/2 w-full h-full rounded-full bg-gradient-to-br from-purple-200/20 to-indigo-200/20 blur-3xl animate-float opacity-70" />
-      <div className="absolute -bottom-1/2 -left-1/2 w-full h-full rounded-full bg-gradient-to-br from-indigo-200/20 to-purple-200/20 blur-3xl animate-float-delayed opacity-70" />
-      
       {/* Content */}
       <div className="relative">
-        <div className="flex items-center gap-2 mb-4">
-          <div className="p-1.5 rounded-lg bg-purple-100/80 text-purple-600">
-            <Sparkles className="h-4 w-4" />
+        <div className="flex items-center gap-2 mb-3.5">
+          <div className="p-1 rounded-md bg-[#3861fb]/10 text-[#3861fb]">
+            <Sparkles className="h-3.5 w-3.5" />
           </div>
-          <span className="font-semibold text-purple-600">AI Suggestions</span>
+          <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">AI Suggested Improvements</span>
         </div>
         
-        <div className="space-y-4">
+        <div className="space-y-3">
           {suggestions.map((suggestion) => (
             <div 
               key={suggestion.id} 
-              className={cn(
-                "group/item relative",
-                "animate-in fade-in-50 duration-500",
-                "transition-all"
-              )}
+              className="group/item relative transition-all"
             >
-              <div className="flex gap-3">
+              <div className="flex gap-2.5 items-start">
                 <div className="flex-1">
                   <Tiptap
                     content={suggestion.point}
                     onChange={() => {}}
                     readOnly={true}
                     className={cn(
-                      "min-h-[80px] text-sm",
-                      "bg-white/60",
-                      "border-purple-200/60",
-                      "text-purple-900",
-                      "focus:border-purple-300/60 focus:ring-2 focus:ring-purple-500/10",
-                      "placeholder:text-purple-400",
-                      "transition-all duration-300",
-                      "hover:bg-white/80"
+                      "min-h-[70px] text-xs sm:text-sm",
+                      "bg-white dark:bg-zinc-950",
+                      "border-zinc-200 dark:border-zinc-800",
+                      "text-zinc-800 dark:text-zinc-200",
+                      "rounded-lg p-2.5",
+                      "transition-all"
                     )}
                   />
                 </div>
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-1.5 shrink-0 pt-0.5">
                   <Button
-                    variant="ghost"
+                    variant="outline"
                     size="icon"
                     onClick={() => onApprove(suggestion)}
-                    className={cn(
-                      "h-9 w-9",
-                      "bg-green-100/80 hover:bg-green-200/80",
-                      "text-green-600 hover:text-green-700",
-                      "border border-green-200/60",
-                      "shadow-sm",
-                      "transition-all duration-300",
-                      "hover:scale-105 hover:shadow-md",
-                      "hover:-translate-y-0.5"
-                    )}
+                    className="h-8 w-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800/60 shadow-xs transition-transform active:scale-95"
+                    title="Accept suggestion"
                   >
-                    <Check className="h-4 w-4" />
+                    <Check className="h-3.5 w-3.5" />
                   </Button>
                   <Button
-                    variant="ghost"
+                    variant="outline"
                     size="icon"
                     onClick={() => onDelete(suggestion.id)}
-                    className={cn(
-                      "h-9 w-9",
-                      "bg-rose-100/80 hover:bg-rose-200/80",
-                      "text-rose-600 hover:text-rose-700",
-                      "border border-rose-200/60",
-                      "shadow-sm",
-                      "transition-all duration-300",
-                      "hover:scale-105 hover:shadow-md",
-                      "hover:-translate-y-0.5"
-                    )}
+                    className="h-8 w-8 rounded-lg bg-zinc-50 dark:bg-zinc-900 hover:bg-red-50 dark:hover:bg-red-950/40 text-zinc-400 hover:text-red-500 border-zinc-200 dark:border-zinc-800 shadow-xs transition-transform active:scale-95"
+                    title="Dismiss"
                   >
-                    <X className="h-4 w-4" />
+                    <X className="h-3.5 w-3.5" />
                   </Button>
                 </div>
               </div>
@@ -118,4 +89,4 @@ export function AISuggestions({ suggestions, onApprove, onDelete }: AISuggestion
       </div>
     </div>
   );
-} 
+}

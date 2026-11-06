@@ -1,10 +1,12 @@
-"use client"
+"use client";
 
-import { cn } from "@/lib/utils";
+import { useMemo } from "react";
+import { Check, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useMemo, useRef } from "react";
-import { Check } from "lucide-react";
 import { AuthDialog } from "@/components/auth/auth-dialog";
+import { cn } from "@/lib/utils";
+import ShinyText from "@/components/ShinyText";
+import Magnet from "@/components/Magnet";
 
 interface PlanFeature {
   text: string;
@@ -20,119 +22,116 @@ interface PricingPlan {
   popular?: boolean;
   features: PlanFeature[];
   ctaText: string;
-  ctaLink: string;
-  ctaSecondary?: boolean;
 }
 
 export function PricingPlans() {
   const plans = useMemo<PricingPlan[]>(() => [
     {
-      name: "FREE",
-      price: "Free",
-      description: "Ideal for trying out the platform",
+      name: "Free Forever",
+      price: "₹0",
+      description: "Everything you need to build, calibrate, and export your resume using your own API keys.",
       features: [
-        { text: "Use your own API keys" },
-        { text: "2 base resumes" },
-        { text: "5 tailored resumes" },
-        { text: "Watermarked PDF exports" },
-        { text: "Smart formatting" },
+        { text: "Bring your own API keys (OpenAI, Claude, Gemini)" },
+        { text: "2 master profile resumes" },
+        { text: "5 tailored branches for specific job requisitions" },
+        { text: "Single-column ATS-optimized PDF export" },
+        { text: "STAR framework bullet suggestions" },
+        { text: "Zero platform fees, zero watermarks" },
       ],
-      ctaText: "Get Started",
-      ctaLink: "/auth/register",
-      ctaSecondary: true,
+      ctaText: "Start Building Free",
     },
     {
-      name: "PRO",
-      price: "Rs 199",
-      description: "Everything you need to get hired",
+      name: "Pro Lifetime",
+      price: "₹199",
+      period: "/ one-time pay",
+      description: "Full access to hosted Claude 3.5 Sonnet & GPT\u20114o with unlimited tailored resumes.",
       badge: "MOST POPULAR",
       popular: true,
       features: [
-        { text: "Access to all premium AI models", highlight: true },
-        { text: "Unlimited base resumes", highlight: true },
-        { text: "Unlimited tailored resumes", highlight: true },
-        { text: "No resume watermark", highlight: true },
-        { text: "Support student developers ❤️", highlight: true },
+        { text: "Hosted Claude 3.5 & GPT\u20114o (no keys needed)", highlight: true },
+        { text: "Unlimited master career profiles", highlight: true },
+        { text: "Unlimited tailored job branches", highlight: true },
+        { text: "Instant single-column PDF generation", highlight: true },
+        { text: "Direct support & student community updates", highlight: true },
+        { text: "Lifetime access with zero recurring fees", highlight: true },
       ],
-      ctaText: "Upgrade Now",
-      ctaLink: "/auth/register",
+      ctaText: "Get Pro Lifetime Access",
     }
   ], []);
 
-  const sectionRef = useRef<HTMLElement>(null);
-
   return (
-    <section 
-      ref={sectionRef}
-      className="py-24 md:py-32 px-4 relative bg-white dark:bg-zinc-950 scroll-mt-10" 
-      id="pricing"
-    >
-      {/* Heading */}
-      <div className="relative z-10 max-w-4xl mx-auto text-center mb-16">
-        <div className="flex justify-center mb-8">
-          <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-zinc-100 dark:bg-zinc-900 text-zinc-500 border border-zinc-200 dark:border-zinc-800">
-            Simple Pricing
-          </span>
+    <section className="py-20 md:py-28 px-4 sm:px-6 max-w-6xl mx-auto scroll-mt-20" id="pricing">
+      
+      {/* Section Header */}
+      <div className="max-w-3xl mx-auto text-center space-y-3.5 mb-14">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800">
+          <Zap className="w-3.5 h-3.5 text-blue-600 fill-blue-600" />
+          <span>TRANSPARENT PRICING</span>
         </div>
-        
-        <h2 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 text-zinc-900 dark:text-zinc-50">
-          Ready to get hired?
+
+        <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-zinc-950 dark:text-zinc-50 leading-[1.12]">
+          Simple, honest pricing. No monthly traps.
         </h2>
-        
-        <p className="text-base md:text-lg text-zinc-500 dark:text-zinc-400 max-w-xl mx-auto">
-          Choose the plan that fits your career stage. Upgrade or downgrade anytime.
+        <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 font-normal max-w-2xl mx-auto">
+          Free forever for developers who supply their own API keys. One-time student-friendly fee for hosted models.
         </p>
       </div>
-      
-      {/* Pricing Cards Grid */}
-      <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
+
+      {/* Pricing Cards Container */}
+      <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-8 items-stretch">
         {plans.map((plan) => (
           <div
             key={plan.name}
             className={cn(
-              "relative p-8 flex flex-col rounded-xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 transition-all duration-300",
-              plan.popular 
-                ? "ring-1 ring-zinc-900 dark:ring-zinc-100 shadow-xl" 
-                : "hover:border-zinc-300 dark:hover:border-zinc-700"
+              "relative p-7 sm:p-9 flex flex-col rounded-2xl transition-all duration-200",
+              plan.popular
+                ? "border-2 border-blue-600/70 dark:border-blue-500 bg-white dark:bg-zinc-900 shadow-md"
+                : "border border-zinc-200/80 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/40 hover:border-zinc-300 dark:hover:border-zinc-700 shadow-sm"
             )}
           >
-            {/* Badge for Popular Plan */}
             {plan.popular && (
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-950 text-[10px] font-bold uppercase tracking-widest z-10 whitespace-nowrap">
-                <div className="flex items-center gap-1.5 ">
-                  <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse" />
-                  Most Popular
-                </div>
+              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-10 whitespace-nowrap">
+                <span className="px-4 py-1 rounded-full text-xs font-bold tracking-wider uppercase bg-[#3861fb] text-white shadow-sm border border-white/20 whitespace-nowrap inline-flex items-center">
+                  <ShinyText text={plan.badge} speed={2.5} color="#ffffff" shineColor="rgba(255,255,255,0.7)" />
+                </span>
               </div>
             )}
-            
+
             <div className="flex-1 flex flex-col">
-              <div className="mb-8">
-                <p className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-widest mb-1">
+              <div className="mb-5 pt-1">
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
                   {plan.name}
-                </p>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-4xl font-bold text-zinc-900 dark:text-zinc-50 tracking-tight">{plan.price}</span>
-                  {plan.period && <span className="text-sm font-medium text-zinc-400">{plan.period}</span>}
+                </h3>
+                <div className="flex items-baseline gap-1.5 mt-1.5">
+                  <span className="text-4xl sm:text-5xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
+                    {plan.price}
+                  </span>
+                  {plan.period && (
+                    <span className="text-sm text-zinc-500 font-medium">
+                      {plan.period}
+                    </span>
+                  )}
                 </div>
               </div>
-              
-              <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-8 leading-relaxed">
+
+              <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-6 leading-relaxed">
                 {plan.description}
               </p>
-              
-              <div className="space-y-4 mb-10">
+
+              <div className="space-y-3 mb-8">
                 {plan.features.map((feature, i) => (
-                  <div key={i} className="flex items-start gap-3">
+                  <div key={i} className="flex items-start gap-2.5">
                     <div className={cn(
-                      "mt-1 h-4 w-4 rounded-full flex items-center justify-center flex-shrink-0",
-                      plan.popular ? "bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-950" : "bg-zinc-100 dark:bg-zinc-900 text-zinc-400"
+                      "mt-0.5 rounded-full p-0.5 flex-shrink-0",
+                      plan.popular ? "text-blue-600 dark:text-blue-400" : "text-zinc-400"
                     )}>
-                      <Check className="h-2.5 w-2.5 stroke-[3]" />
+                      <Check className="h-4 w-4 stroke-[2.5]" />
                     </div>
                     <span className={cn(
-                      "text-sm",
-                      feature.highlight ? "text-zinc-900 dark:text-zinc-100 font-medium" : "text-zinc-500 dark:text-zinc-400"
+                      "text-sm leading-snug",
+                      feature.highlight
+                        ? "text-zinc-950 dark:text-zinc-50 font-semibold"
+                        : "text-zinc-600 dark:text-zinc-400"
                     )}>
                       {feature.text}
                     </span>
@@ -140,23 +139,30 @@ export function PricingPlans() {
                 ))}
               </div>
             </div>
-            
+
             <AuthDialog>
-              <Button 
-                variant={plan.popular ? "default" : "outline"}
-                className={cn(
-                  "w-full h-11 text-sm font-semibold transition-all",
-                  !plan.popular && "border-zinc-200 dark:border-zinc-800"
-                )}
-              >
-                {plan.ctaText}
-              </Button>
+              {plan.popular ? (
+                <Magnet magnetStrength={2} padding={20} wrapperClassName="w-full">
+                  <Button
+                    variant="default"
+                    className="w-full h-11 text-sm font-semibold"
+                  >
+                    {plan.ctaText}
+                  </Button>
+                </Magnet>
+              ) : (
+                <Button
+                  variant="outline"
+                  className="w-full h-11 text-sm font-semibold"
+                >
+                  {plan.ctaText}
+                </Button>
+              )}
             </AuthDialog>
           </div>
         ))}
       </div>
+
     </section>
   );
 }
-
-export default PricingPlans;

@@ -4,7 +4,8 @@ import { WorkExperience } from "@/lib/types";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Plus, Trash2, Briefcase, Calendar, MapPin, Building2, Code2 } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -20,14 +21,17 @@ interface ProfileWorkExperienceFormProps {
 
 export function ProfileWorkExperienceForm({ experiences, onChange }: ProfileWorkExperienceFormProps) {
   const addExperience = () => {
-    onChange([...experiences, {
-      company: "",
-      position: "",
-      location: "",
-      date: "",
-      description: [],
-      technologies: []
-    }]);
+    onChange([
+      ...experiences,
+      {
+        company: "",
+        position: "",
+        location: "",
+        date: "",
+        description: [""],
+        technologies: []
+      }
+    ]);
   };
 
   const updateExperience = (index: number, field: keyof WorkExperience, value: string | string[]) => {
@@ -45,13 +49,36 @@ export function ProfileWorkExperienceForm({ experiences, onChange }: ProfileWork
   );
 
   React.useEffect(() => {
-    setTechInputs(Object.fromEntries(
-      experiences.map((exp, i) => [i, exp.technologies?.join(', ') || ''])
-    ));
+    setTechInputs(
+      Object.fromEntries(experiences.map((exp, i) => [i, exp.technologies?.join(', ') || '']))
+    );
   }, [experiences]);
 
+  if (experiences.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center p-8 text-center rounded-xl border border-dashed border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50">
+        <div className="w-10 h-10 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-500 mb-3">
+          <Briefcase className="h-5 w-5" />
+        </div>
+        <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">No work experience added</h3>
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 max-w-sm mb-4">
+          Add internships, full-time positions, or co-ops. These form the core evidence for your ATS resume score.
+        </p>
+        <Button
+          type="button"
+          onClick={addExperience}
+          size="sm"
+          className="bg-[#3861fb] text-white hover:bg-[#3861fb]/90 font-medium text-xs h-9 px-4 rounded-lg shadow-sm"
+        >
+          <Plus className="h-3.5 w-3.5 mr-1.5" />
+          Add First Experience
+        </Button>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       <Accordion 
         type="multiple" 
         className="space-y-3"
@@ -61,195 +88,219 @@ export function ProfileWorkExperienceForm({ experiences, onChange }: ProfileWork
           <AccordionItem
             key={index}
             value={`experience-${index}`}
-            className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 transition-all duration-300 rounded-md overflow-hidden"
+            className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800/80 hover:border-zinc-300 dark:hover:border-zinc-700 transition-all rounded-xl overflow-hidden shadow-sm"
           >
-            <AccordionTrigger className="px-4 py-2 hover:no-underline">
-              <div className="flex items-center justify-between gap-3 flex-1">
-                <div className="flex-1 text-left text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                  {exp.position || "Untitled Position"} {exp.company && `at ${exp.company}`}
-                </div>
-                <div className="flex items-center gap-2 text-xs text-zinc-500">
-                  {exp.date && <span>{exp.date}</span>}
-                  {exp.technologies && exp.technologies.length > 0 && (
-                    <span className="max-w-[200px] truncate">
-                      {exp.technologies.join(", ")}
+            <AccordionTrigger className="px-4 py-3 hover:no-underline">
+              <div className="flex items-center justify-between gap-3 flex-1 text-left">
+                <div className="min-w-0">
+                  <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 truncate">
+                    {exp.position || "Untitled Position"}
+                  </div>
+                  <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5 mt-0.5">
+                    <span className="font-medium text-zinc-700 dark:text-zinc-300">
+                      {exp.company || "Company not specified"}
                     </span>
+                    {exp.location && <span>• {exp.location}</span>}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  {exp.date && (
+                    <Badge variant="secondary" className="text-[10px] font-normal text-zinc-600 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 rounded-md px-2 py-0.5">
+                      {exp.date}
+                    </Badge>
                   )}
                 </div>
               </div>
             </AccordionTrigger>
+
             <AccordionContent>
-              <div className="px-4 pb-4 pt-2 space-y-4">
-                {/* Position and Delete Button Row */}
-                <div className="flex items-center justify-between gap-3">
-                  <div className="relative group flex-1 min-w-0">
-                    <Input
-                      value={exp.position}
-                      onChange={(e) => updateExperience(index, 'position', e.target.value)}
-                      className="text-base bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 rounded-md h-9
-                        focus:border-zinc-400 dark:focus:border-zinc-600 focus:ring-zinc-400 dark:focus:ring-zinc-600
-                        transition-colors placeholder:text-zinc-400"
-                      placeholder="Position Title"
-                    />
-                    <div className="absolute -top-2.5 left-2 px-1 bg-white dark:bg-zinc-950 text-[9px] font-medium text-zinc-500 uppercase">
-                      Position
+              <div className="px-5 pb-5 pt-2 border-t border-zinc-100 dark:border-zinc-800/60 space-y-4">
+                {/* Header row: Position & Delete button */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
+                      Position Title
+                    </Label>
+                    <div className="relative">
+                      <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 pointer-events-none" />
+                      <Input
+                        value={exp.position}
+                        onChange={(e) => updateExperience(index, 'position', e.target.value)}
+                        placeholder="e.g. Software Engineer Intern"
+                        className="pl-9 h-9 text-sm bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 focus-visible:ring-1 focus-visible:ring-[#3861fb]"
+                      />
                     </div>
                   </div>
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => removeExperience(index)}
-                    className="text-zinc-400 hover:text-red-500 transition-colors duration-300 h-9 w-9"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </Button>
-                </div>
 
-                {/* Company */}
-                <div className="relative group">
-                  <Input
-                    value={exp.company}
-                    onChange={(e) => updateExperience(index, 'company', e.target.value)}
-                    className="bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 rounded-md h-9
-                      focus:border-zinc-400 focus:ring-zinc-400 dark:focus:border-zinc-600 dark:focus:ring-zinc-600
-                      transition-colors placeholder:text-zinc-400 text-sm"
-                    placeholder="Company Name"
-                  />
-                  <div className="absolute -top-2.5 left-2 px-1 bg-white dark:bg-zinc-950 text-[9px] font-medium text-zinc-500 uppercase">
-                    Company
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
+                      Company / Organization
+                    </Label>
+                    <div className="relative">
+                      <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 pointer-events-none" />
+                      <Input
+                        value={exp.company}
+                        onChange={(e) => updateExperience(index, 'company', e.target.value)}
+                        placeholder="e.g. Infosys, Cisco, Startup"
+                        className="pl-9 h-9 text-sm bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 focus-visible:ring-1 focus-visible:ring-[#3861fb]"
+                      />
+                    </div>
                   </div>
                 </div>
 
-                {/* Date and Location Row */}
-                <div className="flex flex-col md:flex-row md:items-start gap-3 text-gray-600">
-                  <div className="relative group md:w-1/3">
-                    <Input
-                      type="text"
-                      value={exp.date}
-                      onChange={(e) => updateExperience(index, 'date', e.target.value)}
-                      className="bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 rounded-md h-9
-                        focus:border-zinc-400 focus:ring-zinc-400 dark:focus:border-zinc-600 dark:focus:ring-zinc-600
-                        transition-colors placeholder:text-zinc-400 text-sm"
-                      placeholder="e.g., Jan 2023 - Present"
-                    />
-                    <div className="absolute -top-2.5 left-2 px-1 bg-white dark:bg-zinc-950 text-[9px] font-medium text-zinc-500 uppercase">
-                      Date
+                {/* Date & Location */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
+                      Date Range
+                    </Label>
+                    <div className="relative">
+                      <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 pointer-events-none" />
+                      <Input
+                        value={exp.date}
+                        onChange={(e) => updateExperience(index, 'date', e.target.value)}
+                        placeholder="e.g. Jan 2023 - Present"
+                        className="pl-9 h-9 text-sm bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 focus-visible:ring-1 focus-visible:ring-[#3861fb]"
+                      />
                     </div>
                   </div>
-                  <div className="relative group flex-1 min-w-0">
-                    <Input
-                      value={exp.location}
-                      onChange={(e) => updateExperience(index, 'location', e.target.value)}
-                      className="bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 rounded-md h-9
-                        focus:border-zinc-400 focus:ring-zinc-400 dark:focus:border-zinc-600 dark:focus:ring-zinc-600
-                        transition-colors placeholder:text-zinc-400 text-sm"
-                      placeholder="e.g., Vancouver, BC"
-                    />
-                    <div className="absolute -top-2.5 left-2 px-1 bg-white dark:bg-zinc-950 text-[9px] font-medium text-zinc-500 uppercase">
+
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
                       Location
+                    </Label>
+                    <div className="relative">
+                      <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 pointer-events-none" />
+                      <Input
+                        value={exp.location}
+                        onChange={(e) => updateExperience(index, 'location', e.target.value)}
+                        placeholder="e.g. Bengaluru, India or Remote"
+                        className="pl-9 h-9 text-sm bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 focus-visible:ring-1 focus-visible:ring-[#3861fb]"
+                      />
                     </div>
                   </div>
                 </div>
 
-                {/* Technologies */}
+                {/* Technologies Used */}
                 <div className="space-y-1.5">
-                  <div className="flex justify-between items-baseline">
-                    <Label className="text-xs font-medium text-zinc-700 dark:text-zinc-300">Technologies & Skills Used</Label>
-                    <span className="text-[10px] text-zinc-500 uppercase tracking-widest">Separate with commas</span>
+                  <div className="flex items-center justify-between">
+                    <Label className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
+                      Technologies & Tools
+                    </Label>
+                    <span className="text-[10px] text-zinc-400">Separate with commas</span>
                   </div>
-                  <Input
-                    value={techInputs[index] || ''}
-                    onChange={(e) => {
-                      const newValue = e.target.value;
-                      setTechInputs(prev => ({ ...prev, [index]: newValue }));
-                      
-                      if (newValue.endsWith(',')) {
-                        const technologies = newValue
-                          .split(',')
-                          .map(t => t.trim())
-                          .filter(Boolean);
-                        updateExperience(index, 'technologies', technologies);
-                      } else {
-                        const technologies = newValue
-                          .split(',')
-                          .map(t => t.trim())
-                          .filter(Boolean);
-                        updateExperience(index, 'technologies', technologies);
-                      }
-                    }}
-                    onBlur={(e) => {
-                      const technologies = e.target.value
-                        .split(',')
-                        .map(t => t.trim())
-                        .filter(Boolean);
-                      updateExperience(index, 'technologies', technologies);
-                      setTechInputs(prev => ({ 
-                        ...prev, 
-                        [index]: technologies.join(', ') 
-                      }));
-                    }}
-                    placeholder="React, TypeScript, Node.js, etc."
-                    className="bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 rounded-md h-9
-                      focus:border-zinc-400 focus:ring-zinc-400 dark:focus:border-zinc-600 dark:focus:ring-zinc-600
-                      transition-colors placeholder:text-zinc-400 text-sm"
-                  />
+                  <div className="relative">
+                    <Code2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 pointer-events-none" />
+                    <Input
+                      value={techInputs[index] || ''}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setTechInputs(prev => ({ ...prev, [index]: val }));
+                        const list = val.split(',').map(s => s.trim()).filter(Boolean);
+                        updateExperience(index, 'technologies', list);
+                      }}
+                      onBlur={(e) => {
+                        const list = e.target.value.split(',').map(s => s.trim()).filter(Boolean);
+                        updateExperience(index, 'technologies', list);
+                        setTechInputs(prev => ({ ...prev, [index]: list.join(', ') }));
+                      }}
+                      placeholder="e.g. React, Next.js, Node.js, AWS, PostgreSQL"
+                      className="pl-9 h-9 text-sm bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 focus-visible:ring-1 focus-visible:ring-[#3861fb]"
+                    />
+                  </div>
+
+                  {exp.technologies && exp.technologies.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {exp.technologies.map((tech, tIdx) => (
+                        <Badge
+                          key={tIdx}
+                          variant="secondary"
+                          className="text-[11px] font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 px-2 py-0.5 rounded-md"
+                        >
+                          {tech}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
-                {/* Description */}
-                <div className="space-y-1.5">
-                  <div className="flex justify-between items-baseline">
-                    <Label className="text-xs font-medium text-zinc-700 dark:text-zinc-300">Key Responsibilities & Achievements</Label>
+                {/* Key Responsibilities & Achievements */}
+                <div className="space-y-2 pt-1">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <Label className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
+                        Responsibilities & Achievements
+                      </Label>
+                      <p className="text-[10px] text-zinc-400 mt-0.5">
+                        Start each bullet with an active verb (e.g. Built, Optimized, Spearheaded).
+                      </p>
+                    </div>
                     <Button
-                      variant="ghost"
+                      type="button"
+                      variant="outline"
                       size="sm"
                       onClick={() => {
                         const updated = [...experiences];
-                        updated[index].description = [...updated[index].description, ""];
+                        updated[index].description = [...(updated[index].description || []), ""];
                         onChange(updated);
                       }}
-                      className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors h-7 text-xs"
+                      className="h-7 text-xs font-medium px-2 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
                     >
-                      <Plus className="h-3.5 w-3.5 mr-1" />
-                      Add Point
+                      <Plus className="h-3 w-3 mr-1" />
+                      Add Bullet
                     </Button>
                   </div>
+
                   <div className="space-y-2">
-                    {exp.description.map((desc, descIndex) => (
-                      <div key={descIndex} className="flex gap-2 items-start">
-                        <div className="flex-1 min-w-0">
-                          <Input
-                            value={desc}
-                            onChange={(e) => {
-                              const updated = [...experiences];
-                              updated[index].description[descIndex] = e.target.value;
-                              onChange(updated);
-                            }}
-                            placeholder="Start with a strong action verb"
-                            className="bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 rounded-md h-9
-                              focus:border-zinc-400 focus:ring-zinc-400 dark:focus:border-zinc-600 dark:focus:ring-zinc-600
-                              transition-colors placeholder:text-zinc-400 text-sm"
-                          />
-                        </div>
+                    {(exp.description || []).map((desc, dIdx) => (
+                      <div key={dIdx} className="flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-600 shrink-0 ml-1" />
+                        <Input
+                          value={desc}
+                          onChange={(e) => {
+                            const updated = [...experiences];
+                            updated[index].description[dIdx] = e.target.value;
+                            onChange(updated);
+                          }}
+                          placeholder="e.g. Developed RESTful APIs reducing latency by 28%..."
+                          className="h-8 text-xs bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 focus-visible:ring-1 focus-visible:ring-[#3861fb]"
+                        />
                         <Button
+                          type="button"
                           variant="ghost"
                           size="sm"
                           onClick={() => {
                             const updated = [...experiences];
-                            updated[index].description = updated[index].description.filter((_, i) => i !== descIndex);
+                            updated[index].description = updated[index].description.filter((_, i) => i !== dIdx);
                             onChange(updated);
                           }}
-                          className="text-zinc-400 hover:text-red-500 transition-colors duration-300 h-9 w-9"
+                          className="h-8 w-8 p-0 text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-md shrink-0"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                         </Button>
                       </div>
                     ))}
-                    {exp.description.length === 0 && (
-                      <div className="text-xs text-zinc-500 italic">
-                        Add points to describe your responsibilities and achievements
-                      </div>
+                    {(exp.description || []).length === 0 && (
+                      <p className="text-xs text-zinc-400 italic py-1">
+                        No bullets added. Click &quot;Add Bullet&quot; to describe your impact.
+                      </p>
                     )}
                   </div>
+                </div>
+
+                {/* Footer action: Delete Position */}
+                <div className="pt-2 flex justify-end">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => removeExperience(index)}
+                    className="h-8 text-xs text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 px-2.5 rounded-lg"
+                  >
+                    <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+                    Remove Role
+                  </Button>
                 </div>
               </div>
             </AccordionContent>
@@ -257,14 +308,15 @@ export function ProfileWorkExperienceForm({ experiences, onChange }: ProfileWork
         ))}
       </Accordion>
 
-      <Button 
-        variant="outline" 
+      <Button
+        type="button"
+        variant="outline"
         onClick={addExperience}
-        className="w-full bg-zinc-50 dark:bg-zinc-900 border-dashed border-zinc-300 dark:border-zinc-700 hover:border-zinc-400 dark:hover:border-zinc-600 text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all duration-300 h-9 text-sm"
+        className="w-full bg-zinc-50 dark:bg-zinc-900/40 border-dashed border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all h-9 text-xs font-medium rounded-xl"
       >
         <Plus className="h-3.5 w-3.5 mr-1.5" />
         Add Work Experience
       </Button>
     </div>
   );
-} 
+}

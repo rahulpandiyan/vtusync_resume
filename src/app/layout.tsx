@@ -1,4 +1,4 @@
-import { Nunito } from "next/font/google";
+import { DM_Sans } from "next/font/google";
 import { DisableRightClick } from "@/components/layout/disable-right-click";
 
 import "./globals.css";
@@ -16,11 +16,15 @@ import {
   parseImpersonationStateCookieValue,
 } from "@/lib/impersonation";
 
-
 // Only enable Vercel Analytics when running on Vercel platform
 const isVercel = process.env.VERCEL === '1';
 
-const nunito = Nunito({ subsets: ["latin"] });
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
+  variable: "--font-sans",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://resume.vtusync.in"),
@@ -98,19 +102,15 @@ export default async function RootLayout({
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  // Detect impersonation via signed cookie set during /admin/impersonate flow
   const cookieStore = await cookies();
   const impersonationState = parseImpersonationStateCookieValue(
     cookieStore.get(IMPERSONATION_STATE_COOKIE_NAME)?.value
   );
   const isImpersonating = Boolean(impersonationState);
 
-  
-
-
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={nunito.className}>
+    <html lang="en" className={dmSans.variable} suppressHydrationWarning>
+      <body className={`${dmSans.className} ${dmSans.variable}`}>
         <DisableRightClick />
         <PostHogProvider>
           {isImpersonating && user && (

@@ -12,6 +12,7 @@ const SUBSCRIPTION_EXEMPT_ROUTES = [
   '/start-trial',
   '/subscription/checkout',
   '/subscription/checkout-return',
+  '/resume-scanner',
   '/auth',
   '/api',
   '/privacy',
@@ -76,6 +77,7 @@ export async function updateSession(request: NextRequest) {
       pathname.startsWith('/privacy') ||
       pathname.startsWith('/terms') ||
       pathname.startsWith('/how-it-works') ||
+      pathname.startsWith('/resume-scanner') ||
       pathname.startsWith('/api/robots') ||
       pathname.startsWith('/api/sitemap')
 

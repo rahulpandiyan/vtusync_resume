@@ -1,161 +1,59 @@
-'use client'
-import Link from "next/link";
-import { useState } from "react";
-import { cn } from "@/lib/utils";
-import { Menu } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { AuthDialog } from "@/components/auth/auth-dialog";
+"use client";
 
 import { usePathname, useRouter } from "next/navigation";
+import { useAuthDialog } from "@/components/auth/auth-dialog-provider";
+import PillNav, { PillNavItem } from "@/components/PillNav";
 
-interface NavLinkProps {
-  href: string;
-  children: React.ReactNode;
-  className?: string;
-  onClick?: () => void;
-}
-
-function NavLink({ href, children, className, onClick }: NavLinkProps) {
+export function NavLinks() {
   const pathname = usePathname();
   const router = useRouter();
+  const { openDialog } = useAuthDialog();
 
-  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (href.startsWith('#')) {
-      e.preventDefault();
-      
-      if (pathname !== '/') {
-        router.push(`/${href}`);
+  const navItems: PillNavItem[] = [
+    { label: "ATS Engine", href: "#features" },
+    { label: "Pricing", href: "#pricing" },
+    { label: "About", href: "#about" },
+    { label: "FAQ", href: "#faq" },
+    { label: "Blog", href: "/blog" },
+    { label: "Create Resume", href: "#create" },
+  ];
+
+  const handleItemClick = (item: PillNavItem, _index: number, event: React.MouseEvent<HTMLElement>) => {
+    if (item.href === "#create" || item.label === "Create Resume") {
+      event.preventDefault();
+      openDialog("signup");
+      return;
+    }
+
+    if (item.href?.startsWith("#")) {
+      event.preventDefault();
+
+      if (pathname !== "/") {
+        router.push(`/${item.href}`);
         return;
       }
 
-      const target = document.querySelector(href);
+      const target = document.querySelector(item.href);
       if (target) {
-        target.scrollIntoView({ behavior: 'smooth' });
+        target.scrollIntoView({ behavior: "smooth" });
       }
     }
-    onClick?.();
   };
 
-  const isHash = href.startsWith('#');
-  const targetHref = isHash && pathname !== '/' ? `/${href}` : href;
-
-  if (isHash) {
-    return (
-      <a
-        href={targetHref}
-        onClick={handleClick}
-        className={cn(
-          "text-sm font-medium text-muted-foreground/90 hover:text-foreground transition-colors duration-200",
-          className
-        )}
-      >
-        {children}
-      </a>
-    );
-  }
-
   return (
-    <Link
-      href={targetHref}
-      onClick={handleClick}
-      className={cn(
-        "text-sm font-medium text-muted-foreground/90 hover:text-foreground transition-colors duration-200",
-        className
-      )}
-    >
-      {children}
-    </Link>
-  );
-}
-
-const navItems = [
-  { href: "#features", label: "Features" },
-  { href: "/how-it-works", label: "How it Works" },
-  { href: "#pricing", label: "Pricing" },
-  { href: "#about", label: "About" },
-  { href: "/blog", label: "Blog" },
-];
-
-export function NavLinks() {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <>
-      {/* Desktop Navigation */}
-      <div className="hidden md:flex items-center gap-6">
-        {navItems.map((item) => (
-          <NavLink key={item.href} href={item.href}>{item.label}</NavLink>
-        ))}
-        <AuthDialog>
-          <Button size="sm" className="h-8 px-4 text-xs font-semibold">
-            Get Started
-          </Button>
-        </AuthDialog>
-      </div>
-
-      {/* Mobile Hamburger */}
-      <div className="md:hidden">
-        <Sheet open={isOpen} onOpenChange={setIsOpen}>
-          <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-9 w-9 rounded-md">
-              <Menu className="h-5 w-5" />
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="right" className="w-[280px] border-l border-zinc-200 dark:border-zinc-800 p-0 bg-white dark:bg-zinc-950">
-            <div className="p-6 flex flex-col gap-1">
-              <SheetHeader className="mb-6 text-left">
-                <SheetTitle className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-                  Menu
-                </SheetTitle>
-              </SheetHeader>
-
-              {navItems.map((item) => (
-                <NavLink
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setIsOpen(false)}
-                  className="px-3 py-3 rounded-lg text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-50 hover:bg-zinc-100 dark:hover:bg-zinc-900"
-                >
-                  {item.label}
-                </NavLink>
-              ))}
-
-              <div className="h-px bg-zinc-100 dark:bg-zinc-900 my-2" />
-
-              <NavLink
-                href="/privacy"
-                onClick={() => setIsOpen(false)}
-                className="px-3 py-3 rounded-lg text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-50 hover:bg-zinc-100 dark:hover:bg-zinc-900"
-              >
-                Privacy Policy
-              </NavLink>
-              <NavLink
-                href="/terms"
-                onClick={() => setIsOpen(false)}
-                className="px-3 py-3 rounded-lg text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-50 hover:bg-zinc-100 dark:hover:bg-zinc-900"
-              >
-                Terms of Service
-              </NavLink>
-
-              <div className="h-px bg-zinc-100 dark:bg-zinc-900 my-4" />
-
-              <AuthDialog>
-                <Button
-                  className="w-full h-11 text-sm font-semibold"
-                  onClick={() => setIsOpen(false)}
-                >
-                  Get Started Free
-                </Button>
-              </AuthDialog>
-
-              <p className="text-center text-xs text-zinc-400 mt-4">
-                ResuSync · Powered by VTUSync
-              </p>
-            </div>
-          </SheetContent>
-        </Sheet>
-      </div>
-    </>
+    <PillNav
+      logo="/favicon-16x16.png"
+      logoAlt="ResuSync"
+      logoHref="/"
+      items={navItems}
+      size="md"
+      theme="light"
+      layout="split"
+      hoverEffect="glide"
+      highlightColor="#3861fb"
+      highlightTextColor="#ffffff"
+      onItemClick={handleItemClick}
+      className="w-full md:w-auto"
+    />
   );
 }

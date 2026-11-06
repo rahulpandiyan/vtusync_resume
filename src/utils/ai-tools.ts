@@ -5,8 +5,12 @@ import { LanguageModelV1 } from 'ai';
 import { 
   getModelById, 
   getProviderById,
+  getDefaultModel,
+  parseCustomModelId,
+  resolveCustomProvider,
   type AIModel,
-  type AIConfig
+  type AIConfig,
+  type CustomProvider
 } from '@/lib/ai-models';
 
 // Re-export types for backward compatibility
@@ -33,161 +37,163 @@ const HIDDEN_MODELS: Record<string, HiddenModel> = {
 };
 
 /**
- * Initializes an AI client based on the provided configuration
- * Falls back to default OpenAI configuration if no config is provided
+ * Groq is OpenAI API-compatible, so we reuse the OpenAI SDK with a custom baseURL.
+ */
+function createGroqClient(apiKey: string, modelId: string) {
+  return createOpenAI({
+    apiKey,
+    baseURL: 'https://api.groq.com/openai/v1',
+  })(modelId) as LanguageModelV1;
+}
+
+/**
+ * Initializes an AI client based on the provided configuration.
+ * Automatically resolves appropriate provider credentials and seamlessly
+ * falls back to OpenRouter when individual provider environment keys are unconfigured.
  */
 export function initializeAIClient(config?: AIConfig, isPro?: boolean, useThinking?: boolean) {
-  void useThinking; // Keep for future use
+  void useThinking;
 
-  // Handle Pro subscription with environment variables
-  if (isPro && config) {
-    const { model } = config;
-    const modelData = getModelById(model) ?? HIDDEN_MODELS[model];
-    const resolvedModelId = modelData?.id ?? model;
-    const provider = modelData ? getProviderById(modelData.provider) : undefined;
-    
-    if (!modelData || !provider) {
-      throw new Error(`Unknown model: ${model}`);
+  // 1. User-registered custom OpenAI-compatible providers
+  if (config?.model && config.model.startsWith('custom::')) {
+    const parsed = parseCustomModelId(config.model);
+    if (!parsed) {
+      throw new Error('Invalid custom model id');
     }
-
-    // Get the environment key and check if it exists
-    const envKey = process.env[provider.envKey];
-    if (!envKey) {
-      throw new Error(`${provider.name} API key not found (${provider.envKey})`);
+    const customProvider = resolveCustomProvider(config.customProviders, parsed.providerId);
+    if (!customProvider) {
+      throw new Error(`Custom provider "${parsed.providerId}" not found. Configure it in Settings.`);
     }
+    if (!customProvider.apiKey) {
+      throw new Error(`No API key set for custom provider "${customProvider.name}".`);
+    }
+    return createOpenAI({
+      apiKey: customProvider.apiKey,
+      baseURL: customProvider.baseUrl,
+    })(parsed.modelId) as LanguageModelV1;
+  }
 
-    // Create the appropriate SDK client based on provider
-    switch (provider.id) {
-      case 'anthropic':
-        return createAnthropic({ apiKey: envKey })(resolvedModelId) as LanguageModelV1;
-      
-      case 'openai':
-        // Check if this is actually an OpenRouter model (contains forward slash)
-        if (resolvedModelId.includes('/')) {
-          // Use OpenRouter for models with provider prefix
-          const openRouterKey = process.env.OPENROUTER_API_KEY;
-          if (!openRouterKey) {
-            throw new Error('OpenRouter API key not found (OPENROUTER_API_KEY)');
+  // 2. Resolve target model and provider
+  const requestedModel = config?.model || getDefaultModel(Boolean(isPro));
+  const modelData = getModelById(requestedModel) ?? HIDDEN_MODELS[requestedModel];
+  const resolvedModelId = modelData?.id ?? requestedModel;
+  const provider = modelData ? getProviderById(modelData.provider) : undefined;
+
+  const serverOpenRouterKey = process.env.OPENROUTER_API_KEY;
+  const userProviderKey = config?.apiKeys?.find(k => k.service === (provider?.id || ''))?.key;
+  const userOpenRouterKey = config?.apiKeys?.find(k => k.service === 'openrouter')?.key;
+  const activeOpenRouterKey = userOpenRouterKey || serverOpenRouterKey;
+
+  // 3. Pro user configuration
+  if (isPro) {
+    const envKey = provider ? process.env[provider.envKey] : undefined;
+    const effectiveKey = envKey || userProviderKey;
+
+    if (effectiveKey && provider) {
+      switch (provider.id) {
+        case 'anthropic':
+          return createAnthropic({ apiKey: effectiveKey })(resolvedModelId) as LanguageModelV1;
+        case 'openai':
+          if (resolvedModelId.includes('/')) {
+            if (activeOpenRouterKey) {
+              return createOpenRouter({
+                apiKey: activeOpenRouterKey,
+                baseURL: 'https://openrouter.ai/api/v1',
+                headers: {
+                  'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+                  'X-Title': 'ResuSync'
+                },
+              })(resolvedModelId) as LanguageModelV1;
+            }
           }
+          return createOpenAI({
+            apiKey: effectiveKey,
+            compatibility: 'strict'
+          })(resolvedModelId) as LanguageModelV1;
+        case 'openrouter':
           return createOpenRouter({
-            apiKey: openRouterKey,
+            apiKey: effectiveKey,
             baseURL: 'https://openrouter.ai/api/v1',
             headers: {
               'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
               'X-Title': 'ResuSync'
-            },
+            }
           })(resolvedModelId) as LanguageModelV1;
+        case 'groq':
+          return createGroqClient(effectiveKey, resolvedModelId);
+      }
+    }
+
+    // Pro fallback to OpenRouter
+    if (activeOpenRouterKey) {
+      const orModelId = resolvedModelId.includes('/') ? resolvedModelId : 'openrouter/free';
+      return createOpenRouter({
+        apiKey: activeOpenRouterKey,
+        baseURL: 'https://openrouter.ai/api/v1',
+        headers: {
+          'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+          'X-Title': 'ResuSync'
         }
-        // Regular OpenAI models
-        return createOpenAI({ 
-          apiKey: envKey,
-          compatibility: 'strict'
-        })(resolvedModelId) as LanguageModelV1;
-      
+      })(orModelId) as LanguageModelV1;
+    }
+
+    throw new Error(`${provider?.name || 'AI'} API key not configured. Please add your key in Settings.`);
+  }
+
+  // 4. Free user or unauthenticated
+  if (modelData?.features.isFree || resolvedModelId.includes('/')) {
+    if (provider?.id === 'groq') {
+      const groqKey = userProviderKey || process.env.GROQ_API_KEY;
+      if (groqKey) {
+        return createGroqClient(groqKey, resolvedModelId);
+      }
+    }
+
+    if (activeOpenRouterKey) {
+      const orModelId = resolvedModelId.includes('/') ? resolvedModelId : 'openrouter/free';
+      return createOpenRouter({
+        apiKey: activeOpenRouterKey,
+        baseURL: 'https://openrouter.ai/api/v1',
+        headers: {
+          'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+          'X-Title': 'ResuSync'
+        }
+      })(orModelId) as LanguageModelV1;
+    }
+  }
+
+  // User provided custom key for provider
+  if (userProviderKey && provider) {
+    switch (provider.id) {
+      case 'anthropic':
+        return createAnthropic({ apiKey: userProviderKey })(resolvedModelId) as LanguageModelV1;
+      case 'openai':
+        return createOpenAI({ apiKey: userProviderKey, compatibility: 'strict' })(resolvedModelId) as LanguageModelV1;
       case 'openrouter':
         return createOpenRouter({
-          apiKey: envKey,
+          apiKey: userProviderKey,
           baseURL: 'https://openrouter.ai/api/v1',
           headers: {
             'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
             'X-Title': 'ResuSync'
           }
         })(resolvedModelId) as LanguageModelV1;
-      
-      default:
-        throw new Error(`Unsupported provider: ${provider.id}`);
+      case 'groq':
+        return createGroqClient(userProviderKey, resolvedModelId);
     }
   }
 
-  // Existing logic for free users
-  if (!config) {
-    return createOpenAI({ apiKey: '' })('no-model') as LanguageModelV1;
-  }
-
-  const { model, apiKeys } = config;
-  const modelData = getModelById(model) ?? HIDDEN_MODELS[model];
-  const resolvedModelId = modelData?.id ?? model;
-  const provider = modelData ? getProviderById(modelData.provider) : undefined;
-  
-  if (!modelData || !provider) {
-    throw new Error(`Unknown model: ${model}`);
-  }
-  
-  // Special case: free-tier models (e.g., GPT-5 Mini) skip user key requirement
-  // Also allow GPT OSS models to use server-side OpenRouter key
-  if (modelData.features.isFree || resolvedModelId.includes('/')) {
-    // For OpenRouter models (with slash), use OpenRouter key
-    if (resolvedModelId.includes('/')) {
-      const openRouterKey = process.env.OPENROUTER_API_KEY;
-      if (!openRouterKey) throw new Error('OpenRouter API key not found');
-      
-      return createOpenRouter({
-        apiKey: openRouterKey,
-        baseURL: 'https://openrouter.ai/api/v1',
-        headers: {
-          'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
-          'X-Title': 'ResuSync'
-        }
-      })(resolvedModelId) as LanguageModelV1;
-    }
-    
-    // For regular free models like GPT 4.1 Nano
-    const envKey = process.env[provider.envKey];
-    if (!envKey) throw new Error(`${provider.name} API key not found`);
-    
-    if (provider.id === 'openai') {
-      return createOpenAI({ 
-        apiKey: envKey,
-        compatibility: 'strict',
-      })(resolvedModelId) as LanguageModelV1;
-    }
-  }
-  
-  // For non-free models, user must provide their own API key
-  const userApiKey = apiKeys.find(k => k.service === provider.id)?.key;
-  if (!userApiKey) {
-    throw new Error(`${provider.name} API key not found in user configuration`);
-  }
-
-  // Create the appropriate SDK client based on provider
-  switch (provider.id) {
-    case 'anthropic':
-      return createAnthropic({ apiKey: userApiKey })(resolvedModelId) as LanguageModelV1;
-    
-    case 'openai':
-      // Check if this is actually an OpenRouter model (contains forward slash)
-      if (resolvedModelId.includes('/')) {
-        // Use OpenRouter for models with provider prefix
-        const openRouterKey = apiKeys.find(k => k.service === 'openrouter')?.key;
-        if (!openRouterKey) {
-          throw new Error('OpenRouter API key not found in user configuration');
-        }
-        return createOpenRouter({
-          apiKey: openRouterKey,
-          baseURL: 'https://openrouter.ai/api/v1',
-          headers: {
-            'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
-            'X-Title': 'ResuSync'
-          }
-        })(resolvedModelId) as LanguageModelV1;
+  // Universal fallback for free users when OpenRouter key is available
+  if (serverOpenRouterKey) {
+    return createOpenRouter({
+      apiKey: serverOpenRouterKey,
+      baseURL: 'https://openrouter.ai/api/v1',
+      headers: {
+        'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+        'X-Title': 'ResuSync'
       }
-      // Regular OpenAI models
-      return createOpenAI({ 
-        apiKey: userApiKey,
-        compatibility: 'strict'
-      })(resolvedModelId) as LanguageModelV1;
-    
-    case 'openrouter':
-      return createOpenRouter({
-        apiKey: userApiKey,
-        baseURL: 'https://openrouter.ai/api/v1',
-        headers: {
-          'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
-          'X-Title': 'ResuSync'
-        }
-      })(resolvedModelId) as LanguageModelV1;
-    
-    default:
-      throw new Error(`Unsupported provider: ${provider.id}`);
+    })('openrouter/free') as LanguageModelV1;
   }
+
+  throw new Error(`${provider?.name || 'AI'} API key not found. Please set your API key in Settings.`);
 }

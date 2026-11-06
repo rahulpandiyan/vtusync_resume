@@ -1,6 +1,7 @@
+'use client';
+
 import { cn } from "@/lib/utils";
-import { Copy } from "lucide-react";
-import { Brain } from "lucide-react";
+import { Copy, Brain } from "lucide-react";
 import { ComponentPropsWithoutRef } from "react";
 
 interface ImportMethodRadioItemProps extends ComponentPropsWithoutRef<'input'> {
@@ -29,23 +30,20 @@ function ImportMethodRadioItem({
       <div
         tabIndex={0}
         className={cn(
-          "flex flex-col items-center justify-center rounded-lg p-3",
-          "bg-white/80 border-2 shadow-sm h-full",
-          "hover:border-pink-200 hover:bg-pink-50/50",
-          "transition-all duration-300",
-          "peer-checked:border-pink-500 peer-checked:bg-pink-50",
-          "peer-checked:shadow-md peer-checked:shadow-pink-100",
-          "focus:outline-none focus:ring-2 focus:ring-pink-500/50"
+          "flex flex-col items-center justify-center rounded-xl p-4",
+          "bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm h-full",
+          "hover:border-zinc-300 dark:hover:border-zinc-700 hover:bg-zinc-50/50 dark:hover:bg-zinc-800/40",
+          "transition-all duration-200",
+          "peer-checked:border-[#3861fb] peer-checked:bg-[#3861fb]/[0.03] peer-checked:ring-2 peer-checked:ring-[#3861fb]/20",
+          "focus:outline-none focus:ring-2 focus:ring-[#3861fb]/30"
         )}
       >
         <div className="flex flex-col items-center text-center">
-          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-pink-50 to-rose-50 border border-pink-100 flex items-center justify-center mb-2">
-            <div className="scale-75">
-              {icon}
-            </div>
+          <div className="h-9 w-9 rounded-lg bg-[#3861fb]/10 text-[#3861fb] flex items-center justify-center mb-2.5">
+            {icon}
           </div>
-          <div className="font-semibold text-xs text-pink-950 mb-1">{title}</div>
-          <span className="text-xs leading-tight text-gray-600">{description}</span>
+          <div className="font-semibold text-xs text-zinc-900 dark:text-zinc-100 mb-1">{title}</div>
+          <span className="text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">{description}</span>
         </div>
       </div>
     </label>
@@ -59,7 +57,7 @@ interface ImportMethodRadioGroupProps {
 
 export function ImportMethodRadioGroup({ value, onChange }: ImportMethodRadioGroupProps) {
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-2 gap-3.5">
       <ImportMethodRadioItem
         name="tailorOption"
         value="ai"
@@ -67,8 +65,8 @@ export function ImportMethodRadioGroup({ value, onChange }: ImportMethodRadioGro
         checked={value === 'ai'}
         onChange={() => onChange('ai')}
         title="Tailor with AI"
-        description="Let AI analyze the job description and optimize your resume for the best match"
-        icon={<Brain className="h-6 w-6 text-pink-600" />}
+        description="Let AI analyze the job description and calibrate your resume for maximum ATS alignment"
+        icon={<Brain className="h-4 w-4" />}
       />
       
       <ImportMethodRadioItem
@@ -78,9 +76,9 @@ export function ImportMethodRadioGroup({ value, onChange }: ImportMethodRadioGro
         checked={value === 'import-profile'}
         onChange={() => onChange('import-profile')}
         title="Copy Base Resume"
-        description="Create a copy of your base resume. Add a job description to link it to a specific position."
-        icon={<Copy className="h-6 w-6 text-pink-600" />}
+        description="Create a clean duplicate of your base resume and link it to this specific role"
+        icon={<Copy className="h-4 w-4" />}
       />
     </div>
   );
-} 
+}

@@ -1,21 +1,34 @@
 'use client';
 
-import { AlertTriangle, Sparkles } from "lucide-react";
+import { AlertCircle, Sparkles, KeyRound, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogHeader, 
+  DialogTitle 
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
-function isRateLimitErrorMessage(text: string) {
-  const normalizedText = text.toLowerCase();
+function isRateLimitOrQuotaError(text: string) {
+  const normalized = text.toLowerCase();
   return (
-    normalizedText.includes('rate limit') ||
-    normalizedText.includes('too many requests') ||
-    normalizedText.includes('http 429') ||
-    normalizedText.includes('status 429') ||
-    normalizedText.includes('429') ||
-    normalizedText.includes('quota exceeded') ||
-    normalizedText.includes('exceeded your current quota') ||
-    normalizedText.includes('throttl')
+    normalized.includes('rate limit') ||
+    normalized.includes('too many requests') ||
+    normalized.includes('429') ||
+    normalized.includes('quota') ||
+    normalized.includes('throttl')
+  );
+}
+
+function isApiKeyError(text: string) {
+  const normalized = text.toLowerCase();
+  return (
+    normalized.includes('api key') ||
+    normalized.includes('unauthorized') ||
+    normalized.includes('invalid key') ||
+    normalized.includes('authentication')
   );
 }
 
@@ -34,102 +47,75 @@ export function ApiErrorDialog({
   onUpgrade,
   onSettings
 }: ApiErrorDialogProps) {
-  const shouldShowUpgradeAndSettings =
-    isRateLimitErrorMessage(`${errorMessage.title} ${errorMessage.description}`);
+  const fullMessage = `${errorMessage.title} ${errorMessage.description}`;
+  const isRateLimit = isRateLimitOrQuotaError(fullMessage);
+  const isKeyError = isApiKeyError(fullMessage);
 
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className={cn(
-        "bg-white/95 backdrop-blur-xl",
-        "border-2 border-red-200/40",
-        "p-0 gap-0 pb-8"
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className={cn(
+        "sm:max-w-[440px] p-0 overflow-hidden",
+        "bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800",
+        "shadow-2xl rounded-2xl"
       )}>
-        <div className={cn(
-          "flex flex-col items-center gap-4 p-6",
-          "text-red-500 text-center"
-        )}>
-          <div className="flex flex-col items-center gap-3">
-            <div className="p-3 rounded-full bg-red-50">
-              <AlertTriangle className="w-6 h-6 text-red-500" />
+        <div className="p-6 space-y-5">
+          {/* Header Icon & Title */}
+          <div className="flex flex-col items-center text-center space-y-3">
+            <div className="p-3 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+              <AlertCircle className="w-6 h-6 stroke-[2.2]" />
             </div>
-            <AlertDialogTitle className="text-red-600 text-lg">
-              {errorMessage.title}
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-gray-600">
-              {errorMessage.description}
-            </AlertDialogDescription>
+            
+            <div className="space-y-1.5">
+              <DialogTitle className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
+                {errorMessage.title || "AI Service Notice"}
+              </DialogTitle>
+              <DialogDescription className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-sm mx-auto">
+                {errorMessage.description || "An unexpected error occurred while processing your request."}
+              </DialogDescription>
+            </div>
           </div>
 
-          {shouldShowUpgradeAndSettings && (
-            <>
-              <div className="w-full h-px bg-red-100" />
-              
-              <div className="text-sm text-red-400 mb-2">
-                Unlock premium features and advanced AI capabilities
-              </div>
-              
-              <div className="flex flex-col items-center gap-2 w-full">
-                <div className="relative group w-full">
-                  <div className="absolute -inset-[3px] bg-gradient-to-r from-amber-500/0 via-orange-500/0 to-red-500/0 rounded-lg opacity-75 blur-md group-hover:from-amber-500/50 group-hover:via-orange-500/50 group-hover:to-red-500/50 transition-all duration-300 ease-in-out" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-amber-400/0 via-orange-400/0 to-red-400/0 rounded-lg opacity-100 group-hover:via-orange-400/10 transition-all duration-300 ease-in-out" />
-                  
-                  <Button
-                    onClick={onUpgrade}
-                    className={cn(
-                      "relative w-full",
-                      "bg-gradient-to-r from-amber-500 to-orange-500",
-                      "hover:from-amber-500 hover:via-orange-500 hover:to-red-500",
-                      "text-white font-medium",
-                      "shadow-lg hover:shadow-xl hover:shadow-orange-500/20",
-                      "transition-all duration-300 ease-in-out",
-                      "hover:-translate-y-0.5",
-                      "flex items-center justify-center gap-1.5"
-                    )}
-                  >
-                    <Sparkles className="h-4 w-4 transition-transform duration-300 ease-in-out group-hover:scale-110" />
-                    <span className="transition-all duration-300 ease-in-out group-hover:translate-x-0.5">
-                      Upgrade to Pro
-                    </span>
-                  </Button>
-                </div>
-                
-                <Button
-                  variant="outline"
-                  onClick={onSettings}
-                  className={cn(
-                    "w-full",
-                    "text-xs text-gray-500 hover:text-gray-600",
-                    "hover:bg-gray-50/50",
-                    "border border-gray-200",
-                    "h-8",
-                    "transition-all duration-300",
-                    "hover:-translate-y-0.5",
-                    "hover:shadow-sm"
-                  )}
-                >
-                  Set API Keys
-                </Button>
-              </div>
-            </>
-          )}
+          {/* Action Area */}
+          <div className="space-y-2.5 pt-1">
+            {isRateLimit ? (
+              <Button
+                onClick={onUpgrade}
+                className="w-full h-9 bg-[#3861fb] hover:bg-[#3861fb]/90 text-white text-xs font-semibold rounded-xl shadow-sm transition-all flex items-center justify-center gap-2"
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                <span>Upgrade to Pro for Higher Limits</span>
+              </Button>
+            ) : isKeyError ? (
+              <Button
+                onClick={onSettings}
+                className="w-full h-9 bg-[#3861fb] hover:bg-[#3861fb]/90 text-white text-xs font-semibold rounded-xl shadow-sm transition-all flex items-center justify-center gap-2"
+              >
+                <KeyRound className="h-3.5 w-3.5" />
+                <span>Configure AI Key in Settings</span>
+              </Button>
+            ) : null}
 
-          <div className="absolute top-2 right-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => onOpenChange(false)}
-              className={cn(
-                " text-xs text-gray-700 hover:text-gray-900",
-                "h-7 px-2",
-                "hover:bg-gray-50/50",
-                "transition-colors duration-200 border border-gray-500 bg-gray-200" 
-              )}
-            >
-              Dismiss
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                onClick={onSettings}
+                className="flex-1 h-8 text-xs font-medium border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-xl"
+              >
+                <KeyRound className="mr-1.5 h-3.5 w-3.5 text-zinc-400" />
+                <span>AI Settings</span>
+              </Button>
+
+              <Button
+                variant="ghost"
+                onClick={() => onOpenChange(false)}
+                className="h-8 px-4 text-xs font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 rounded-xl"
+              >
+                Dismiss
+              </Button>
+            </div>
           </div>
         </div>
-      </AlertDialogContent>
-    </AlertDialog>
+      </DialogContent>
+    </Dialog>
   );
-} 
+}

@@ -1,11 +1,10 @@
-// src/app/settings/page.tsx
+"use server";
 
-"use server"
-
-import { SettingsContent } from '@/components/settings/settings-content'
-import { createClient } from '@/utils/supabase/server'
+import { SettingsContent } from '@/components/settings/settings-content';
+import { createClient } from '@/utils/supabase/server';
 import { getSubscriptionAccessState } from '@/lib/subscription-access';
-
+import { Suspense } from 'react';
+import { Loader2 } from 'lucide-react';
 
 export default async function SettingsPage() {
   const supabase = await createClient();
@@ -14,7 +13,7 @@ export default async function SettingsPage() {
   const { data: subscription } = user
     ? await supabase
         .from('subscriptions')
-        .select('subscription_plan, subscription_status, current_period_end, trial_end, stripe_subscription_id')
+        .select('subscription_plan, subscription_status')
         .eq('user_id', user.id)
         .maybeSingle()
     : { data: null };
@@ -24,15 +23,18 @@ export default async function SettingsPage() {
   const subscriptionStatus = subscription?.subscription_status ?? '';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
-      <main className="pt-4 pb-16 px-4 md:px-8 max-w-7xl mx-auto">
+    <div className="w-full">
+      <Suspense fallback={
+        <div className="flex items-center justify-center min-h-[300px]">
+          <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
+        </div>
+      }>
         <SettingsContent 
           user={user} 
           isProPlan={isProPlan}
           subscriptionStatus={subscriptionStatus}
-          subscriptionSnapshot={subscription}
         />
-      </main>
+      </Suspense>
     </div>
-  )
+  );
 }

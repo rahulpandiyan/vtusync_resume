@@ -31,7 +31,7 @@ export function TogglePlanButton() {
     <Button
       onClick={handleToggle}
       variant={isPro ? 'default' : 'outline'}
-      className={isPro ? 'bg-purple-600 hover:bg-purple-700' : ''}
+      className={isPro ? 'bg-[#3861fb] hover:bg-[#3861fb]/90 text-white shadow-sm' : ''}
       disabled={isLoading}
     >
       {isLoading ? (
@@ -41,4 +41,4 @@ export function TogglePlanButton() {
       )}
     </Button>
   );
-} 
+}

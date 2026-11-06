@@ -14,8 +14,12 @@ import {
   getProviderById,
   isModelAvailable,
   groupModelsByProvider,
+  parseCustomModelId,
+  buildCustomModelCompositeId,
+  CUSTOM_MODEL_PREFIX,
   type AIModel,
-  type ApiKey
+  type ApiKey,
+  type CustomProvider,
 } from '@/lib/ai-models'
 
 interface ModelSelectorProps {
@@ -26,6 +30,7 @@ interface ModelSelectorProps {
   className?: string
   placeholder?: string
   showToast?: boolean
+  customProviders?: CustomProvider[]
 }
 
 // Helper component for unavailable model popover
@@ -118,14 +123,22 @@ export function ModelSelector({
   isProPlan, 
   className,
   placeholder = "Select an AI model",
-  showToast = true
+  showToast = true,
+  customProviders,
 }: ModelSelectorProps) {
   
   const isModelSelectable = (modelId: string) => {
+    if (modelId.startsWith(CUSTOM_MODEL_PREFIX)) return true
     return isModelAvailable(modelId, isProPlan, apiKeys)
   }
 
   const handleModelChange = (modelId: string) => {
+    if (modelId.startsWith(CUSTOM_MODEL_PREFIX)) {
+      onValueChange(modelId)
+      if (showToast) toast.success('Model updated successfully')
+      return
+    }
+
     const selectedModel = getModelById(modelId)
     if (!selectedModel) return
 
@@ -234,6 +247,44 @@ export function ModelSelector({
             )}
           </div>
         ))}
+
+        {/* Custom user-registered providers (OpenAI-compatible endpoints) */}
+        {customProviders && customProviders.length > 0 && (
+          <div key="custom-group">
+            {customProviders.map(provider => {
+              if (!provider.models?.length) return null
+              return (
+                <SelectGroup key={provider.id}>
+                  <SelectLabel className="text-xs font-semibold text-zinc-500 dark:text-zinc-400 px-3 py-2">
+                    <div className="flex items-center gap-2">
+                      <span className="w-3.5 h-3.5 rounded-sm bg-zinc-400" aria-hidden="true" />
+                      {provider.name} (Custom)
+                    </div>
+                  </SelectLabel>
+                  {provider.models.map(model => {
+                    const value = buildCustomModelCompositeId(provider.id, model.id)
+                    return (
+                      <SelectItem
+                        key={value}
+                        value={value}
+                        className="rounded-lg transition-all mb-1 px-3 py-2 cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                      >
+                        <div className="flex items-center gap-3 w-full">
+                          <span className="text-sm truncate font-medium">
+                            {model.label || model.id}
+                          </span>
+                          <span className="text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-md text-[10px] font-medium border border-zinc-200 dark:border-zinc-700">
+                            Free
+                          </span>
+                        </div>
+                      </SelectItem>
+                    )
+                  })}
+                </SelectGroup>
+              )
+            })}
+          </div>
+        )}
       </SelectContent>
     </Select>
   )

@@ -3,9 +3,8 @@
 import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
 import { CheckCircle2 } from "lucide-react";
-import { LoadingDots } from "@/components/ui/loading-dots";
+import LatticeLoader from "@/components/ui/lattice-loader";
 
-// Define the creation steps
 export const CREATION_STEPS = [
   { id: 'analyzing', label: 'Analyzing Job Description' },
   { id: 'formatting', label: 'Formatting Requirements' },
@@ -24,19 +23,19 @@ export function LoadingOverlay({ currentStep }: LoadingOverlayProps) {
   const progress = ((currentStepIndex + 1) / CREATION_STEPS.length) * 100;
 
   return (
-    <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="max-w-md w-full space-y-8 p-8">
+    <div className="absolute inset-0 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md flex items-center justify-center z-50 p-4">
+      <div className="max-w-md w-full space-y-6 p-6 sm:p-8 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/90 dark:border-zinc-800/90 shadow-2xl">
         {/* Progress bar */}
-        <div className="space-y-3">
-          <div className="flex justify-between text-sm text-muted-foreground">
-            <span>Creating Resume</span>
-            <span>{Math.round(progress)}%</span>
+        <div className="space-y-2">
+          <div className="flex justify-between text-xs font-semibold text-zinc-600 dark:text-zinc-400">
+            <span>Calibrating Tailored Resume</span>
+            <span className="font-mono text-[#3861fb]">{Math.round(progress)}%</span>
           </div>
-          <Progress value={progress} className="h-2" />
+          <Progress value={progress} className="h-1.5 bg-zinc-100 dark:bg-zinc-800 [&>div]:bg-[#3861fb]" />
         </div>
 
         {/* Steps */}
-        <div className="space-y-4">
+        <div className="space-y-2">
           {CREATION_STEPS.map((step, index) => {
             const isActive = step.id === currentStep;
             const isCompleted = index < currentStepIndex;
@@ -45,42 +44,55 @@ export function LoadingOverlay({ currentStep }: LoadingOverlayProps) {
               <div
                 key={step.id}
                 className={cn(
-                  "flex items-center gap-3 p-3 rounded-lg transition-colors duration-300",
-                  isActive && "bg-pink-50 text-pink-900",
-                  isCompleted && "text-muted-foreground"
+                  "flex items-center justify-between p-2.5 rounded-xl transition-all duration-300 border",
+                  isActive && "bg-[#3861fb]/[0.06] border-[#3861fb]/30 shadow-sm",
+                  isCompleted && "border-transparent text-zinc-500 dark:text-zinc-400 bg-zinc-50/60 dark:bg-zinc-800/40",
+                  !isActive && !isCompleted && "border-transparent text-zinc-400 opacity-60"
                 )}
               >
-                {isCompleted ? (
-                  <CheckCircle2 className="h-5 w-5 text-green-500" />
-                ) : isActive ? (
-                  <div className="h-5 w-5 flex items-center justify-center">
-                    <LoadingDots className="text-pink-600" />
-                  </div>
-                ) : (
-                  <div className="h-5 w-5 rounded-full border-2 border-muted" />
+                <div className="flex items-center gap-2.5">
+                  {isCompleted ? (
+                    <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                  ) : isActive ? (
+                    <div className="h-2 w-2 rounded-full bg-[#3861fb] animate-pulse" />
+                  ) : (
+                    <div className="h-2 w-2 rounded-full bg-zinc-300 dark:bg-zinc-700" />
+                  )}
+                  <span className={cn(
+                    "text-xs font-medium",
+                    isActive && "text-zinc-900 dark:text-zinc-100 font-semibold",
+                    isCompleted && "text-zinc-600 dark:text-zinc-400"
+                  )}>
+                    {step.label}
+                  </span>
+                </div>
+
+                {isActive && (
+                  <LatticeLoader
+                    status="working"
+                    label=""
+                    showTimer={true}
+                    color="#3861fb"
+                    fontSize={11}
+                    cellSize={4}
+                    gap={1.5}
+                  />
                 )}
-                <span className={cn(
-                  "text-sm font-medium",
-                  isActive && "text-pink-900",
-                  !isActive && !isCompleted && "text-muted-foreground"
-                )}>
-                  {step.label}
-                </span>
               </div>
             );
           })}
         </div>
 
         {/* Current action description */}
-        <div className="text-center">
-          <p className="text-sm text-muted-foreground animate-pulse">
-            {currentStep === 'analyzing' && "Reading and understanding the job requirements..."}
-            {currentStep === 'formatting' && "Structuring the job information..."}
-            {currentStep === 'tailoring' && "Optimizing your resume for the best match..."}
-            {currentStep === 'finalizing' && "Putting the final touches..."}
+        <div className="text-center pt-1">
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">
+            {currentStep === 'analyzing' && "Extracting essential competencies & keywords..."}
+            {currentStep === 'formatting' && "Mapping qualifications against target job criteria..."}
+            {currentStep === 'tailoring' && "Optimizing bullet points for maximum ATS readability..."}
+            {currentStep === 'finalizing' && "Assembling calibrated resume preview..."}
           </p>
         </div>
       </div>
     </div>
   );
-} 
+}

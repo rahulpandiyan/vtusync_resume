@@ -25,10 +25,7 @@ export function PreviewPanel({
 
   return (
     <div className={cn(
-      "h-full w-full",
-      resume.is_base_resume
-        ? "bg-purple-50/30"
-        : "bg-pink-50/60 shadow-sm shadow-pink-200/20"
+      "h-full w-full bg-zinc-100/70 dark:bg-zinc-950/80 transition-colors"
     )}>
       <ScrollArea className="z-50 h-full w-full">
         <div className="min-h-full w-full flex flex-col items-center justify-start p-2 sm:p-4">
@@ -44,4 +41,4 @@ export function PreviewPanel({
       </ScrollArea>
     </div>
   );
-} 
+}

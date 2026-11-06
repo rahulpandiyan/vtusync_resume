@@ -21,6 +21,7 @@ import { useResumeContext } from "../../editor/resume-editor-context";
 import { AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { BriefcaseIcon } from "lucide-react";
 import { formatJobListing } from "@/utils/actions/jobs/ai";
+import { readStoredCustomProviders } from "@/hooks/use-custom-providers";
 
 interface TailoredJobCardProps {
   jobId: string | null;
@@ -147,7 +148,8 @@ export function TailoredJobCard({
       // Format job listing using AI
       const formattedJob = await formatJobListing(jobDescription, {
         model: selectedModel || '',
-        apiKeys
+        apiKeys,
+        customProviders: readStoredCustomProviders()
       });
 
       setIsFormatting(false);

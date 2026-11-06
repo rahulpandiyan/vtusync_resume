@@ -144,7 +144,7 @@ export function TextImportDialog({
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] bg-white/95 backdrop-blur-xl border-white/40 shadow-2xl">
         <DialogHeader>
-          <DialogTitle className="text-2xl bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
+          <DialogTitle className="text-2xl bg-gradient-to-r from-zinc-900 to-zinc-700 dark:from-zinc-100 dark:to-zinc-300 bg-clip-text text-transparent">
             Import Resume Content
           </DialogTitle>
           <DialogDescription asChild>
@@ -166,8 +166,8 @@ export function TextImportDialog({
             className={cn(
               "border-2 border-dashed rounded-lg p-8 flex flex-col items-center justify-center gap-3 transition-colors duration-200 cursor-pointer group",
               isDragging
-                ? "border-violet-500 bg-violet-50/50"
-                : "border-violet-500/80 hover:border-violet-500 hover:bg-violet-50/10"
+                ? "border-[#3861fb] bg-blue-50/40 dark:bg-blue-950/20"
+                : "border-zinc-300 dark:border-zinc-700 hover:border-[#3861fb] hover:bg-zinc-50 dark:hover:bg-zinc-900"
             )}
           >
             <input
@@ -176,7 +176,7 @@ export function TextImportDialog({
               accept="application/pdf"
               onChange={handleFileInput}
             />
-            <Upload className="w-10 h-10 text-violet-500 group-hover:scale-110 transition-transform duration-200" />
+            <Upload className="w-10 h-10 text-[#3861fb] group-hover:scale-110 transition-transform duration-200" />
             <div className="text-center">
               <p className="text-sm font-medium text-foreground">
                 Drop your PDF resume here
@@ -194,7 +194,7 @@ export function TextImportDialog({
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="Start pasting your resume content here..."
-              className="min-h-[100px] bg-white/50 border-black/40 focus:border-violet-500/40 focus:ring-violet-500/20 transition-all duration-300 pt-4"
+              className="min-h-[100px] bg-white/50 border-black/40 focus:border-[#3861fb]/40 focus:ring-[#3861fb]/20 transition-all duration-300 pt-4"
             />
           </div>
         </div>
@@ -234,7 +234,7 @@ export function TextImportDialog({
           <Button
             onClick={handleImport}
             disabled={isProcessing || !content.trim()}
-            className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white hover:from-violet-700 hover:to-indigo-700"
+            className="bg-[#3861fb] hover:bg-[#3861fb]/90 text-white shadow-sm"
           >
             {isProcessing ? (
               <>

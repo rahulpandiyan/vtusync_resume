@@ -207,7 +207,8 @@ export type ServiceName =
   | 'openai'
   // | 'azure'
   | 'anthropic'
-  | 'openrouter';
+  | 'openrouter'
+  | 'groq';
   // | 'bedrock'
   // | 'google'
   // | 'vertex'
@@ -217,7 +218,6 @@ export type ServiceName =
   // | 'cohere'
   // | 'fireworks'
   // | 'deepinfra'
-  // | 'groq'
   // | 'deepseek';
 
 // Re-export AI model types from centralized location (except AIProvider to avoid conflict)

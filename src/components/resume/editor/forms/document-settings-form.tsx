@@ -350,11 +350,11 @@ export function DocumentSettingsForm({ documentSettings, onChange, profile, show
                 education_margin_horizontal: 0,
                 experience_margin_horizontal: 0
               })}
-              className="relative h-60 group p-0 overflow-hidden border-slate-200 hover:border-pink-600/40 transition-colors"
+              className="relative h-60 group p-0 overflow-hidden border-slate-200 hover:border-[#3861fb]/40 transition-colors"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-pink-50/50 to-rose-50/50 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-indigo-50/50 dark:from-blue-950/20 dark:to-indigo-950/20 opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="relative h-full w-full flex flex-col items-center">
-                <div className="w-full p-2 text-xs font-medium text-pink-600 border-b border-slate-200 bg-slate-50/80">
+                <div className="w-full p-2 text-xs font-medium text-[#3861fb] border-b border-slate-200 bg-slate-50/80">
                   <LayoutTemplate className="w-3 h-3 inline-block mr-1" />
                   Compact Layout
                 </div>

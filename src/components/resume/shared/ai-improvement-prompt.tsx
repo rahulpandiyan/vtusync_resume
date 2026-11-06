@@ -20,25 +20,24 @@ export function AIImprovementPrompt({
   onChange,
   onSubmit,
   isLoading,
-  placeholder = "e.g., Make it more impactful and quantifiable",
+  placeholder = "e.g., Make it more impactful and quantifiable with metrics",
   hideSubmitButton = false
 }: AIImprovementPromptProps) {
   return (
-    <div className="space-y-3">
+    <div className="space-y-2.5">
       <div>
-        <Label className="text-[11px] font-medium text-purple-700">Prompt for AI (Optional)</Label>
+        <Label className="text-[11px] font-medium text-zinc-700 dark:text-zinc-300">Prompt for AI (Optional)</Label>
         <Textarea
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           className={cn(
-            "h-14 mt-0.5 text-xs",
-            "bg-white",
-            "border-purple-200",
-            "focus:border-purple-400 focus:ring-1 focus:ring-purple-300",
-            "hover:bg-white",
+            "h-14 mt-1 text-xs",
+            "bg-white dark:bg-zinc-950",
+            "border-zinc-200 dark:border-zinc-800",
+            "focus:border-[#3861fb] focus:ring-1 focus:ring-[#3861fb]",
             "resize-none",
-            "text-purple-900 placeholder:text-purple-400"
+            "text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400"
           )}
         />
       </div>
@@ -49,15 +48,10 @@ export function AIImprovementPrompt({
           onClick={onSubmit}
           disabled={isLoading}
           className={cn(
-            "w-full h-8",
-            "bg-purple-50/80 hover:bg-purple-100/80",
-            "text-purple-600 hover:text-purple-700",
-            "border border-purple-200/60",
-            "shadow-sm",
-            "transition-all duration-300",
-            "hover:scale-[1.02] hover:shadow-md",
-            "hover:-translate-y-0.5",
-            "text-xs"
+            "w-full h-8 text-xs font-medium rounded-lg",
+            "bg-[#3861fb] text-white hover:bg-[#3861fb]/90 hover:text-white",
+            "border-none shadow-xs",
+            "transition-all active:scale-[0.98]"
           )}
         >
           {isLoading ? (
@@ -75,4 +69,4 @@ export function AIImprovementPrompt({
       )}
     </div>
   );
-} 
+}

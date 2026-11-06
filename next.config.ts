@@ -16,8 +16,8 @@ const withMDX = mdx({
 });
 
 const nextConfig: NextConfig = {
-  // Enable standalone output for Docker builds
-  output: 'standalone',
+  // Enable standalone output for Docker builds (prevent Windows symlink EPERM in local dev)
+  output: process.env.BUILD_STANDALONE === 'true' || process.env.NEXT_PUBLIC_BASE_PATH === '/__NEXT_BASEPATH_PLACEHOLDER__' ? 'standalone' : undefined,
   // Support serving the app at a path prefix (e.g., /resumelm)
   // Local dev/Vercel default to root; Docker builds set NEXT_PUBLIC_BASE_PATH to the
   // placeholder /__NEXT_BASEPATH_PLACEHOLDER__ which entrypoint.sh replaces at runtime.
@@ -28,11 +28,6 @@ const nextConfig: NextConfig = {
   images: {
     loader: 'custom',
     loaderFile: './src/lib/image-loader.ts',
-  },
-  experimental: {
-    turbo: {
-      // ...
-    },
   },
   // Allow MDX files to be considered pages/components
   pageExtensions: ['ts', 'tsx', 'mdx'],

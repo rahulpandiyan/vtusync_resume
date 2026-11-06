@@ -1,99 +1,63 @@
-'use client'
+'use client';
 
-import { ArrowRight, Clock, Crown } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import { ProUpgradeButton } from "@/components/settings/pro-upgrade-button"
-import { useApiKeys } from "@/hooks/use-api-keys"
-import { useRouter } from "next/navigation"
+import { ArrowRight, Crown, Sparkles, Key } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { useApiKeys } from "@/hooks/use-api-keys";
+import { Badge } from "@/components/ui/badge";
 
-type ApiKeyAlertVariant = 'upgrade' | 'trial'
+type ApiKeyAlertVariant = 'upgrade' | 'trial';
 
 export function ApiKeyAlert({ variant = 'upgrade' }: { variant?: ApiKeyAlertVariant }) {
-  const { apiKeys } = useApiKeys()
-  const router = useRouter()
-  
-  const hasApiKeys = apiKeys.length > 0
+  const { apiKeys } = useApiKeys();
+  const hasApiKeys = apiKeys.length > 0;
 
-  if (hasApiKeys) return null
+  if (hasApiKeys) return null;
 
   return (
-    <div className="w-full rounded-lg sm:rounded-xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 shadow-sm p-4">
-      <div className="flex flex-col gap-4">
-        {/* Header with Icon and Title */}
-        <div className="flex items-start gap-3">
-          <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30 flex items-center justify-center">
-            {variant === 'trial' ? (
-              <Clock className="w-5 h-5 text-amber-600 dark:text-amber-400" />
-            ) : (
-              <Crown className="w-5 h-5 text-amber-600 dark:text-amber-400" />
-            )}
+    <div className="relative overflow-hidden rounded-xl border border-amber-500/20 bg-gradient-to-r from-amber-500/5 via-orange-500/5 to-transparent p-4 sm:p-4.5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+            <Crown className="h-5 w-5" />
           </div>
-          
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-                {variant === 'trial' ? 'Try Pro free for 7 days' : 'Unlock Full AI Power'}
+          <div>
+            <div className="flex items-center gap-2">
+              <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50">
+                Unlock Unlimited AI Resumes & Multi-Model Scoring
               </h3>
-              <span className="px-2 py-0.5 text-[10px] font-medium bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800 rounded-full">
-                {variant === 'trial' ? 'Free trial' : 'Most Popular'}
-              </span>
+              <Badge variant="outline" className="hidden xs:inline-flex text-[10px] font-bold border-amber-500/30 text-amber-700 dark:text-amber-300 bg-amber-500/10 py-0">
+                PRO ACCESS
+              </Badge>
             </div>
-            
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-zinc-600 dark:text-zinc-400">
-              <span>🚀 Unlimited resumes</span>
-              <span>🤖 AI models</span>
-              <span>⚡ Instant</span>
-            </div>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+              Get unlimited ATS tailoring, GPT-4o & Claude 3.5 Sonnet without bringing your own API keys.
+            </p>
           </div>
         </div>
 
-        {/* CTA Button */}
-        {variant === 'trial' ? (
-          <Button
-            onClick={() => router.push('/subscription')}
-            className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white"
-          >
-            View pricing
-          </Button>
-        ) : (
-          <ProUpgradeButton />
-        )}
-
-        {/* API Keys Section */}
-        <div className="pt-3 border-t border-zinc-100 dark:border-zinc-900">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-zinc-500">
-              <span className="font-medium text-zinc-400">API keys:</span>
-              <a 
-                href="https://console.anthropic.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
-              >
-                Anthropic <ArrowRight className="w-3 h-3" />
-              </a>
-              <a 
-                href="https://platform.openai.com/docs/quickstart/create-and-export-an-api-key"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
-              >
-                OpenAI <ArrowRight className="w-3 h-3" />
-              </a>
-            </div>
-            <Link href="/settings">
-              <Button
-                size="sm"
-                variant="outline"
-                className="text-xs h-8 px-4 border-zinc-200 dark:border-zinc-800"
-              >
-                Configure
-              </Button>
-            </Link>
-          </div>
+        <div className="flex items-center gap-2 self-start sm:self-center shrink-0">
+          <Link href="/settings">
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 px-3 rounded-lg text-xs font-semibold border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+            >
+              <Key className="h-3.5 w-3.5 mr-1 text-zinc-400" />
+              <span>Use Custom Key</span>
+            </Button>
+          </Link>
+          <Link href="/subscription">
+            <Button
+              size="sm"
+              className="h-8 px-3.5 rounded-lg text-xs font-semibold bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-sm transition-all"
+            >
+              <Sparkles className="h-3.5 w-3.5 mr-1" />
+              <span>Upgrade to Pro</span>
+            </Button>
+          </Link>
         </div>
       </div>
     </div>
-  )
+  );
 }

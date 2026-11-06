@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { WorkExperience } from "@/lib/types";
 import { useState } from 'react';
 
-const DIFF_HIGHLIGHT_CLASSES = "bg-green-300 px-1 rounded-sm";
+const DIFF_HIGHLIGHT_CLASSES = "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 px-1 rounded-sm";
 
 interface WorkExperienceSuggestionProps {
   currentWork: WorkExperience;
@@ -39,11 +39,10 @@ export function WorkExperienceSuggestion({
 
   // Safe description comparison
   const descriptionComparison = (current: string[] = [], suggested: string[] = []): DescriptionPoint[] => {
-    // Handle undefined/null cases and ensure arrays
     const safeCurrent = Array.isArray(current) ? current : [];
     const safeSuggested = Array.isArray(suggested) ? suggested : [];
     
-    return safeSuggested.map((point = '', index) => { // Add default for point
+    return safeSuggested.map((point = '', index) => {
       const currentPoint = safeCurrent[index] || '';
       return {
         text: point,
@@ -55,7 +54,7 @@ export function WorkExperienceSuggestion({
   const highlightedDescription = modifiedField === 'description'
     ? descriptionComparison(
         currentWork?.description ?? [],
-        (newValue as string[]) // Type assertion since we know modifiedField='description'
+        (newValue as string[])
       )
     : (currentWork.description ?? []).map((point) => ({
         text: point,
@@ -65,32 +64,31 @@ export function WorkExperienceSuggestion({
   return (
     <Card className={cn(
       "group relative overflow-hidden",
-      "border border-white/60",
-      "bg-gradient-to-br from-white/95 via-purple-50/30 to-indigo-50/40",
-      "shadow-xl shadow-purple-500/10",
-      "transition-all duration-500 ease-in-out",
-      "hover:shadow-2xl hover:shadow-purple-500/20",
-      "backdrop-blur-xl"
+      "border border-zinc-200 dark:border-zinc-800",
+      "bg-white dark:bg-zinc-900",
+      "shadow-sm",
+      "transition-all duration-300 ease-in-out",
+      "hover:shadow-md"
     )}>
-      <div className="relative p-4">
+      <div className="relative p-3.5">
         {/* Header */}
         <div className="flex justify-between items-start">
           <div>
             <h3 className={cn(
-              "text-base font-bold text-gray-900",
+              "text-sm font-semibold text-zinc-900 dark:text-zinc-100",
               getHighlightClass(currentWork.position, suggestedWork.position, suggestedWork.position)
             )}>
               {suggestedWork.position}
             </h3>
             <p className={cn(
-              "text-xs text-gray-700",
+              "text-xs text-zinc-600 dark:text-zinc-400",
               getHighlightClass(currentWork.company, suggestedWork.company, suggestedWork.company)
             )}>
               {suggestedWork.company}
             </p>
           </div>
           <span className={cn(
-            "text-[10px] text-gray-600",
+            "text-[10px] text-zinc-500",
             getHighlightClass(currentWork.date, suggestedWork.date, suggestedWork.date)
           )}>
             {suggestedWork.date}
@@ -100,7 +98,7 @@ export function WorkExperienceSuggestion({
         {/* Location */}
         {suggestedWork.location && (
           <p className={cn(
-            "text-xs text-gray-600 mt-1",
+            "text-xs text-zinc-500 mt-1",
             getHighlightClass(currentWork.location, suggestedWork.location, suggestedWork.location)
           )}>
             {suggestedWork.location}
@@ -112,8 +110,10 @@ export function WorkExperienceSuggestion({
           <div className="space-y-1.5 mt-2">
             {highlightedDescription.map((point, index) => (
               <div key={index} className="flex items-start gap-1.5">
-                <span className="text-gray-800 mt-0.5 text-xs">•</span>
-                <p className={cn("text-xs text-gray-800", point.isNew ? DIFF_HIGHLIGHT_CLASSES : "")}>{point.text || 'No description provided'}</p>
+                <span className="text-zinc-400 mt-0.5 text-xs">•</span>
+                <p className={cn("text-xs text-zinc-700 dark:text-zinc-300", point.isNew ? DIFF_HIGHLIGHT_CLASSES : "")}>
+                  {point.text || 'No description provided'}
+                </p>
               </div>
             ))}
           </div>

@@ -11,7 +11,6 @@ interface ResizablePanelsProps {
 }
 
 export function ResizablePanels({
-  isBaseResume,
   editorPanel,
   previewPanel
 }: ResizablePanelsProps) {
@@ -69,19 +68,19 @@ export function ResizablePanels({
         <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col h-full">
           {/* Mobile Navigation Header */}
           <div className="shrink-0 z-40 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800 p-2">
-            <TabsList className="grid w-full grid-cols-2 h-12 p-1 bg-zinc-100 dark:bg-zinc-900 rounded-xl">
+            <TabsList className="grid w-full grid-cols-2 h-10 p-1 bg-zinc-100 dark:bg-zinc-900 rounded-xl">
               <TabsTrigger 
                 value="edit" 
-                className="flex items-center justify-center gap-2 text-sm font-semibold rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-800 data-[state=active]:shadow-sm transition-all"
+                className="flex items-center justify-center gap-2 text-xs font-semibold rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-800 data-[state=active]:shadow-sm transition-all"
               >
-                <FileEdit className="h-4 w-4" />
-                <span>Edit</span>
+                <FileEdit className="h-3.5 w-3.5" />
+                <span>Editor</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="preview" 
-                className="flex items-center justify-center gap-2 text-sm font-semibold rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-800 data-[state=active]:shadow-sm transition-all"
+                className="flex items-center justify-center gap-2 text-xs font-semibold rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-800 data-[state=active]:shadow-sm transition-all"
               >
-                <Eye className="h-4 w-4" />
+                <Eye className="h-3.5 w-3.5" />
                 <span>Preview</span>
               </TabsTrigger>
             </TabsList>
@@ -108,21 +107,16 @@ export function ResizablePanels({
       <div className="hidden lg:block h-full">
         <ResizablePanelGroup
           direction="horizontal"
-          className={cn(
-            "relative h-full rounded-lg",
-            isBaseResume
-              ? "border-purple-200/40"
-              : "border-pink-300/50"
-          )}
+          className="relative h-full rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-zinc-950 overflow-hidden shadow-sm"
         >
           {/* Editor Panel */}
           <ResizablePanel 
-            defaultSize={40} 
+            defaultSize={45} 
             minSize={30} 
-            maxSize={70}
+            maxSize={65}
             onResize={updatePanelWidths}
           >
-            <div ref={editorPanelRef} className="h-full w-full overflow-hidden">
+            <div ref={editorPanelRef} className="h-full w-full overflow-hidden bg-white dark:bg-zinc-950">
               {editorPanel}
             </div>
           </ResizablePanel>
@@ -130,25 +124,16 @@ export function ResizablePanels({
           {/* Resize Handle */}
           <ResizableHandle 
             withHandle 
-            className={cn(
-              isBaseResume
-                ? "bg-purple-100/50 hover:bg-purple-200/50"
-                : "bg-pink-200/50 hover:bg-pink-300/50 shadow-sm shadow-pink-200/20"
-            )}
+            className="bg-zinc-200/80 dark:border-zinc-800/80 hover:bg-[#3861fb] transition-colors w-1.5"
           />
 
           {/* Preview Panel */}
           <ResizablePanel 
-            defaultSize={60} 
-            minSize={30} 
+            defaultSize={55} 
+            minSize={35} 
             maxSize={70}
             onResize={updatePanelWidths}
-            className={cn(
-              "shadow-[0_0_30px_-5px_rgba(0,0,0,0.3)] overflow-hidden",
-              isBaseResume
-                ? "shadow-purple-200/50"
-                : "shadow-pink-200/50"
-            )}
+            className="overflow-hidden bg-zinc-100/70 dark:bg-zinc-900/60"
           >
             <div ref={previewPanelRef} className="h-full w-full overflow-y-auto">
               {previewPanel(previewWidth)}

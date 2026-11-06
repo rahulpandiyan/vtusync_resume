@@ -23,7 +23,8 @@ export async function convertTextToResume(prompt: string, existingResume: Resume
   const resolvedConfig: AIConfig = {
     model: config?.model || fallbackModel,
     apiKeys: config?.apiKeys || [],
-    ...(config?.customPrompts ? { customPrompts: config.customPrompts } : {})
+    ...(config?.customPrompts ? { customPrompts: config.customPrompts } : {}),
+    ...(config?.customProviders ? { customProviders: config.customProviders } : {})
   };
 
   let aiClient: LanguageModelV1;

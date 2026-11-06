@@ -44,11 +44,39 @@ export interface ApiKey {
   addedAt: string
 }
 
+/**
+ * A user-supplied OpenAI-compatible provider (e.g. from freellm.net).
+ * Any provider that exposes an OpenAI-style /chat/completions endpoint works.
+ */
+export interface CustomModel {
+  /** The model id as the provider expects it, e.g. "meta-llama/llama-3.3-70b-instruct" */
+  id: string
+  /** Optional friendly label; defaults to the id */
+  label?: string
+}
+
+export interface CustomProvider {
+  /** Unique local slug, e.g. "dp_01hx..." */
+  id: string
+  /** Display name, e.g. "DeepInfra" */
+  name: string
+  /** Base URL of the OpenAI-compatible endpoint, e.g. "https://api.deepinfra.com/v1/openai" */
+  baseUrl: string
+  apiKey: string
+  models: CustomModel[]
+}
+
 export interface AIConfig {
   model: string
   apiKeys: ApiKey[]
   customPrompts?: import('./types').CustomPrompts
+  /** User-registered OpenAI-compatible providers */
+  customProviders?: CustomProvider[]
 }
+
+// Composite id used to select a custom model in the UI / persist as default.
+// Format: custom::{providerId}::{modelId}
+export const CUSTOM_MODEL_PREFIX = 'custom::'
 
 export interface GroupedModels {
   provider: ServiceName
@@ -88,6 +116,15 @@ export const PROVIDERS: Partial<Record<ServiceName, AIProvider>> = {
     sdkInitializer: 'openrouter',
     unstable: false
     
+  },
+  groq: {
+    id: 'groq',
+    name: 'Groq',
+    apiLink: 'https://console.groq.com/keys',
+    logo: '/logos/llama-logo.png',
+    envKey: 'GROQ_API_KEY',
+    sdkInitializer: 'groq',
+    unstable: false
   },
 }
 
@@ -162,30 +199,51 @@ export const AI_MODELS: AIModel[] = [
       requiresPro: false
     }
   },
+  // OpenRouter Free Models
   {
-    id: 'google/gemini-3-pro-preview',
-    name: 'Gemini 3 Pro Preview',
+    id: 'openrouter/free',
+    name: 'OpenRouter Free AI',
     provider: 'openrouter',
     features: {
+      isFree: true,
       isRecommended: true,
       isUnstable: false,
-      maxTokens: 1000000,
-      supportsVision: false,
+      maxTokens: 131072,
+      supportsVision: true,
       supportsTools: true
     },
     availability: {
-      requiresApiKey: true,
+      requiresApiKey: false,
       requiresPro: false
     }
   },
   {
-    id: 'openai/gpt-oss-120b',
-    name: 'GPT-OSS 120B',
+    id: 'nvidia/nemotron-3-ultra-550b-a55b:free',
+    name: 'Nemotron 3 Ultra (Free)',
     provider: 'openrouter',
     features: {
-      isRecommended: false,
-      isUnstable: false,
       isFree: true,
+      isRecommended: true,
+      isUnstable: false,
+      maxTokens: 65536,
+      supportsVision: false,
+      supportsTools: true
+    },
+    availability: {
+      requiresApiKey: false,
+      requiresPro: false
+    }
+  },
+
+  // Groq Models (free tier: ~1000 requests/day, no credit card required)
+  {
+    id: 'openai/gpt-oss-120b',
+    name: 'GPT-OSS 120B (Groq Free)',
+    provider: 'groq',
+    features: {
+      isFree: true,
+      isRecommended: true,
+      isUnstable: false,
       maxTokens: 131072,
       supportsVision: false,
       supportsTools: true
@@ -197,12 +255,12 @@ export const AI_MODELS: AIModel[] = [
   },
   {
     id: 'openai/gpt-oss-20b',
-    name: 'GPT-OSS 20B',
-    provider: 'openrouter',
+    name: 'GPT-OSS 20B (Groq Free)',
+    provider: 'groq',
     features: {
+      isFree: true,
       isRecommended: false,
       isUnstable: false,
-      isFree: true,
       maxTokens: 131072,
       supportsVision: false,
       supportsTools: true
@@ -213,34 +271,19 @@ export const AI_MODELS: AIModel[] = [
     }
   },
   {
-    id: 'z-ai/glm-4.6:exacto',
-    name: 'GLM-4.6 Exacto',
-    provider: 'openrouter',
+    id: 'qwen/qwen3.8-27b',
+    name: 'Qwen3.8 27B (Groq Free)',
+    provider: 'groq',
     features: {
+      isFree: true,
       isRecommended: false,
       isUnstable: false,
+      maxTokens: 131072,
       supportsVision: false,
       supportsTools: true
     },
     availability: {
       requiresApiKey: true,
-      requiresPro: false
-    }
-  },
-  {
-    id: 'deepseek/deepseek-v3.2:nitro',
-    name: 'DeepSeek V3.2',
-    provider: 'openrouter',
-    features: {
-      isFree: true,
-      isRecommended: true,
-      isUnstable: false,
-      maxTokens: 163840,
-      supportsVision: false,
-      supportsTools: true
-    },
-    availability: {
-      requiresApiKey: false,
       requiresPro: false
     }
   },
@@ -332,11 +375,13 @@ const MODEL_ALIASES: Record<string, string> = {
   'gpt-5.2-2025-12-11': 'gpt-5.2',
   'gpt-5.2-pro-2025-12-11': 'gpt-5.2-pro',
   // Legacy GPT-5 reference → latest GPT-5.2
-  'gpt-5': 'gpt-5.2',
-  // Allow DeepSeek without the nitro suffix
-  'deepseek/deepseek-v3.2': 'deepseek/deepseek-v3.2:nitro',
-  // Legacy Gemini 3 model ID without provider prefix
-  'gemini-3-pro-preview': 'google/gemini-3-pro-preview',
+  'gpt-5': 'openrouter/free',
+  'gpt-5.2': 'openrouter/free',
+  'gpt-5.2-pro': 'openrouter/free',
+  // Legacy DeepSeek shorthand → Groq-free GPT-OSS 120B
+  'deepseek/deepseek-v3.2': 'openai/gpt-oss-120b',
+  // Legacy Gemini 3 shorthand → Groq-free GPT-OSS 120B
+  'gemini-3-pro-preview': 'openai/gpt-oss-120b',
 }
 
 // ========================
@@ -344,8 +389,8 @@ const MODEL_ALIASES: Record<string, string> = {
 // ========================
 
 export const DEFAULT_MODELS = {
-  PRO_USER: 'gpt-5.2',
-  FREE_USER: 'deepseek/deepseek-v3.2:nitro'
+  PRO_USER: 'openrouter/free',
+  FREE_USER: 'openrouter/free'
 } as const
 
 // ========================
@@ -359,19 +404,19 @@ export const DEFAULT_MODELS = {
 export const MODEL_DESIGNATIONS = {
   // Fast & cheap model for parsing, simple tasks, quick analysis
   FAST_CHEAP: 'claude-sonnet-4-5-20250929',
-  // Alternative fast & cheap option (free for all users)
-  FAST_CHEAP_FREE: 'deepseek/deepseek-v3.2:nitro',
+  // Alternative fast & cheap option (free for all users via Groq)
+  FAST_CHEAP_FREE: 'openai/gpt-oss-120b',
   // Frontier model for complex tasks, deep analysis, best quality
   FRONTIER: 'gpt-5.2',
   // Alternative frontier model
   FRONTIER_ALT: 'claude-opus-4-5-20251101',
-  // Balanced model - good quality but faster/cheaper than frontier
-  BALANCED: 'google/gemini-3-pro-preview',
+  // Balanced model - good quality but faster/cheaper than frontier (free via Groq)
+  BALANCED: 'openai/gpt-oss-120b',
   // Vision-capable model for image analysis
   VISION: 'claude-sonnet-4-5-20250929',
   // Default models by user type
-  DEFAULT_PRO: 'gpt-5.2',
-  DEFAULT_FREE: 'deepseek/deepseek-v3.2:nitro'
+  DEFAULT_PRO: 'openrouter/free',
+  DEFAULT_FREE: 'openrouter/free'
 } as const
 
 // Type for model designations
@@ -425,8 +470,14 @@ export function isModelAvailable(
   const model = getModelById(modelId)
   if (!model) return false
 
-  // Free model allowance
-  if (model.features.isFree) return true
+  // Free model allowance — if a free model requires the user's own key,
+  // the user must have added it (e.g. Groq free models).
+  if (model.features.isFree) {
+    if (model.availability.requiresApiKey) {
+      return apiKeys.some(key => key.service === model.provider)
+    }
+    return true
+  }
 
   // Check if this is an OpenRouter model (contains forward slash)
   if (modelId.includes('/')) {
@@ -435,6 +486,31 @@ export function isModelAvailable(
 
   // Check if user has the required API key
   return apiKeys.some(key => key.service === model.provider)
+}
+
+/**
+ * Split a composite custom-model id (`custom::{providerId}::{modelId}`)
+ * into its parts. Returns null if the id is not a custom model.
+ */
+export function parseCustomModelId(
+  compositeId: string
+): { providerId: string; modelId: string } | null {
+  if (!compositeId.startsWith(CUSTOM_MODEL_PREFIX)) return null
+  const rest = compositeId.slice(CUSTOM_MODEL_PREFIX.length)
+  const sep = rest.indexOf('::')
+  if (sep <= 0 || sep === rest.length - 2) return null
+  return { providerId: rest.slice(0, sep), modelId: rest.slice(sep + 2) }
+}
+
+export function buildCustomModelCompositeId(providerId: string, modelId: string): string {
+  return `${CUSTOM_MODEL_PREFIX}${providerId}::${modelId}`
+}
+
+export function resolveCustomProvider(
+  customProviders: CustomProvider[] | undefined,
+  providerId: string
+): CustomProvider | undefined {
+  return customProviders?.find(p => p.id === providerId)
 }
 
 /**
@@ -457,7 +533,7 @@ export function getModelProvider(modelId: string): AIProvider | undefined {
  * Group models by provider for display
  */
 export function groupModelsByProvider(): GroupedModels[] {
-  const providerOrder: ServiceName[] = ['anthropic', 'openai', 'openrouter']
+  const providerOrder: ServiceName[] = ['anthropic', 'openai', 'openrouter', 'groq']
   const grouped = new Map<ServiceName, AIModel[]>()
 
   // Group models by provider

@@ -1,15 +1,29 @@
 'use client';
 
 import { Profile, WorkExperience, Education, Project } from "@/lib/types";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { User, Linkedin, Briefcase, GraduationCap, Wrench, FolderGit2, Upload, Save, Trash2} from "lucide-react";
+import { 
+  User, 
+  Linkedin, 
+  Briefcase, 
+  GraduationCap, 
+  Wrench, 
+  FolderGit2, 
+  Upload, 
+  Save, 
+  Trash2, 
+  FileText,
+  Sparkles,
+  AlertTriangle,
+  Loader2
+} from "lucide-react";
 
 import {
   Dialog,
@@ -18,21 +32,27 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-import { Loader2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from "@/components/ui/alert-dialog";
+
 import { ProfileBasicInfoForm } from "@/components/profile/profile-basic-info-form";
 import { ProfileWorkExperienceForm } from "@/components/profile/profile-work-experience-form";
 import { ProfileProjectsForm } from "@/components/profile/profile-projects-form";
 import { ProfileEducationForm } from "@/components/profile/profile-education-form";
 import { ProfileSkillsForm } from "@/components/profile/profile-skills-form";
-// import { ProfileEditorHeader } from "./profile-editor-header";
 import { formatProfileWithAI } from "../../utils/actions/profiles/ai";
 import { getLinkedInAuthUrl, isLinkedInConfigured } from "@/utils/actions/linkedin/actions";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-
 import { ProUpgradeButton } from "@/components/settings/pro-upgrade-button";
-import { AlertTriangle } from "lucide-react";
 import { importResume, updateProfile } from "@/utils/actions/profiles/actions";
 import { cn, withBasePath } from "@/lib/utils";
 import pdfToText from "react-pdftotext";
@@ -88,13 +108,11 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
       toast.error(errorMessages[error] || detail || "LinkedIn import failed. Please try again.");
     }
     
-    // Clear query params after handling
     if (success || error) {
       router.replace('/profile');
     }
   }, [searchParams, router]);
 
-  // Add useEffect to clear error when dialogs close
   useEffect(() => {
     if (!isResumeDialogOpen && !isTextImportDialogOpen) {
       setApiKeyError("");
@@ -109,8 +127,7 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
     try {
       setIsSubmitting(true);
       await updateProfile(profile);
-      toast.success("Changes saved successfully");
-      // Force a server revalidation
+      toast.success("Profile changes saved successfully");
       router.refresh();
     } catch (error) {
       void error;
@@ -123,7 +140,6 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
   const handleReset = async () => {
     try {
       setIsResetting(true);
-      // Reset to empty profile locally
       const resetProfile = {
         id: profile.id,
         user_id: profile.user_id,
@@ -143,15 +159,9 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
         updated_at: profile.updated_at
       };
       
-      // Update local state
       setProfile(resetProfile);
-      
-      // Save to database
       await updateProfile(resetProfile);
-      
       toast.success("Profile reset successfully");
-      
-      // Force a server revalidation
       router.refresh();
     } catch (error: unknown) {
       toast.error("Failed to reset profile. Please try again.");
@@ -161,7 +171,7 @@ export function ProfileEditForm({ profile: initialProfile }: ProfileEditFormProp
     }
   };
 
-const handleLinkedInImport = async () => {
+  const handleLinkedInImport = async () => {
     try {
       const configured = await isLinkedInConfigured();
       if (!configured) {
@@ -183,7 +193,6 @@ const handleLinkedInImport = async () => {
     try {
       setIsProcessingResume(true);
       
-      // Get model and API key from local storage
       const MODEL_STORAGE_KEY = 'resusync-default-model';
       const LOCAL_STORAGE_KEY = 'resusync-api-keys';
       
@@ -203,7 +212,6 @@ const handleLinkedInImport = async () => {
       });
       
       if (result) {
-        // Clean and transform the data to match our database schema
         const cleanedProfile: Partial<Profile> = {
           first_name: result.first_name || null,
           last_name: result.last_name || null,
@@ -272,7 +280,7 @@ const handleLinkedInImport = async () => {
           ...prev,
           ...cleanedProfile
         }));
-        toast.success("Content imported successfully - Don't forget to save your changes");
+        toast.success("Profile content parsed & imported. Review and save your changes.");
         setIsResumeDialogOpen(false);
         setIsTextImportDialogOpen(false);
         setResumeContent("");
@@ -283,7 +291,7 @@ const handleLinkedInImport = async () => {
         console.error('Resume upload error:', error);
         if (error.message.toLowerCase().includes('api key')) {
           setApiKeyError(
-            'API key required. Please add your OpenAI API key in settings or upgrade to our Pro Plan.'
+            'AI API key required. Please configure your key in settings or upgrade to Pro.'
           );
         } else {
           toast.error("Failed to process content: " + error.message);
@@ -294,7 +302,6 @@ const handleLinkedInImport = async () => {
     }
   };
 
-  // Add drag event handlers
   const handleDrag = (e: React.DragEvent, isDraggingState: React.Dispatch<React.SetStateAction<boolean>>) => {
     e.preventDefault();
     e.stopPropagation();
@@ -320,10 +327,10 @@ const handleLinkedInImport = async () => {
         setContent(prev => prev + (prev ? "\n\n" : "") + text);
       } catch (error) {
         console.error("PDF processing error:", error);
-        toast.error("Failed to extract text from the PDF. Please try again or paste the content manually.");
+        toast.error("Failed to extract text from the PDF. Please try again or paste text manually.");
       }
     } else {
-      toast.error("Please drop a PDF file.");
+      toast.error("Please drop a valid PDF file.");
     }
   };
 
@@ -335,505 +342,471 @@ const handleLinkedInImport = async () => {
         setContent(prev => prev + (prev ? "\n\n" : "") + text);
       } catch (error) {
         console.error("PDF processing error:", error);
-        toast.error("Failed to extract text from the PDF. Please try again or paste the content manually.");
+        toast.error("Failed to extract text from the PDF. Please try again or paste text manually.");
       }
     }
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto">
-      {/* Action Bar */}
-      <div className="sticky top-0 z-[40] mb-6 pt-2">
-        <div className="bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md border border-zinc-200 dark:border-zinc-800 rounded-xl p-2 sm:p-3 flex items-center justify-between gap-4 shadow-sm">
-              <div className="flex items-center gap-2 min-w-0 shrink">
-                <div className="w-2.5 h-2.5 shrink-0 rounded-full bg-zinc-900 dark:bg-zinc-50" />
-                <span className="text-xs sm:text-sm font-semibold tracking-wide text-zinc-500 truncate">Profile Editor</span>
+    <div className="w-full max-w-4xl mx-auto space-y-6">
+      {/* Top Header */}
+      <div className="pb-4 border-b border-zinc-200/60 dark:border-zinc-800/60">
+        <div className="flex items-center gap-2">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+            Profile Builder
+          </h1>
+          <Badge 
+            variant="outline" 
+            className="text-[10px] font-semibold text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 rounded-full px-2 py-0.5"
+          >
+            Master Candidate Record
+          </Badge>
+        </div>
+        <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+          Manage your verified education, experience, and skills used to calibrate AI resumes and beat ATS filters.
+        </p>
+      </div>
+
+      {/* Modern Quick Import Bar */}
+      <div className="bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 rounded-xl p-4 sm:p-5">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-[#3861fb]" />
+              <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                Quick Import & Auto-Fill
+              </h2>
+            </div>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+              Import and auto-format your experience, education, and skills from existing documents.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            {/* LinkedIn Sync Button */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleLinkedInImport}
+              disabled={isLinkedInLoading}
+              className="h-8 text-xs font-medium border-zinc-200 dark:border-zinc-800 hover:bg-white dark:hover:bg-zinc-800 px-3 text-[#0a66c2]"
+            >
+              {isLinkedInLoading ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
+              ) : (
+                <Linkedin className="h-3.5 w-3.5 mr-1.5" />
+              )}
+              <span>Sync LinkedIn</span>
+            </Button>
+
+            {/* Resume Upload PDF Button */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsResumeDialogOpen(true)}
+              className="h-8 text-xs font-medium border-zinc-200 dark:border-zinc-800 hover:bg-white dark:hover:bg-zinc-800 px-3 text-zinc-700 dark:text-zinc-300"
+            >
+              <Upload className="h-3.5 w-3.5 mr-1.5 text-zinc-400" />
+              <span>Upload PDF</span>
+            </Button>
+
+            {/* Text Import Button */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsTextImportDialogOpen(true)}
+              className="h-8 text-xs font-medium border-zinc-200 dark:border-zinc-800 hover:bg-white dark:hover:bg-zinc-800 px-3 text-zinc-700 dark:text-zinc-300"
+            >
+              <FileText className="h-3.5 w-3.5 mr-1.5 text-zinc-400" />
+              <span>Paste Text</span>
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Tabs Switcher for Sections */}
+      <Tabs defaultValue="basic" className="space-y-6">
+        <div className="border-b border-zinc-200/60 dark:border-zinc-800/60 pb-3">
+          <TabsList className="bg-zinc-100 dark:bg-zinc-900 p-1 rounded-xl h-auto flex flex-wrap gap-1">
+            <TabsTrigger 
+              value="basic" 
+              className="rounded-lg text-xs font-semibold px-3 sm:px-4 py-2 data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-900 dark:data-[state=active]:text-zinc-50 data-[state=active]:shadow-sm transition-all"
+            >
+              <User className="h-3.5 w-3.5 mr-1.5 text-zinc-500" />
+              <span>Basic Info</span>
+            </TabsTrigger>
+
+            <TabsTrigger 
+              value="experience" 
+              className="rounded-lg text-xs font-semibold px-3 sm:px-4 py-2 data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-900 dark:data-[state=active]:text-zinc-50 data-[state=active]:shadow-sm transition-all"
+            >
+              <Briefcase className="h-3.5 w-3.5 mr-1.5 text-zinc-500" />
+              <span>Experience</span>
+              {profile.work_experience?.length > 0 && (
+                <span className="ml-1.5 text-[10px] font-bold text-zinc-500 bg-zinc-200/60 dark:bg-zinc-700/60 px-1.5 py-0.2 rounded-full">
+                  {profile.work_experience.length}
+                </span>
+              )}
+            </TabsTrigger>
+
+            <TabsTrigger 
+              value="projects" 
+              className="rounded-lg text-xs font-semibold px-3 sm:px-4 py-2 data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-900 dark:data-[state=active]:text-zinc-50 data-[state=active]:shadow-sm transition-all"
+            >
+              <FolderGit2 className="h-3.5 w-3.5 mr-1.5 text-zinc-500" />
+              <span>Projects</span>
+              {profile.projects?.length > 0 && (
+                <span className="ml-1.5 text-[10px] font-bold text-zinc-500 bg-zinc-200/60 dark:bg-zinc-700/60 px-1.5 py-0.2 rounded-full">
+                  {profile.projects.length}
+                </span>
+              )}
+            </TabsTrigger>
+
+            <TabsTrigger 
+              value="education" 
+              className="rounded-lg text-xs font-semibold px-3 sm:px-4 py-2 data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-900 dark:data-[state=active]:text-zinc-50 data-[state=active]:shadow-sm transition-all"
+            >
+              <GraduationCap className="h-3.5 w-3.5 mr-1.5 text-zinc-500" />
+              <span>Education</span>
+              {profile.education?.length > 0 && (
+                <span className="ml-1.5 text-[10px] font-bold text-zinc-500 bg-zinc-200/60 dark:bg-zinc-700/60 px-1.5 py-0.2 rounded-full">
+                  {profile.education.length}
+                </span>
+              )}
+            </TabsTrigger>
+
+            <TabsTrigger 
+              value="skills" 
+              className="rounded-lg text-xs font-semibold px-3 sm:px-4 py-2 data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-900 dark:data-[state=active]:text-zinc-50 data-[state=active]:shadow-sm transition-all"
+            >
+              <Wrench className="h-3.5 w-3.5 mr-1.5 text-zinc-500" />
+              <span>Skills</span>
+              {profile.skills?.length > 0 && (
+                <span className="ml-1.5 text-[10px] font-bold text-zinc-500 bg-zinc-200/60 dark:bg-zinc-700/60 px-1.5 py-0.2 rounded-full">
+                  {profile.skills.length}
+                </span>
+              )}
+            </TabsTrigger>
+          </TabsList>
+        </div>
+
+        {/* Tab Contents */}
+        <TabsContent value="basic" className="mt-0 outline-none">
+          <ProfileBasicInfoForm
+            profile={profile}
+            onChange={(field, value) => updateField(field, value)}
+          />
+        </TabsContent>
+
+        <TabsContent value="experience" className="mt-0 outline-none">
+          <ProfileWorkExperienceForm
+            experiences={profile.work_experience || []}
+            onChange={(experiences) => updateField('work_experience', experiences)}
+          />
+        </TabsContent>
+
+        <TabsContent value="projects" className="mt-0 outline-none">
+          <ProfileProjectsForm
+            projects={profile.projects || []}
+            onChange={(projects) => updateField('projects', projects)}
+          />
+        </TabsContent>
+
+        <TabsContent value="education" className="mt-0 outline-none">
+          <ProfileEducationForm
+            education={profile.education || []}
+            onChange={(education) => updateField('education', education)}
+          />
+        </TabsContent>
+
+        <TabsContent value="skills" className="mt-0 outline-none">
+          <ProfileSkillsForm
+            skills={profile.skills || []}
+            onChange={(skills) => updateField('skills', skills)}
+          />
+        </TabsContent>
+      </Tabs>
+
+      {/* Bottom Action Footer */}
+      <div className="pt-6 border-t border-zinc-200/60 dark:border-zinc-800/60 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <p className="text-xs text-zinc-500 dark:text-zinc-400">
+          Save your changes to update your master profile and calibrate AI resumes.
+        </p>
+
+        <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={isResetting}
+                className="text-xs font-medium text-zinc-600 hover:text-red-600 hover:border-red-200 hover:bg-red-50 dark:text-zinc-400 dark:hover:text-red-400 dark:hover:bg-red-950/20 h-9 px-3.5 rounded-lg"
+              >
+                {isResetting ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
+                ) : (
+                  <Trash2 className="h-3.5 w-3.5 mr-1.5 text-zinc-400" />
+                )}
+                <span>Reset Profile</span>
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent className="sm:max-w-[420px]">
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-base font-bold text-zinc-900 dark:text-zinc-50">
+                  Reset Master Profile?
+                </AlertDialogTitle>
+                <AlertDialogDescription className="text-xs text-zinc-500 dark:text-zinc-400">
+                  This will clear all work experience, projects, education, and skills. This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter className="gap-2 sm:gap-0">
+                <AlertDialogCancel disabled={isResetting} className="text-xs h-9">
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleReset}
+                  disabled={isResetting}
+                  className="bg-red-600 hover:bg-red-700 text-white text-xs h-9"
+                >
+                  {isResetting ? "Resetting..." : "Yes, Reset Profile"}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+
+          <Button 
+            onClick={handleSubmit} 
+            disabled={isSubmitting}
+            size="sm"
+            className="bg-[#3861fb] hover:bg-[#3861fb]/90 text-white font-medium text-xs h-9 px-5 rounded-lg shadow-sm"
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
+                <span>Saving...</span>
+              </>
+            ) : (
+              <>
+                <Save className="h-3.5 w-3.5 mr-1.5" />
+                <span>Save Changes</span>
+              </>
+            )}
+          </Button>
+        </div>
+      </div>
+
+      {/* Upload PDF Dialog */}
+      <Dialog open={isResumeDialogOpen} onOpenChange={setIsResumeDialogOpen}>
+        <DialogContent className="sm:max-w-[560px]">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
+              Upload Resume (PDF)
+            </DialogTitle>
+            <DialogDescription className="text-xs text-zinc-500 dark:text-zinc-400">
+              Upload an existing resume PDF. Our AI engine extracts and calibrates work experience, education, projects, and skills into your profile.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-2">
+            <label
+              onDragEnter={(e) => handleDrag(e, setIsResumeDragging)}
+              onDragLeave={(e) => handleDrag(e, setIsResumeDragging)}
+              onDragOver={(e) => handleDrag(e, setIsResumeDragging)}
+              onDrop={(e) => handleDrop(e, setResumeContent)}
+              className={cn(
+                "border-2 border-dashed rounded-xl p-6 flex flex-col items-center justify-center gap-2 transition-colors cursor-pointer text-center",
+                isResumeDragging
+                  ? "border-[#3861fb] bg-[#3861fb]/5"
+                  : "border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-900/50"
+              )}
+            >
+              <input
+                type="file"
+                className="hidden"
+                accept="application/pdf"
+                onChange={(e) => handleFileInput(e, setResumeContent)}
+              />
+              <div className="w-10 h-10 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-500">
+                <Upload className="h-5 w-5" />
               </div>
-              
-              <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
-                {/* Reset Profile Button */}
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
+              <div>
+                <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">
+                  Drop your PDF resume here
+                </p>
+                <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">
+                  or click to select file from your computer
+                </p>
+              </div>
+            </label>
+
+            <div className="space-y-1.5">
+              <Label className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
+                Or paste resume text directly
+              </Label>
+              <Textarea
+                value={resumeContent}
+                onChange={(e) => setResumeContent(e.target.value)}
+                placeholder="Paste plain resume text or raw bullet points here..."
+                rows={4}
+                className="text-xs bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 focus-visible:ring-1 focus-visible:ring-[#3861fb]"
+              />
+            </div>
+
+            {apiKeyError && (
+              <div className="p-3 bg-red-50/80 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-lg flex items-start gap-2.5 text-xs text-red-600 dark:text-red-400">
+                <AlertTriangle className="h-4 w-4 shrink-0 text-red-500 mt-0.5" />
+                <div className="flex-1 space-y-2">
+                  <p className="font-semibold">API Key Required</p>
+                  <p>{apiKeyError}</p>
+                  <div className="flex items-center gap-2 pt-1">
+                    <ProUpgradeButton />
                     <Button
+                      variant="outline"
                       size="sm"
-                      variant="outline"
-                      className="shrink-0 font-semibold text-xs text-red-500 border-red-200 hover:bg-red-50 dark:border-red-900/50 dark:hover:bg-red-900/20 px-2 sm:px-3"
-                      disabled={isResetting}
+                      className="text-xs h-8 text-zinc-700 dark:text-zinc-300"
+                      onClick={() => window.location.href = withBasePath('/settings')}
                     >
-                      {isResetting ? (
-                        <>
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                          <span className="hidden sm:inline ml-2">Resetting...</span>
-                        </>
-                      ) : (
-                        <>
-                          <Trash2 className="h-4 w-4" />
-                          <span className="hidden sm:inline ml-2">Reset</span>
-                        </>
-                      )}
+                      Settings
                     </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent className="sm:max-w-[425px]">
-                    <AlertDialogHeader>
-                      <AlertDialogTitle className="font-black uppercase tracking-tight">Reset Profile</AlertDialogTitle>
-                      <AlertDialogDescription className="font-bold">
-                        Are you sure you want to reset your profile? This action cannot be undone.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel disabled={isResetting} className="font-semibold">Cancel</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={handleReset}
-                        disabled={isResetting}
-                        className="bg-red-600 text-white hover:bg-red-700 font-semibold"
-                      >
-                        {isResetting ? "Resetting..." : "Reset Profile"}
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
- 
-                {/* Save Button */}
-                <Button 
-                  onClick={handleSubmit} 
-                  disabled={isSubmitting}
-                  size="sm"
-                  className="font-semibold text-xs bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 px-3 sm:px-4"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      <span className="hidden sm:inline ml-2">Saving...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Save className="h-4 w-4" />
-                      <span className="hidden sm:inline ml-2">Save Changes</span>
-                      <span className="sm:hidden ml-2">Save</span>
-                    </>
-                  )}
-                </Button>
-              </div>
-            </div>
-      </div>
-      {/* Main content container with consistent styling */}
-      <div className="relative pb-4 sm:pb-10">
-        {/* Import Actions Row */}
-        <div className="relative mb-6">
-          <div className="bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800 p-3.5 sm:p-8 shadow-sm">
-            <div className="flex flex-col gap-4">
-              
-              {/* Import Options Text */}
-              <div className="flex items-center gap-2 text-sm text-zinc-500">
-                <div className="flex items-center gap-2">
-                  <span className="inline-block w-2.5 h-2.5 rounded-full bg-zinc-900 dark:bg-zinc-50" />
-                  <span className="font-semibold tracking-wide text-zinc-900 dark:text-zinc-100">Import Options</span>
-                </div>
-              </div>
-
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-                <Button
-                  variant="outline"
-                  onClick={handleLinkedInImport}
-                  disabled={isLinkedInLoading}
-                  className="group relative bg-[#0077b5]/5 hover:bg-[#0077b5]/10 border-[#0077b5]/20 hover:border-[#0077b5]/30 text-[#0077b5] transition-all duration-300 h-auto py-1.5 sm:py-3 px-1 sm:px-4"
-                >
-                  <div className="relative flex flex-col items-center gap-0.5 sm:gap-1.5 w-full">
-                    <div className="flex items-center justify-center w-6 h-6 sm:w-9 sm:h-9 rounded-full bg-[#0077b5]/10">
-                      {isLinkedInLoading ? (
-                        <Loader2 className="h-3.5 w-3.5 sm:h-5 sm:w-5 animate-spin" />
-                      ) : (
-                        <Linkedin className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
-                      )}
-                    </div>
-                    <div className="text-center">
-                      <div className="font-bold text-[9px] sm:text-xs leading-tight">LinkedIn</div>
-                      <div className="text-[9px] sm:text-[10px] text-[#0077b5]/70 leading-tight hidden sm:block">Sync profile</div>
-                    </div>
                   </div>
-                </Button>
-
-                 {/* Resume Upload Button */}
-                <Dialog open={isResumeDialogOpen} onOpenChange={setIsResumeDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="group relative border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-900 h-auto py-1.5 sm:py-3 px-1 sm:px-4 w-full"
-                    >
-                      <div className="relative flex flex-col items-center gap-0.5 sm:gap-1.5 w-full">
-                        <div className="flex items-center justify-center w-6 h-6 sm:w-9 sm:h-9 rounded-xl bg-zinc-100 dark:bg-zinc-800">
-                          <Upload className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
-                        </div>
-                        <div className="text-center">
-                          <div className="font-bold text-[9px] sm:text-xs leading-tight">Resume</div>
-                          <div className="text-[9px] sm:text-[10px] text-zinc-500 leading-tight hidden sm:block">Upload PDF</div>
-                        </div>
-                      </div>
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[600px] bg-white/95 backdrop-blur-xl border-white/40 shadow-2xl">
-                    <DialogHeader>
-                      <DialogTitle className="text-2xl text-zinc-900 dark:text-zinc-50 font-bold">
-                        Upload Resume Content
-                      </DialogTitle>
-                      <DialogDescription asChild>
-                        <div className="space-y-2 text-base text-muted-foreground/80">
-                          <span className="block">Let our AI analyze your resume and enhance your profile by adding new information.</span>
-                          <span className="block text-sm">Your existing profile information will be preserved. New entries will be added alongside your current data. Want to start fresh instead? Use the &quot;Reset Profile&quot; option before uploading.</span>
-                        </div>
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="grid gap-4 py-4">
-                      <div className="space-y-4">
-                        <label
-                          onDragEnter={(e) => handleDrag(e, setIsResumeDragging)}
-                          onDragLeave={(e) => handleDrag(e, setIsResumeDragging)}
-                          onDragOver={(e) => handleDrag(e, setIsResumeDragging)}
-                          onDrop={(e) => handleDrop(e, setResumeContent)}
-                          className={cn(
-                            "border-2 border-dashed rounded-lg p-8 flex flex-col items-center justify-center gap-3 transition-colors duration-200 cursor-pointer group",
-                            isResumeDragging
-                              ? "border-violet-500 bg-violet-50/50"
-                              : "border-gray-200 hover:border-violet-500/50 hover:bg-violet-50/10"
-                          )}
-                        >
-                          <input
-                            type="file"
-                            className="hidden"
-                            accept="application/pdf"
-                            onChange={(e) => handleFileInput(e, setResumeContent)}
-                          />
-                          <Upload className="w-10 h-10 text-violet-500 group-hover:scale-110 transition-transform duration-200" />
-                          <div className="text-center">
-                            <p className="text-sm font-medium text-foreground">
-                              Drop your PDF resume here
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              or click to browse files
-                            </p>
-                          </div>
-                        </label>
-                        <div className="relative">
-                          <div className="absolute -top-3 left-3 bg-white px-2 text-sm text-muted-foreground">
-                            Or paste your resume text here
-                          </div>
-                          <Textarea
-                            value={resumeContent}
-                            onChange={(e) => setResumeContent(e.target.value)}
-                            placeholder="Paste your resume content here..."
-                            className="min-h-[100px] bg-white/50 border-white/40 focus:border-violet-500/40 focus:ring-violet-500/20 transition-all duration-300 pt-4"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    {apiKeyError && (
-                      <div className="px-4 py-3 bg-red-50/50 border border-red-200/50 rounded-lg flex items-start gap-3 text-red-600 text-sm">
-                        <div className="p-1.5 rounded-full bg-red-100">
-                          <AlertTriangle className="w-4 h-4 text-red-500" />
-                        </div>
-                        <div className="flex-1">
-                          <p className="font-medium">API Key Required</p>
-                          <p className="text-red-500/90">{apiKeyError}</p>
-                          <div className="mt-2 flex flex-col gap-2 justify-start">
-                            <div className="w-auto mx-auto">
-                              <ProUpgradeButton />
-                            </div>
-                            <div className="text-center text-xs text-red-400">or</div>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="text-red-600 border-red-200 hover:bg-red-50/50 w-auto mx-auto"
-                              onClick={() => window.location.href = withBasePath('/settings')}
-                            >
-                              Set API Keys in Settings
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                    <DialogFooter className="gap-3">
-                      <Button
-                        variant="outline"
-                        onClick={() => setIsResumeDialogOpen(false)}
-                        className="bg-white/50 hover:bg-white/60 transition-all duration-300"
-                      >
-                        Cancel
-                      </Button>
-                      <Button
-                        onClick={() => handleResumeUpload(resumeContent)}
-                        disabled={isProcessingResume || !resumeContent.trim()}
-                        className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white hover:opacity-90 transition-all duration-500 hover:scale-[1.02] disabled:hover:scale-100"
-                      >
-                        {isProcessingResume ? (
-                          <div className="flex items-center gap-2">
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                            <span>Processing...</span>
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-2">
-                            <Upload className="h-4 w-4" />
-                            <span>Process with AI</span>
-                          </div>
-                        )}
-                      </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-
-                {/* Import From Text Button */}
-                <Dialog open={isTextImportDialogOpen} onOpenChange={setIsTextImportDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="group relative bg-violet-500/5 hover:bg-violet-500/10 border-violet-500/20 hover:border-violet-500/30 text-violet-600 transition-all duration-300 h-auto py-1.5 sm:py-3 px-1 sm:px-4 w-full"
-                    >
-                      <div className="relative flex flex-col items-center gap-0.5 sm:gap-1.5 w-full">
-                        <div className="flex items-center justify-center w-6 h-6 sm:w-9 sm:h-9 rounded-full bg-violet-500/10">
-                          <Upload className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
-                        </div>
-                        <div className="text-center">
-                          <div className="font-bold text-[9px] sm:text-xs text-violet-600 leading-tight">Text Import</div>
-                          <div className="text-[9px] sm:text-[10px] text-violet-600/70 leading-tight hidden sm:block">Any content</div>
-                        </div>
-                      </div>
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[600px] bg-white/95 backdrop-blur-xl border-white/40 shadow-2xl">
-                    <DialogHeader>
-                      <DialogTitle className="text-2xl bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
-                        Import From Text
-                      </DialogTitle>
-                      <DialogDescription asChild>
-                        <div className="space-y-2 text-base text-muted-foreground/80">
-                          <span className="block">Paste any text content below (resume, job description, achievements, etc.). Our AI will analyze it and enhance your profile by adding relevant information.</span>
-                          <span className="block text-sm">Your existing profile information will be preserved. New entries will be added alongside your current data.</span>
-                        </div>
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="grid gap-4 py-4">
-                      <div className="space-y-4">
-                        <label
-                          onDragEnter={(e) => handleDrag(e, setIsTextImportDragging)}
-                          onDragLeave={(e) => handleDrag(e, setIsTextImportDragging)}
-                          onDragOver={(e) => handleDrag(e, setIsTextImportDragging)}
-                          onDrop={(e) => handleDrop(e, setTextImportContent)}
-                          className={cn(
-                            "border-2 border-dashed rounded-lg p-8 flex flex-col items-center justify-center gap-3 transition-colors duration-200 cursor-pointer group",
-                            isTextImportDragging
-                              ? "border-violet-500 bg-violet-50/50"
-                              : "border-gray-200 hover:border-violet-500/50 hover:bg-violet-50/10"
-                          )}
-                        >
-                          <input
-                            type="file"
-                            className="hidden"
-                            accept="application/pdf"
-                            onChange={(e) => handleFileInput(e, setTextImportContent)}
-                          />
-                          <Upload className="w-10 h-10 text-violet-500 group-hover:scale-110 transition-transform duration-200" />
-                          <div className="text-center">
-                            <p className="text-sm font-medium text-foreground">
-                              Drop your PDF file here
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              or click to browse files
-                            </p>
-                          </div>
-                        </label>
-                        <div className="relative">
-                          <div className="absolute -top-3 left-3 bg-white px-2 text-sm text-muted-foreground">
-                            Or paste your text content here
-                          </div>
-                          <Textarea
-                            value={textImportContent}
-                            onChange={(e) => setTextImportContent(e.target.value)}
-                            placeholder="Paste your text content here..."
-                            className="min-h-[100px] bg-white/50 border-white/40 focus:border-violet-500/40 focus:ring-violet-500/20 transition-all duration-300 pt-4"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    {apiKeyError && (
-                      <div className="px-4 py-3 bg-red-50/50 border border-red-200/50 rounded-lg flex items-start gap-3 text-red-600 text-sm">
-                        <div className="p-1.5 rounded-full bg-red-100">
-                          <AlertTriangle className="w-4 h-4 text-red-500" />
-                        </div>
-                        <div className="flex-1">
-                          <p className="font-medium">API Key Required</p>
-                          <p className="text-red-500/90">{apiKeyError}</p>
-                          <div className="mt-2 flex flex-col gap-2 justify-start">
-                            <div className="w-auto mx-auto">
-                              <ProUpgradeButton />
-                            </div>
-                            <div className="text-center text-xs text-red-400">or</div>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="text-red-600 border-red-200 hover:bg-red-50/50 w-auto mx-auto"
-                              onClick={() => window.location.href = withBasePath('/settings')}
-                            >
-                              Set API Keys in Settings
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                    <DialogFooter className="gap-3">
-                      <Button
-                        variant="outline"
-                        onClick={() => setIsTextImportDialogOpen(false)}
-                        className="bg-white/50 hover:bg-white/60 transition-all duration-300"
-                      >
-                        Cancel
-                      </Button>
-                      <Button
-                        onClick={() => handleResumeUpload(textImportContent)}
-                        disabled={isProcessingResume || !textImportContent.trim()}
-                        className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white hover:opacity-90 transition-all duration-500 hover:scale-[1.02] disabled:hover:scale-100"
-                      >
-                        {isProcessingResume ? (
-                          <div className="flex items-center gap-2">
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                            <span>Processing...</span>
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-2">
-                            <Upload className="h-4 w-4" />
-                            <span>Process with AI</span>
-                          </div>
-                        )}
-                      </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Profile Tabs */}
-        <div className="relative">
-          <div className="w-full">
-            <Tabs defaultValue="basic" className="w-full">
-              <TabsList className="h-full w-full justify-start relative bg-white/50 dark:bg-zinc-950/50 border border-zinc-200 dark:border-zinc-800 rounded-xl p-1 sm:p-1.5 flex overflow-x-auto no-scrollbar scrollbar-hide gap-1 shadow-sm min-h-[48px]">
-                <TabsTrigger 
-                  value="basic" 
-                  className="group shrink-0 flex items-center gap-2 px-3 sm:px-6 py-3 sm:py-3 rounded-lg font-semibold tracking-wide transition-all duration-200 min-h-[44px]
-                    data-[state=active]:bg-zinc-100 data-[state=active]:text-zinc-900 dark:data-[state=active]:bg-zinc-800 dark:data-[state=active]:text-zinc-50
-                    data-[state=inactive]:text-zinc-500 data-[state=inactive]:hover:bg-zinc-50 dark:data-[state=inactive]:hover:bg-zinc-900"
-                >
-                  <User className="h-4 w-4 sm:h-5 sm:w-5" />
-                  <span className="text-xs sm:text-base">Basic</span>
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="experience" 
-                  className="group shrink-0 flex items-center gap-2 px-3 sm:px-6 py-3 sm:py-3 rounded-lg font-semibold tracking-wide transition-all duration-200 min-h-[44px]
-                    data-[state=active]:bg-zinc-100 data-[state=active]:text-zinc-900 dark:data-[state=active]:bg-zinc-800 dark:data-[state=active]:text-zinc-50
-                    data-[state=inactive]:text-zinc-500 data-[state=inactive]:hover:bg-zinc-50 dark:data-[state=inactive]:hover:bg-zinc-900"
-                >
-                  <Briefcase className="h-4 w-4 sm:h-5 sm:w-5" />
-                  <span className="text-xs sm:text-base">Experience</span>
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="projects" 
-                  className="group shrink-0 flex items-center gap-2 px-3 sm:px-6 py-3 sm:py-3 rounded-lg font-semibold tracking-wide transition-all duration-200 min-h-[44px]
-                    data-[state=active]:bg-zinc-100 data-[state=active]:text-zinc-900 dark:data-[state=active]:bg-zinc-800 dark:data-[state=active]:text-zinc-50
-                    data-[state=inactive]:text-zinc-500 data-[state=inactive]:hover:bg-zinc-50 dark:data-[state=inactive]:hover:bg-zinc-900"
-                >
-                  <FolderGit2 className="h-4 w-4 sm:h-5 sm:w-5" />
-                  <span className="text-xs sm:text-base">Projects</span>
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="education" 
-                  className="group shrink-0 flex items-center gap-2 px-3 sm:px-6 py-3 sm:py-3 rounded-lg font-semibold tracking-wide transition-all duration-200 min-h-[44px]
-                    data-[state=active]:bg-zinc-100 data-[state=active]:text-zinc-900 dark:data-[state=active]:bg-zinc-800 dark:data-[state=active]:text-zinc-50
-                    data-[state=inactive]:text-zinc-500 data-[state=inactive]:hover:bg-zinc-50 dark:data-[state=inactive]:hover:bg-zinc-900"
-                >
-                  <GraduationCap className="h-4 w-4 sm:h-5 sm:w-5" />
-                  <span className="text-xs sm:text-base">Education</span>
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="skills" 
-                  className="group shrink-0 flex items-center gap-2 px-3 sm:px-6 py-3 sm:py-3 rounded-lg font-semibold tracking-wide transition-all duration-200 min-h-[44px]
-                    data-[state=active]:bg-zinc-100 data-[state=active]:text-zinc-900 dark:data-[state=active]:bg-zinc-800 dark:data-[state=active]:text-zinc-50
-                    data-[state=inactive]:text-zinc-500 data-[state=inactive]:hover:bg-zinc-50 dark:data-[state=inactive]:hover:bg-zinc-900"
-                >
-                  <Wrench className="h-4 w-4 sm:h-5 sm:w-5" />
-                  <span className="text-xs sm:text-base">Skills</span>
-                </TabsTrigger>
-              </TabsList>
-              <div className="relative mt-8">
-                <div className="relative space-y-6">
-                  <TabsContent value="basic" className="mt-0 outline-none">
-                    <Card className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-4 sm:p-6 shadow-sm">
-                        <ProfileBasicInfoForm
-                          profile={profile}
-                          onChange={(field, value) => {
-                            if (field in profile) {
-                              updateField(field as keyof Profile, value);
-                            }
-                          }}
-                        />
-                    </Card>
-                  </TabsContent>
-
-                  <TabsContent value="experience" className="mt-6 animate-in fade-in-50 slide-in-from-bottom-2 duration-500">
-                    <Card className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-sm relative overflow-hidden group">
-                      
-                      <div className="relative p-4 sm:p-8">
-                        <ProfileWorkExperienceForm
-                          experiences={profile.work_experience}
-                          onChange={(experiences) => updateField('work_experience', experiences)}
-                        />
-                      </div>
-                    </Card>
-                  </TabsContent>
-
-                  <TabsContent value="projects" className="mt-6 animate-in fade-in-50 slide-in-from-bottom-2 duration-500">
-                    <Card className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-sm relative overflow-hidden group">
-                      
-                      <div className="relative p-4 sm:p-8">
-                        <ProfileProjectsForm
-                          projects={profile.projects}
-                          onChange={(projects) => updateField('projects', projects)}
-                        />
-                      </div>
-                    </Card>
-                  </TabsContent>
-
-                  <TabsContent value="education" className="mt-6 animate-in fade-in-50 slide-in-from-bottom-2 duration-500">
-                    <Card className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-sm relative overflow-hidden group">
-                      
-                      <div className="relative p-4 sm:p-8">
-                        <ProfileEducationForm
-                          education={profile.education}
-                          onChange={(education) => updateField('education', education)}
-                        />
-                      </div>
-                    </Card>
-                  </TabsContent>
-
-                  <TabsContent value="skills" className="mt-6 animate-in fade-in-50 slide-in-from-bottom-2 duration-500">
-                    <Card className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-sm relative overflow-hidden group">
-                      
-                      <div className="relative p-4 sm:p-8">
-                        <ProfileSkillsForm
-                          skills={profile.skills}
-                          onChange={(skills) => updateField('skills', skills)}
-                        />
-                      </div>
-                    </Card>
-                  </TabsContent>
-
-                 
                 </div>
               </div>
-            </Tabs>
+            )}
           </div>
-          <div className="absolute inset-x-0 -bottom-3 h-8 bg-gradient-to-t from-white/60 to-transparent pointer-events-none"></div>
-        </div>
-      </div>
+
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsResumeDialogOpen(false)}
+              className="text-xs h-9"
+            >
+              Cancel
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => handleResumeUpload(resumeContent)}
+              disabled={isProcessingResume || !resumeContent.trim()}
+              className="bg-[#3861fb] hover:bg-[#3861fb]/90 text-white font-medium text-xs h-9 px-4 rounded-lg shadow-sm"
+            >
+              {isProcessingResume ? (
+                <>
+                  <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
+                  <span>Parsing with AI...</span>
+                </>
+              ) : (
+                <>
+                  <Sparkles className="h-3.5 w-3.5 mr-1.5" />
+                  <span>Parse with AI</span>
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Paste Text Dialog */}
+      <Dialog open={isTextImportDialogOpen} onOpenChange={setIsTextImportDialogOpen}>
+        <DialogContent className="sm:max-w-[560px]">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
+              Import Profile from Raw Text
+            </DialogTitle>
+            <DialogDescription className="text-xs text-zinc-500 dark:text-zinc-400">
+              Paste bio, achievements, project notes, or job descriptions. The AI parses entities into structured profile fields.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-2">
+            <label
+              onDragEnter={(e) => handleDrag(e, setIsTextImportDragging)}
+              onDragLeave={(e) => handleDrag(e, setIsTextImportDragging)}
+              onDragOver={(e) => handleDrag(e, setIsTextImportDragging)}
+              onDrop={(e) => handleDrop(e, setTextImportContent)}
+              className={cn(
+                "border-2 border-dashed rounded-xl p-5 flex flex-col items-center justify-center gap-1.5 transition-colors cursor-pointer text-center",
+                isTextImportDragging
+                  ? "border-[#3861fb] bg-[#3861fb]/5"
+                  : "border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-900/50"
+              )}
+            >
+              <input
+                type="file"
+                className="hidden"
+                accept="application/pdf"
+                onChange={(e) => handleFileInput(e, setTextImportContent)}
+              />
+              <Upload className="h-4 w-4 text-zinc-400" />
+              <p className="text-[11px] text-zinc-500">
+                Drop PDF file or click to browse
+              </p>
+            </label>
+
+            <div className="space-y-1.5">
+              <Label className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
+                Text Content
+              </Label>
+              <Textarea
+                value={textImportContent}
+                onChange={(e) => setTextImportContent(e.target.value)}
+                placeholder="Paste raw career summary, LinkedIn bio, or project details..."
+                rows={6}
+                className="text-xs bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 focus-visible:ring-1 focus-visible:ring-[#3861fb]"
+              />
+            </div>
+
+            {apiKeyError && (
+              <div className="p-3 bg-red-50/80 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-lg flex items-start gap-2.5 text-xs text-red-600 dark:text-red-400">
+                <AlertTriangle className="h-4 w-4 shrink-0 text-red-500 mt-0.5" />
+                <div className="flex-1 space-y-2">
+                  <p className="font-semibold">API Key Required</p>
+                  <p>{apiKeyError}</p>
+                  <div className="flex items-center gap-2 pt-1">
+                    <ProUpgradeButton />
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-xs h-8 text-zinc-700 dark:text-zinc-300"
+                      onClick={() => window.location.href = withBasePath('/settings')}
+                    >
+                      Settings
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsTextImportDialogOpen(false)}
+              className="text-xs h-9"
+            >
+              Cancel
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => handleResumeUpload(textImportContent)}
+              disabled={isProcessingResume || !textImportContent.trim()}
+              className="bg-[#3861fb] hover:bg-[#3861fb]/90 text-white font-medium text-xs h-9 px-4 rounded-lg shadow-sm"
+            >
+              {isProcessingResume ? (
+                <>
+                  <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
+                  <span>Parsing with AI...</span>
+                </>
+              ) : (
+                <>
+                  <Sparkles className="h-3.5 w-3.5 mr-1.5" />
+                  <span>Parse with AI</span>
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
-} 
+}

@@ -1,5 +1,4 @@
-'use client'
-
+'use client';
 
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
@@ -10,12 +9,24 @@ import { logout } from "@/app/auth/login/actions";
 
 interface LogoutButtonProps {
   className?: string;
+  showText?: boolean;
+  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
+  children?: React.ReactNode;
 }
 
-export function LogoutButton({ className }: LogoutButtonProps) {
+export function LogoutButton({ 
+  className, 
+  showText = true, 
+  variant = "ghost",
+  children 
+}: LogoutButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogout = async () => {
+  const handleLogout = async (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     try {
       setIsLoading(true);
       await logout();
@@ -32,18 +43,21 @@ export function LogoutButton({ className }: LogoutButtonProps) {
 
   return (
     <Button
-      variant="ghost"
+      variant={variant}
       className={cn(
-        "flex items-center gap-1.5 px-3 py-1",
-        "text-sm font-medium text-purple-600/80 hover:text-purple-800",
-        "transition-colors duration-200",
+        "flex items-center gap-2 transition-colors duration-150",
         className
       )}
       onClick={handleLogout}
       disabled={isLoading}
+      title="Sign out"
     >
-      <LogOut className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-      <span className="hidden sm:inline">{isLoading ? 'Signing out...' : 'Logout'}</span>
+      <LogOut className={cn("h-4 w-4 shrink-0", isLoading && "animate-spin")} />
+      {children ? (
+        children
+      ) : showText ? (
+        <span>{isLoading ? 'Signing out...' : 'Sign out'}</span>
+      ) : null}
     </Button>
   );
-} 
+}

@@ -18,6 +18,7 @@ import { BaseResumeSelector } from "../base-resume-selector";
 import { ImportMethodRadioGroup } from "../import-method-radio-group";
 import { JobDescriptionInput } from "../job-description-input";
 import { ApiErrorDialog } from "@/components/ui/api-error-dialog";
+import { readStoredCustomProviders } from "@/hooks/use-custom-providers";
 import { cn, withBasePath } from "@/lib/utils";
 
 interface CreateTailoredResumeDialogProps {
@@ -36,6 +37,7 @@ export function CreateTailoredResumeDialog({ children, baseResumes, profile }: C
   const [importOption, setImportOption] = useState<'import-profile' | 'ai'>('ai');
   const [isBaseResumeInvalid, setIsBaseResumeInvalid] = useState(false);
   const [isJobDescriptionInvalid, setIsJobDescriptionInvalid] = useState(false);
+  const [crawledMeta, setCrawledMeta] = useState<{ position_title: string; company_name: string; location: string; job_url: string } | null>(null);
   const [showErrorDialog, setShowErrorDialog] = useState(false);
   const [errorMessage, setErrorMessage] = useState({ title: '', description: '' });
   const router = useRouter();
@@ -140,7 +142,8 @@ export function CreateTailoredResumeDialog({ children, baseResumes, profile }: C
             setCurrentStep('analyzing');
             const formattedJobListing = await formatJobListing(jobDescription, {
               model: selectedModel || '',
-              apiKeys
+              apiKeys,
+              customProviders: readStoredCustomProviders()
             });
 
             setCurrentStep('formatting');
@@ -148,8 +151,8 @@ export function CreateTailoredResumeDialog({ children, baseResumes, profile }: C
             if (!jobEntry?.id) throw new Error("Failed to create job entry");
             
             jobId = jobEntry.id;
-            jobTitle = formattedJobListing.position_title || 'Copied Resume';
-            companyName = formattedJobListing.company_name || '';
+            jobTitle = formattedJobListing.position_title || crawledMeta?.position_title || 'Copied Resume';
+            companyName = formattedJobListing.company_name || crawledMeta?.company_name || '';
           } catch (error: Error | unknown) {
             if (error instanceof Error && (
                 error.message.toLowerCase().includes('api key') || 
@@ -220,7 +223,8 @@ export function CreateTailoredResumeDialog({ children, baseResumes, profile }: C
       try {
         formattedJobListing = await formatJobListing(jobDescription, {
           model: selectedModel || '',
-          apiKeys
+          apiKeys,
+          customProviders: readStoredCustomProviders()
         });
       } catch (error: Error | unknown) {
         if (error instanceof Error && (
@@ -265,7 +269,8 @@ export function CreateTailoredResumeDialog({ children, baseResumes, profile }: C
       try {
         tailoredContent = await tailorResumeToJob(baseResume, formattedJobListing, {
           model: selectedModel || '',
-          apiKeys
+          apiKeys,
+          customProviders: readStoredCustomProviders()
         });
       } catch (error: Error | unknown) {
         if (error instanceof Error && (
@@ -342,8 +347,8 @@ export function CreateTailoredResumeDialog({ children, baseResumes, profile }: C
         </DialogTrigger>
         <DialogContent className="sm:max-w-[500px] bg-white border border-gray-200 shadow-lg rounded-lg">
           <div className="flex flex-col items-center justify-center p-8 space-y-4">
-            <div className="p-3 rounded-lg bg-pink-50 border border-pink-100">
-              <Sparkles className="w-6 h-6 text-pink-600" />
+            <div className="p-3 rounded-lg bg-[#3861fb]/10 border border-[#3861fb]/20">
+              <Sparkles className="w-6 h-6 text-[#3861fb]" />
             </div>
             <div className="text-center space-y-2 max-w-sm">
               <h3 className="font-semibold text-lg text-gray-900">No Base Resumes Found</h3>
@@ -353,7 +358,7 @@ export function CreateTailoredResumeDialog({ children, baseResumes, profile }: C
             </div>
             {profile ? (
               <CreateBaseResumeDialog profile={profile}>
-                <Button className="mt-2 bg-purple-600 hover:bg-purple-700 text-white">
+                <Button className="mt-2 bg-[#3861fb] hover:bg-[#3861fb]/90 text-white text-white">
                   <Plus className="w-4 h-4 mr-2" />
                   Create Base Resume
                 </Button>
@@ -390,8 +395,8 @@ export function CreateTailoredResumeDialog({ children, baseResumes, profile }: C
           {/* Header */}
           <div className="px-6 py-4 border-b border-gray-100">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-pink-50 border border-pink-100">
-                <Sparkles className="w-5 h-5 text-pink-600" />
+              <div className="p-2 rounded-lg bg-[#3861fb]/10 border border-[#3861fb]/20">
+                <Sparkles className="w-5 h-5 text-[#3861fb]" />
               </div>
               <div className="flex-1">
                 <DialogTitle className="text-lg font-semibold text-gray-900">
@@ -408,17 +413,17 @@ export function CreateTailoredResumeDialog({ children, baseResumes, profile }: C
               <div className="flex items-center gap-2">
                 <div className={cn(
                   "w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium",
-                  dialogStep >= 1 ? "bg-pink-600 text-white" : "bg-gray-200 text-gray-600"
+                  dialogStep >= 1 ? "bg-[#3861fb] text-white" : "bg-gray-200 text-gray-600"
                 )}>
                   1
                 </div>
                 <div className={cn(
                   "w-4 h-0.5",
-                  dialogStep >= 2 ? "bg-pink-600" : "bg-gray-200"
+                  dialogStep >= 2 ? "bg-[#3861fb]" : "bg-gray-200"
                 )} />
                 <div className={cn(
                   "w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium",
-                  dialogStep >= 2 ? "bg-pink-600 text-white" : "bg-gray-200 text-gray-600"
+                  dialogStep >= 2 ? "bg-[#3861fb] text-white" : "bg-gray-200 text-gray-600"
                 )}>
                   2
                 </div>
@@ -434,7 +439,7 @@ export function CreateTailoredResumeDialog({ children, baseResumes, profile }: C
               <div className="space-y-6">
                 {/* Header Section */}
                 <div className="text-center space-y-2">
-                  <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 mb-1">
+                  <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-[#3861fb] to-blue-600 mb-1">
                     <Sparkles className="w-5 h-5 text-white" />
                   </div>
                   <h3 className="text-xl font-bold text-gray-900">Choose Your Foundation</h3>
@@ -460,7 +465,7 @@ export function CreateTailoredResumeDialog({ children, baseResumes, profile }: C
               <div className="space-y-6">
 
                 {/* Selected Resume Summary */}
-                <div className="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg p-3">
+                <div className="bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 rounded-lg p-3">
                   <div className="flex items-center gap-3">
                     <div className="flex-shrink-0">
                       <MiniResumePreview
@@ -471,8 +476,8 @@ export function CreateTailoredResumeDialog({ children, baseResumes, profile }: C
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium text-purple-900">Foundation:</span>
-                        <span className="text-sm text-purple-700 font-semibold truncate">
+                        <span className="text-sm font-medium text-zinc-500">Foundation:</span>
+                        <span className="text-sm text-zinc-900 dark:text-zinc-100 font-semibold truncate">
                           {baseResumes.find(r => r.id === selectedBaseResume)?.name}
                         </span>
                       </div>
@@ -483,8 +488,8 @@ export function CreateTailoredResumeDialog({ children, baseResumes, profile }: C
                 {/* Job Description Section */}
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-7 h-7 rounded-full bg-pink-100 flex items-center justify-center">
-                      <span className="text-pink-600 font-bold text-sm">1</span>
+                    <div className="w-7 h-7 rounded-full bg-[#3861fb]/10 flex items-center justify-center">
+                      <span className="text-[#3861fb] font-bold text-sm">1</span>
                     </div>
                     <div>
                       <h4 className="font-semibold text-gray-900">Job Information <span className="text-red-500">*</span></h4>
@@ -504,8 +509,8 @@ export function CreateTailoredResumeDialog({ children, baseResumes, profile }: C
                 {/* Tailoring Method Section */}
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-7 h-7 rounded-full bg-pink-100 flex items-center justify-center">
-                      <span className="text-pink-600 font-bold text-sm">2</span>
+                    <div className="w-7 h-7 rounded-full bg-[#3861fb]/10 flex items-center justify-center">
+                      <span className="text-[#3861fb] font-bold text-sm">2</span>
                     </div>
                     <div>
                       <h4 className="font-semibold text-gray-900">Tailoring Method</h4>
@@ -594,7 +599,7 @@ export function CreateTailoredResumeDialog({ children, baseResumes, profile }: C
                   Cancel
                 </Button>
                 {dialogStep === 1 && (
-                  <Button onClick={handleNext} size="sm" className="bg-pink-600 hover:bg-pink-700">
+                  <Button onClick={handleNext} size="sm" className="bg-[#3861fb] hover:bg-[#3861fb]/90 text-white">
                     Next
                   </Button>
                 )}
@@ -603,7 +608,7 @@ export function CreateTailoredResumeDialog({ children, baseResumes, profile }: C
                     onClick={handleCreate} 
                     disabled={isCreating}
                     size="sm"
-                    className="bg-pink-600 hover:bg-pink-700 text-white"
+                    className="bg-[#3861fb] hover:bg-[#3861fb]/90 text-white text-white"
                   >
                     {isCreating ? (
                       <>
